@@ -42,10 +42,10 @@ class BDGradientNode : SKSpriteNode {
     
     private let u_startAngle = SKUniform(name: "u_startAngle", float: 0.0)
     
-    /// startAngle is an angle in radians between 0 and 2Pi, where 0 is to the right along the x axis. Red will start at this angle. Default is 0.
+    /// An angle in radians between 0 and 2Pi, where 0 is to the right along the x axis. Default is 0.
     var startAngle : Float = 0.0 {
         didSet {
-            u_startAngle.floatValue = (startAngle / Float(2 * M_PI)) % Float(1.0)
+            u_startAngle.floatValue = startAngle / Float(2 * M_PI) % 1.0
         }
     }
     
@@ -100,8 +100,7 @@ class BDGradientNode : SKSpriteNode {
 
     
     // MARK: Linear Gradient
-    
-    // TODO: make sure that there are at least two colors. Test with two.
+
     /**
     
     A SKSpriteNode with a linear gradient from bottom to top in the given texture.
@@ -130,6 +129,7 @@ class BDGradientNode : SKSpriteNode {
         gradientType = "linear"
         
         shader = linearGradientShader(colors: colors, locations: locations, startPoint: startPoint, endPoint: endPoint, blended: blended, keepShape: keepShape)
+        shader?.uniforms = uniforms
     }
        
     
@@ -163,6 +163,7 @@ class BDGradientNode : SKSpriteNode {
         gradientType = "radial"
         
         shader = radialGradientShader(colors: colors, locations: locations, firstCenter: firstCenter, firstRadius: firstRadius, secondCenter: secondCenter, secondRadius: secondRadius, blended: blended)
+        shader?.uniforms = uniforms
     }
     
     
@@ -198,6 +199,7 @@ class BDGradientNode : SKSpriteNode {
         gradientType = "sweep"
         
         shader = sweepGradientShader(colors: colors, locations: locations, center: center, startAngle: startAngle, blended: blended, keepShape: keepShape)
+        shader?.uniforms = uniforms
     }
     
     
@@ -213,7 +215,7 @@ class BDGradientNode : SKSpriteNode {
     
     :param: center A optional point in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: startAngle An optional angle in radians between 0 and 2Pi, where 0 is to the right along the x axis. Red will start at this angle. Default is 0.
+    :param: startAngle An optional angle in radians between 0 and 2Pi, where 0 is to the right along the x axis. Red will start at this angle. Default is 0.  The related uniform is u_startAngle.
     
     :param: blended If true, the given colors will be blended with the texture's existing colors; if false the node will have purely the given colors. Note that if true the keepShape value will be ignored.
     
@@ -227,11 +229,6 @@ class BDGradientNode : SKSpriteNode {
         
         // Sanitization
         
-        // startAngle
-        if startAngle != nil {
-            self.startAngle = startAngle!
-        }
-        uniforms.append(u_startAngle)
         
         // center
         var x : CGFloat = 0.5
@@ -241,11 +238,17 @@ class BDGradientNode : SKSpriteNode {
             y = min(max(center!.y, 0.0), 1.0)
         }
         
+        // startAngle
+        if startAngle != nil {
+            self.startAngle = startAngle!
+        }
+        uniforms.append(u_startAngle)
+        
         
         // Shader Creation
         
         
-        var gamutGradientShader = "vec3 hsv2rgb(vec3 c) { vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0); vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www); return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y); } float M_PI = 3.1415926535897932384626433832795; void main() { vec2 coord = v_tex_coord.xy; float angle = atan(coord.y, coord.x); angle = mod(angle / (2.0 * M_PI), 1.0) - u_startAngle; float distanceFromCenter = length(coord); vec3 color = hsv2rgb(vec3(angle, distanceFromCenter, 1.0)); gl_FragColor = vec4(color, 1.0); }"
+        var gamutGradientShader = "vec3 hsv2rgb(vec3 c) { vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0); vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www); return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y); } float M_PI = 3.1415926535897932384626433832795; void main() { vec2 coord = v_tex_coord.xy; float angle = atan(coord.y, coord.x); angle = mod(angle / (2.0 * M_PI) - u_startAngle, 1.0); float distanceFromCenter = length(coord); vec3 color = hsv2rgb(vec3(angle, distanceFromCenter, 1.0)); gl_FragColor = vec4(color, 1.0); }"
         
         var stringRange : NSRange
         var string = ""
@@ -601,7 +604,7 @@ class BDGradientNode : SKSpriteNode {
     
     :param: center A optional point in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: startAngle An optional angle in radians between 0 and 2Pi, where 0 is to the right along the x axis. The first color will start at this angle; colors will progress counter-clockwise. Default is 0.
+    :param: startAngle An optional angle in radians between 0 and 2Pi, where 0 is to the right along the x axis. The first color will start at this angle; colors will progress counter-clockwise. Default is 0. The related uniform is u_startAngle.
     
     :param: blended If true, the given colors will be blended with the texture's existing colors; if false the node will have purely the given colors. Note that if true the keepShape value will be ignored.
     
@@ -610,7 +613,7 @@ class BDGradientNode : SKSpriteNode {
     :returns: An SKShader that will produce a sweep gradient. Note: the current implementation simply uses the GLSL mix function, which is a linear interpolation. For colors near to each other on the spectrum the results are fine; for very different colors the results can be pretty ugly. If you need a gradient between very different colors then you can simply add more clors in between to narrow the relative distances.
     
     */
-    func sweepGradientShader(#colors: [UIColor], locations: [CGFloat]?, center: CGPoint?, startAngle: Float?, blended: Bool, keepShape: Bool) -> SKShader {
+    private func sweepGradientShader(#colors: [UIColor], locations: [CGFloat]?, center: CGPoint?, startAngle: Float?, blended: Bool, keepShape: Bool) -> SKShader {
         
         
         // Sanitization
@@ -659,17 +662,15 @@ class BDGradientNode : SKSpriteNode {
         
         
         // startAngle
-        var angle : Float = 0.0
         if startAngle != nil {
-            
-            angle = startAngle! % Float(2 * M_PI)
-            angle = angle / Float(2 * M_PI)
+            self.startAngle = startAngle!
         }
+        uniforms.append(u_startAngle)
         
         
         // Shader Construction
         
-        var sweepGradientShader = "float M_PI = 3.1415926535897932384626433832795; void main() { vec2 coord = v_tex_coord.xy; float angle = atan(coord.y, coord.x); angle = mod(angle / (2.0 * M_PI), 1.0); vec4 color = mix(color0, color1, smoothstep(location0, location1, angle)); gl_FragColor = color; }"
+        var sweepGradientShader = "float M_PI = 3.1415926535897932384626433832795; void main() { vec2 coord = v_tex_coord.xy; float angle = atan(coord.y, coord.x); angle = mod(angle / (2.0 * M_PI) - u_startAngle, 1.0); vec4 color = mix(color0, color1, smoothstep(location0, location1, angle)); gl_FragColor = color; }"
         
         
         var stringRange : NSRange
@@ -679,7 +680,7 @@ class BDGradientNode : SKSpriteNode {
         // blended
         if blended {
             
-            string = " * texture2D(u_texture, v_tex_coord); "
+            string = " * texture2D(u_texture, v_tex_coord)"
             stringRange = (sweepGradientShader as NSString).rangeOfString("gl_FragColor = color")
             sweepGradientShader = sweepGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
             
@@ -696,7 +697,7 @@ class BDGradientNode : SKSpriteNode {
         
         
         // Add the last gradient
-        string = "color = mix(color, color0, smoothstep(location\(colors.count - 1), 1.0, angle)); "
+        string = "color = mix(color, color0, smoothstep(location\(colors.count - 1), location0 + 1.0, angle)); "
         stringRange = (sweepGradientShader as NSString).rangeOfString("vec4 color = mix(color0, color1, smoothstep(location0, location1, angle)); ")
         sweepGradientShader = sweepGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
         
@@ -708,12 +709,6 @@ class BDGradientNode : SKSpriteNode {
             string = "color = mix(color, color\(i), smoothstep(location\(i - 1), location\(i), angle)); "
             sweepGradientShader = sweepGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
         }
-        
-        
-        // startAngle
-        string = " - \(angle)"
-        stringRange = (sweepGradientShader as NSString).rangeOfString("angle = mod(angle / (2.0 * M_PI), 1.0)")
-        sweepGradientShader = sweepGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
         
         
         // Remap (0, 0)
@@ -738,6 +733,9 @@ class BDGradientNode : SKSpriteNode {
             string = "vec4 color\(index) = vec4(\(components[0]), \(components[1]), \(components[2]), \(components[3])); "
             sweepGradientShader = sweepGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
         }
+        
+        
+        println(sweepGradientShader)
                 
         return SKShader(source: sweepGradientShader)
     }
