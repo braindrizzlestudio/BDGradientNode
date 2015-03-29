@@ -61,11 +61,12 @@ class GradientScene : SKScene {
     func setupUI () {
         
         setupButtons()
+        setupLabels()
         setupSliders()
     }
     
     
-    // MARK: - Buttons
+    // MARK: - Buttons and Labels
     
     
     func setupButtons () {
@@ -190,6 +191,48 @@ class GradientScene : SKScene {
         label.text = "'Keep Shape' is ignored if 'Blend Colors' is true."
         label.adjustsFontSizeToFitWidth = true
         label.numberOfLines = 0
+        view?.addSubview(label)
+    }
+    
+    
+    // MARK: Labels
+    
+    func setupLabels() {
+        
+        setupCenterLabel()
+        setupStartEndLabel()
+    }
+    
+    
+    func setupCenterLabel() {
+        
+        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - self.size.width - self.size.width * 12 / 21))
+        let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
+        let frame = CGRect(origin: origin, size: size)
+        let label = UILabel(frame: frame)
+        label.text = "Drag the image \rto move the center!"
+        label.adjustsFontSizeToFitWidth = true
+        label.textAlignment = .Center
+        label.textColor = blue
+        label.numberOfLines = 0
+        label.tag = 20
+        view?.addSubview(label)
+    }
+    
+    
+    func setupStartEndLabel() {
+        
+        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - self.size.width - self.size.width * 12 / 21))
+        let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
+        let frame = CGRect(origin: origin, size: size)
+        let label = UILabel(frame: frame)
+        label.text = "Drag on the image \rto move the start and end!"
+        label.adjustsFontSizeToFitWidth = true
+        label.hidden = true
+        label.textAlignment = .Center
+        label.textColor = blue
+        label.numberOfLines = 0
+        label.tag = 21
         view?.addSubview(label)
     }
     
@@ -467,6 +510,8 @@ class GradientScene : SKScene {
         switch displayedNode.gradientType {
             
         case "gamut":
+            if let label = view?.viewWithTag(20) as? UILabel { label.hidden = false }
+            if let label = view?.viewWithTag(21) as? UILabel { label.hidden = true }
             enableSliderForTag(50)
             disableSliderForTag(52)
             disableSliderForTag(54)
@@ -476,6 +521,8 @@ class GradientScene : SKScene {
             disableButtonForTag(98)
             disableLabelForTag(99)
         case "linear":
+            if let label = view?.viewWithTag(20) as? UILabel { label.hidden = true }
+            if let label = view?.viewWithTag(21) as? UILabel { label.hidden = false }
             disableSliderForTag(50)
             disableSliderForTag(52)
             disableSliderForTag(54)
@@ -485,6 +532,8 @@ class GradientScene : SKScene {
             enableButtonForTag(98)
             enableLabelForTag(99)
         case "radial":
+            if let label = view?.viewWithTag(20) as? UILabel { label.hidden = true }
+            if let label = view?.viewWithTag(21) as? UILabel { label.hidden = false }
             disableSliderForTag(50)
             enableSliderForTag(52)
             enableSliderForTag(54)
@@ -494,6 +543,8 @@ class GradientScene : SKScene {
             enableButtonForTag(98)
             enableLabelForTag(99)
         case "sweep":
+            if let label = view?.viewWithTag(20) as? UILabel { label.hidden = false }
+            if let label = view?.viewWithTag(21) as? UILabel { label.hidden = true }
             if !uiViewForTag(95)!.enabled { enableButtonForTag(94) }
             enableSliderForTag(50)
             disableSliderForTag(52)
@@ -653,11 +704,99 @@ class GradientScene : SKScene {
                     switch gradientNode.gradientType {
                         
                         case "gamut": gradientNode.center = point
+                        case "linear":
+                            let closest = chooseCloserPoint(point, otherPoint1: gradientNode.startPoint, otherPoint2: gradientNode.endPoint)
+                            if closest == 1 { gradientNode.startPoint = point }
+                            else if closest == 2 || closest == 3 { gradientNode.endPoint = point }
+                            case "sweep": gradientNode.center = point
+                        case "radial":
+                            let closest = chooseCloserPoint(point, otherPoint1: gradientNode.firstCenter, otherPoint2: gradientNode.secondCenter)
+                            if closest == 1 { gradientNode.firstCenter = point }
+                            else if closest == 2 || closest == 3 { gradientNode.secondCenter = point }
+                        default: return
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
+        
+        for touch in touches {
+            
+            if let touch = touch as? UITouch {
+                let positionInScene = touch.locationInNode(self)
+                let touchedNode = self.nodeAtPoint(positionInScene)
+                
+                if let gradientNode = touchedNode as? BDGradientNode {
+                    
+                    var point = self.convertPoint(positionInScene, toNode: displayedNode)
+                    point.x = point.x / displayedNode.size.width + 0.5
+                    point.y = point.y / displayedNode.size.height + 0.5
+                    
+                    switch gradientNode.gradientType {
+                        
+                        case "gamut": gradientNode.center = point
+                        case "linear":
+                            let closest = chooseCloserPoint(point, otherPoint1: gradientNode.startPoint, otherPoint2: gradientNode.endPoint)
+                            if closest == 1 { gradientNode.startPoint = point }
+                            else if closest == 2 || closest == 3 { gradientNode.endPoint = point }
+                        case "radial":
+                            let closest = chooseCloserPoint(point, otherPoint1: gradientNode.firstCenter, otherPoint2: gradientNode.secondCenter)
+                            if closest == 1 { gradientNode.firstCenter = point }
+                            else if closest == 2 || closest == 3 { gradientNode.secondCenter = point }
                         case "sweep": gradientNode.center = point
                         default: return
                     }
                 }
             }
         }
+    }
+    
+    
+    /**
+    
+    Compares the point to check against the two other points to see which it's closer to.
+    
+    :param: pointToCheck The point to compare.
+    
+    :param: otherPoint1 The first other point.
+    
+    :param: otherPoint2 The second other point.
+    
+    :returns: If pointToCheck is closer to otherPoint1 than to otherPoint2: returns 1. If pointToCheck is closer to otherPoint2 than to otherPoint1: returns 2. If the distances are equal: returns 3. If somehow none of those conditions obtains: returns 0.
+    
+    */
+    func chooseCloserPoint(pointToCheck: CGPoint, otherPoint1: CGPoint, otherPoint2: CGPoint) -> Int {
+        
+        let distance1 = distanceBetweenPoints(pointToCheck, secondPoint: otherPoint1)
+        let distance2 = distanceBetweenPoints(pointToCheck, secondPoint: otherPoint2)
+        
+        if distance1 < distance2 { return 1 }
+        if distance2 < distance1 { return 2 }
+        if distance1 == distance2 { return 3 }
+        
+        return 0
+    }
+    
+    
+    /**
+    
+    The distance between two points.
+    
+    :param: firstPoint The first point.
+    
+    :param: secondPoint The second Point.
+    
+    :returns: The distance between the two given points.
+    
+    */
+    func distanceBetweenPoints(firstPoint: CGPoint, secondPoint: CGPoint) -> CGFloat {
+        
+        let xDistance = secondPoint.x - firstPoint.x
+        let yDistance = secondPoint.y - firstPoint.y
+        
+        return sqrt(pow(xDistance, 2) + pow(yDistance, 2))
     }
 }
