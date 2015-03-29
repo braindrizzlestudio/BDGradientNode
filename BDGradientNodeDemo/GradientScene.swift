@@ -632,4 +632,32 @@ class GradientScene : SKScene {
         let random = CGFloat(Float(arc4random()) / 0xFFFFFFFF)
         return random * (max - min) + min
     }
+    
+    
+    // MARK: - Touch Handling
+    
+    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+        
+        for touch in touches {
+            
+            if let touch = touch as? UITouch {
+                let positionInScene = touch.locationInNode(self)
+                let touchedNode = self.nodeAtPoint(positionInScene)
+                
+                if let gradientNode = touchedNode as? BDGradientNode {
+                    
+                    var point = self.convertPoint(positionInScene, toNode: displayedNode)
+                    point.x = point.x / displayedNode.size.width + 0.5
+                    point.y = point.y / displayedNode.size.height + 0.5
+                    
+                    switch gradientNode.gradientType {
+                        
+                        case "gamut": gradientNode.center = point
+                        case "sweep": gradientNode.center = point
+                        default: return
+                    }
+                }
+            }
+        }
+    }
 }
