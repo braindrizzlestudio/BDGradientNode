@@ -13,11 +13,10 @@ class GradientScene : SKScene {
     
     // MARK: - Properties
     
+    var blue = UIColor(red: 0.0, green: 122/255, blue: 1.0, alpha: 1.0)
     var displayedNode = BDGradientNode()
     
-    let starTexture = SKTexture(imageNamed: "star")
-    
-    // BDGradientNode Properties
+    // BDGradientNode
     var blended = true
     var center = CGPoint(x: 0.5, y: 0.5)
     var colors = [UIColor]() {
@@ -27,7 +26,7 @@ class GradientScene : SKScene {
     }
     var endPoint = CGPoint(x: 0.5, y: 1.0)
     var firstCenter = CGPoint(x: 0.2, y: 0.2)
-    var firstRadius : CGFloat = 0.1
+    var firstRadius : Float = 0.1
     var keepShape = true
     var locations = [CGFloat(0.5)]
     var nodeSize = CGSizeZero
@@ -37,7 +36,7 @@ class GradientScene : SKScene {
         }
     }
     var secondCenter = CGPoint(x: 0.8, y: 0.8)
-    var secondRadius : CGFloat = 0.5
+    var secondRadius : Float = 0.5
     var startAngle : Float = 0.0
     var startPoint = CGPoint(x: 0.5, y: 0.0)
     var currentTexture = SKTexture(imageNamed: "Spaceship")
@@ -106,22 +105,21 @@ class GradientScene : SKScene {
     }
     
     
-    func setupSweepGradientButton () {
+    func setupRadialGradientButton () {
         
         let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - self.size.width))
         let size = CGSize(width: self.size.width * 4 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
-        setupButton(frame: frame, title: "Sweep", action: "sweepGradientButtonPressed")
+        setupButton(frame: frame, title: "Radial", action: "radialGradientButtonPressed")
     }
     
     
-    func setupRadialGradientButton () {
+    func setupSweepGradientButton () {
         
         let origin = convertPointToView(CGPoint(x: self.size.width * 16 / 21, y: self.size.height - self.size.width))
         let size = CGSize(width: self.size.width * 4 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
-        let button = setupButton(frame: frame, title: "Radial", action: "radialGradientButtonPressed")
-        button.tag = 53
+        setupButton(frame: frame, title: "Sweep", action: "sweepGradientButtonPressed")
     }
     
     
@@ -204,10 +202,10 @@ class GradientScene : SKScene {
         
         button.layer.cornerRadius = 8.0
         button.layer.borderWidth = 0.5
-        button.layer.borderColor = UIColor.blueColor().CGColor!
+        button.layer.borderColor = blue.CGColor!
         
         button.setTitle(title, forState: .Normal)
-        button.setTitleColor(UIColor.blueColor(), forState: .Normal)
+        button.setTitleColor(blue, forState: .Normal)
         button.titleLabel!.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
         button.titleLabel!.adjustsFontSizeToFitWidth = true
         
@@ -225,11 +223,11 @@ class GradientScene : SKScene {
         
         label.layer.cornerRadius = 8.0
         label.layer.borderWidth = 0.5
-        label.layer.borderColor = UIColor.blueColor().CGColor!
+        label.layer.borderColor = blue.CGColor!
         
         label.text = text
         label.adjustsFontSizeToFitWidth = true
-        label.textColor = UIColor.blueColor()
+        label.textColor = blue
         label.textAlignment = .Center
         
         view?.addSubview(label)
@@ -245,6 +243,8 @@ class GradientScene : SKScene {
     func setupSliders () {
         
         setupStartAngleSlider()
+        setupFirstRadiusSlider()
+        setupSecondRadiusSlider()
     }
     
     
@@ -254,15 +254,76 @@ class GradientScene : SKScene {
         let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
         let slider = UISlider(frame: frame)
-        
         slider.minimumValue = Float(0.0)
         slider.maximumValue = Float(2 * M_PI)
-        
+        slider.value = startAngle
         slider.addTarget(self, action: "startAngleSliderChanged", forControlEvents: .ValueChanged)
-        
         slider.tag = 50
-        
         view?.addSubview(slider)
+        
+        let subOrigin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - self.size.width - self.size.width * 8 / 21))
+        let subSize = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 0.5 / 21)
+        let subFrame = CGRect(origin: subOrigin, size: subSize)
+        let label = UILabel(frame: subFrame)
+        label.text = "Start Angle"
+        label.textColor = blue
+        label.textAlignment = .Center
+        label.adjustsFontSizeToFitWidth = true
+        label.numberOfLines = 0
+        label.tag = 51
+        view?.addSubview(label)
+    }
+    
+    func setupFirstRadiusSlider () {
+        
+        let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - self.size.width - self.size.width * 9 / 21))
+        let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
+        let frame = CGRect(origin: origin, size: size)
+        let slider = UISlider(frame: frame)
+        slider.minimumValue = Float(0.0)
+        slider.maximumValue = Float(1.0)
+        slider.value = firstRadius
+        slider.addTarget(self, action: "firstRadiusSliderChanged", forControlEvents: .ValueChanged)
+        slider.tag = 52
+        view?.addSubview(slider)
+        
+        let subOrigin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - self.size.width - self.size.width * 8 / 21))
+        let subSize = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 0.5 / 21)
+        let subFrame = CGRect(origin: subOrigin, size: subSize)
+        let label = UILabel(frame: subFrame)
+        label.text = "First Radius"
+        label.textColor = blue
+        label.textAlignment = .Center
+        label.adjustsFontSizeToFitWidth = true
+        label.numberOfLines = 0
+        label.tag = 53
+        view?.addSubview(label)
+    }
+    
+    func setupSecondRadiusSlider () {
+        
+        let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - self.size.width - self.size.width * 12 / 21))
+        let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
+        let frame = CGRect(origin: origin, size: size)
+        let slider = UISlider(frame: frame)
+        slider.minimumValue = Float(0.0)
+        slider.maximumValue = Float(1.0)
+        slider.value = secondRadius
+        slider.addTarget(self, action: "secondRadiusSliderChanged", forControlEvents: .ValueChanged)
+        slider.tag = 54
+        view?.addSubview(slider)
+        
+        let subOrigin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - self.size.width - self.size.width * 11 / 21))
+        let subSize = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 0.5 / 21)
+        let subFrame = CGRect(origin: subOrigin, size: subSize)
+        let label = UILabel(frame: subFrame)
+        label.text = "Second Radius"
+        label.textColor = blue
+        label.textAlignment = .Center
+        label.adjustsFontSizeToFitWidth = true
+        label.numberOfLines = 0
+        label.tag = 55
+        view?.addSubview(label)
     }
     
     
@@ -352,15 +413,14 @@ class GradientScene : SKScene {
         switch button.titleLabel!.text! {
             case "Blend Colors: Yes":
                 button.setTitle("Blend Colors: No", forState: .Normal)
-                enableButtonForTag(94)
+                if displayedNode.gradientType != "radial" { enableButtonForTag(94) }
             case "Blend Colors: No":
                 button.setTitle("Blend Colors: Yes", forState: .Normal)
                 disableButtonForTag(94)
             default: return
         }
         
-        blended = !blended
-        resetCurrentNode()
+        displayedNode.blended = !displayedNode.blended
     }
     
     func keepShapeButtonPressed () {
@@ -375,8 +435,7 @@ class GradientScene : SKScene {
         default: return
         }
         
-        keepShape = !keepShape
-        if displayedNode.gradientType != "radial" { resetCurrentNode() }
+        displayedNode.keepShape = !displayedNode.keepShape
     }
     
     
@@ -386,6 +445,16 @@ class GradientScene : SKScene {
     func startAngleSliderChanged () {
         
         displayedNode.startAngle = (view?.viewWithTag(50) as! UISlider).value
+    }
+    
+    func firstRadiusSliderChanged () {
+        
+        displayedNode.firstRadius = (view?.viewWithTag(52) as! UISlider).value
+    }
+    
+    func secondRadiusSliderChanged () {
+        
+        displayedNode.secondRadius = (view?.viewWithTag(54) as! UISlider).value
     }
 
     
@@ -398,21 +467,37 @@ class GradientScene : SKScene {
         switch displayedNode.gradientType {
             
         case "gamut":
+            enableSliderForTag(50)
+            disableSliderForTag(52)
+            disableSliderForTag(54)
+            if !uiViewForTag(95)!.enabled { enableButtonForTag(94) }
             disableButtonForTag(96)
             disableButtonForTag(97)
             disableButtonForTag(98)
             disableLabelForTag(99)
         case "linear":
-            enableButtonForTag(96)
-            enableButtonForTag(97)
-            enableButtonForTag(98)
-            enableLabelForTag(99)
-        case "sweep":
+            disableSliderForTag(50)
+            disableSliderForTag(52)
+            disableSliderForTag(54)
+            if !uiViewForTag(95)!.enabled { enableButtonForTag(94) }
             enableButtonForTag(96)
             enableButtonForTag(97)
             enableButtonForTag(98)
             enableLabelForTag(99)
         case "radial":
+            disableSliderForTag(50)
+            enableSliderForTag(52)
+            enableSliderForTag(54)
+            disableButtonForTag(94)
+            enableButtonForTag(96)
+            enableButtonForTag(97)
+            enableButtonForTag(98)
+            enableLabelForTag(99)
+        case "sweep":
+            if !uiViewForTag(95)!.enabled { enableButtonForTag(94) }
+            enableSliderForTag(50)
+            disableSliderForTag(52)
+            disableSliderForTag(54)
             enableButtonForTag(96)
             enableButtonForTag(97)
             enableButtonForTag(98)
@@ -421,36 +506,76 @@ class GradientScene : SKScene {
         }
     }
     
+    func uiViewForTag (tag: Int) -> UIButton? {
+        
+        if let button = view?.viewWithTag(tag) as? UIButton { return button }
+        else { return nil }
+    }
+    
     func disableButtonForTag (tag: Int) {
         
-        let button = (view?.viewWithTag(tag) as! UIButton)
-        button.enabled = false
-        button.layer.borderColor = UIColor.lightGrayColor().CGColor!
-        button.setTitleColor(UIColor.lightGrayColor(), forState: .Normal)
+        if let button = (view?.viewWithTag(tag) as? UIButton) {
+            button.enabled = false
+            button.layer.borderColor = UIColor.lightGrayColor().CGColor!
+            button.setTitleColor(UIColor.lightGrayColor(), forState: .Normal)
+        }
     }
     
     func disableLabelForTag (tag: Int) {
         
-        let label = (view?.viewWithTag(tag) as! UILabel)
-        label.enabled = false
-        label.layer.borderColor = UIColor.lightGrayColor().CGColor!
-        label.textColor = UIColor.lightGrayColor()
+        if let label = (view?.viewWithTag(tag) as? UILabel) {
+            label.enabled = false
+            label.layer.borderColor = UIColor.lightGrayColor().CGColor!
+            label.textColor = UIColor.lightGrayColor()
+        }
+    }
+    
+    func disableSliderForTag (tag: Int) {
+        
+        if let slider = view?.viewWithTag(tag) as? UISlider {
+            if slider.userInteractionEnabled {
+                slider.userInteractionEnabled = false
+                slider.minimumTrackTintColor = UIColor.lightGrayColor()
+                slider.maximumTrackTintColor = UIColor.lightGrayColor()
+                
+                if let label = view?.viewWithTag(tag + 1) as? UILabel {
+                    label.textColor = UIColor.lightGrayColor()
+                }
+            }
+        }
     }
     
     func enableButtonForTag (tag: Int) {
         
-        let button = (view?.viewWithTag(tag) as! UIButton)
-        button.enabled = true
-        button.layer.borderColor = UIColor.blueColor().CGColor!
-        button.setTitleColor(UIColor.blueColor(), forState: .Normal)
+        if let button = (view?.viewWithTag(tag) as? UIButton) {
+            button.enabled = true
+            button.layer.borderColor = blue.CGColor!
+            button.setTitleColor(blue, forState: .Normal)
+        }
     }
     
     func enableLabelForTag (tag: Int) {
         
-        let label = (view?.viewWithTag(tag) as! UILabel)
-        label.enabled = true
-        label.layer.borderColor = UIColor.blueColor().CGColor!
-        label.textColor = UIColor.blueColor()
+        if let label = (view?.viewWithTag(tag) as? UILabel) {
+            label.enabled = true
+            label.layer.borderColor = blue.CGColor!
+            label.textColor = blue
+        }
+    }
+    
+    func enableSliderForTag (tag: Int) {
+        
+        if let slider = view?.viewWithTag(tag) as? UISlider {
+            if slider.userInteractionEnabled == false {
+                slider.userInteractionEnabled = true
+                slider.minimumTrackTintColor = blue
+                slider.maximumTrackTintColor = UIColor.darkGrayColor()
+                
+                if let label = view?.viewWithTag(tag + 1) as? UILabel {
+                    label.textColor = blue
+                }
+            }
+        }
     }
     
     
