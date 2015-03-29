@@ -2,7 +2,8 @@
 //  AppDelegate.swift
 //  BDGradientNodeDemo
 //
-//  Created by Ian McKay on 3/28/15.
+//  Created by Braindrizzle Studio.
+//  http://braindrizzlestudio.com
 //  Copyright (c) 2015 Braindrizzle Studio. All rights reserved.
 //
 
