@@ -92,15 +92,18 @@ class GradientScene : SKScene {
     
     func setupButtons () {
         
+        // Animation
+        setupAnimationButton()
+        
+        // Colors
+        setupRandomColorButton()
+        setupNumberOfColorsButtons()
+        
         // Gradients
         setupGamutGradientButton()
         setupLinearGradientButton()
         setupSweepGradientButton()
         setupRadialGradientButton()
-        
-        // Colors
-        setupRandomColorButton()
-        setupNumberOfColorsButtons()
         
         // Options
         setupBlendedButton()
@@ -108,41 +111,15 @@ class GradientScene : SKScene {
     }
     
     
-    // MARK: Gradients
+    // MARK: Animation
     
-    func setupGamutGradientButton () {
+    func setupAnimationButton () {
         
-        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - nodeSize.height * 11.5 / 10))
-        let size = CGSize(width: self.size.width * 4 / 21, height: self.size.height * 1 / 21)
+        let origin = convertPointToView(CGPoint(x: self.size.width * 15 / 21, y: self.size.height - self.size.width * 0.2 / 21))
+        let size = CGSize(width: self.size.width * 5 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
-        setupButton(frame: frame, title: "Gamut", action: "gamutGradientButtonPressed")
-    }
-    
-    
-    func setupLinearGradientButton () {
-        
-        let origin = convertPointToView(CGPoint(x: self.size.width * 6 / 21, y: self.size.height - nodeSize.height * 11.5 / 10))
-        let size = CGSize(width: self.size.width * 4 / 21, height: self.size.height * 1 / 21)
-        let frame = CGRect(origin: origin, size: size)
-        setupButton(frame: frame, title: "Linear", action: "linearGradientButtonPressed")
-    }
-    
-    
-    func setupRadialGradientButton () {
-        
-        let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - nodeSize.height * 11.5 / 10))
-        let size = CGSize(width: self.size.width * 4 / 21, height: self.size.height * 1 / 21)
-        let frame = CGRect(origin: origin, size: size)
-        setupButton(frame: frame, title: "Radial", action: "radialGradientButtonPressed")
-    }
-    
-    
-    func setupSweepGradientButton () {
-        
-        let origin = convertPointToView(CGPoint(x: self.size.width * 16 / 21, y: self.size.height - nodeSize.height * 11.5 / 10))
-        let size = CGSize(width: self.size.width * 4 / 21, height: self.size.height * 1 / 21)
-        let frame = CGRect(origin: origin, size: size)
-        setupButton(frame: frame, title: "Sweep", action: "sweepGradientButtonPressed")
+        let button = setupButton(frame: frame, title: "Animate: No", action: "animateButtonPressed")
+        button.tag = 30
     }
     
     
@@ -185,6 +162,44 @@ class GradientScene : SKScene {
     }
     
     
+    // MARK: Gradients
+    
+    func setupGamutGradientButton () {
+        
+        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - nodeSize.height * 11.5 / 10))
+        let size = CGSize(width: self.size.width * 4 / 21, height: self.size.height * 1 / 21)
+        let frame = CGRect(origin: origin, size: size)
+        setupButton(frame: frame, title: "Gamut", action: "gamutGradientButtonPressed")
+    }
+    
+    
+    func setupLinearGradientButton () {
+        
+        let origin = convertPointToView(CGPoint(x: self.size.width * 6 / 21, y: self.size.height - nodeSize.height * 11.5 / 10))
+        let size = CGSize(width: self.size.width * 4 / 21, height: self.size.height * 1 / 21)
+        let frame = CGRect(origin: origin, size: size)
+        setupButton(frame: frame, title: "Linear", action: "linearGradientButtonPressed")
+    }
+    
+    
+    func setupRadialGradientButton () {
+        
+        let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - nodeSize.height * 11.5 / 10))
+        let size = CGSize(width: self.size.width * 4 / 21, height: self.size.height * 1 / 21)
+        let frame = CGRect(origin: origin, size: size)
+        setupButton(frame: frame, title: "Radial", action: "radialGradientButtonPressed")
+    }
+    
+    
+    func setupSweepGradientButton () {
+        
+        let origin = convertPointToView(CGPoint(x: self.size.width * 16 / 21, y: self.size.height - nodeSize.height * 11.5 / 10))
+        let size = CGSize(width: self.size.width * 4 / 21, height: self.size.height * 1 / 21)
+        let frame = CGRect(origin: origin, size: size)
+        setupButton(frame: frame, title: "Sweep", action: "sweepGradientButtonPressed")
+    }
+    
+    
     // MARK: Options
     
     func setupBlendedButton () {
@@ -223,8 +238,8 @@ class GradientScene : SKScene {
     func setupLabels() {
         
         setupCenterLabel()
-        setupStartEndDragLabel()
         setupCentersDragLabel()
+        setupStartEndDragLabel()
     }
     
     
@@ -240,6 +255,25 @@ class GradientScene : SKScene {
         label.textColor = blue
         label.numberOfLines = 0
         label.tag = 20
+        view?.addSubview(label)
+    }
+    
+    
+    
+    
+    func setupCentersDragLabel() {
+        
+        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - nodeSize.height * 17 / 10))
+        let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
+        let frame = CGRect(origin: origin, size: size)
+        let label = UILabel(frame: frame)
+        label.text = "Drag the two circles to move their centers!"
+        label.adjustsFontSizeToFitWidth = true
+        label.hidden = true
+        label.textAlignment = .Center
+        label.textColor = blue
+        label.numberOfLines = 0
+        label.tag = 22
         view?.addSubview(label)
     }
     
@@ -261,23 +295,6 @@ class GradientScene : SKScene {
     }
     
     
-    func setupCentersDragLabel() {
-        
-        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - nodeSize.height * 17 / 10))
-        let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
-        let frame = CGRect(origin: origin, size: size)
-        let label = UILabel(frame: frame)
-        label.text = "Drag the two circles to move their centers!"
-        label.adjustsFontSizeToFitWidth = true
-        label.hidden = true
-        label.textAlignment = .Center
-        label.textColor = blue
-        label.numberOfLines = 0
-        label.tag = 22
-        view?.addSubview(label)
-    }
-    
-    
     // MARK: Button and Label Makers
     
     func setupButton (#frame: CGRect, title: String, action: Selector) -> UIButton {
@@ -291,6 +308,7 @@ class GradientScene : SKScene {
         button.setTitle(title, forState: .Normal)
         button.setTitleColor(blue, forState: .Normal)
         button.titleLabel!.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
+        
         button.titleLabel!.adjustsFontSizeToFitWidth = true
         
         button.addTarget(self, action: action, forControlEvents: .TouchUpInside)
@@ -414,6 +432,139 @@ class GradientScene : SKScene {
     
     // MARK: - Actions
     
+    // MARK: Animation
+    
+    func animateButtonPressed () {
+        
+        if let animateButton = view?.viewWithTag(30) as? UIButton {
+            
+            switch animateButton.titleLabel!.text! {
+                
+                case "Animate: Yes":
+                    animateButton.setTitle("Animate: No", forState: .Normal)
+                    gradientNode.removeAllActions()
+
+                case "Animate: No":
+                    animateButton.setTitle("Animate: Yes", forState: .Normal)
+                    switch gradientNode.gradientType {
+                        case "gamut": gamutAnimation()
+                        case "linear": linearAnimation()
+                        default: return
+                    }
+                default: return
+            }
+    
+            
+        }
+    }
+    
+    
+    func gamutAnimation () {
+        
+        
+        self.gradientNode.center.x += 0.001
+        self.gradientNode.center.y += 0.001
+        
+        let centerAction = SKAction.runBlock {
+            
+            let angle : CGFloat = 0.03
+            self.gradientNode.center = self.rotatePoint(self.gradientNode.center, byAngle: angle)
+            
+            let multiplier = CGFloat(sin(self.gradientNode.startAngle) / 100)
+            var normalizedPoint = self.gradientNode.center
+            normalizedPoint.x -= 0.5
+            normalizedPoint.y -= 0.5
+            let length = sqrt(pow(normalizedPoint.x, 2) + pow(normalizedPoint.y, 2))
+            normalizedPoint.x /= length
+            normalizedPoint.y /= length
+            
+            self.gradientNode.center.x += multiplier * normalizedPoint.x
+            self.gradientNode.center.y -= multiplier * normalizedPoint.y
+        }
+        
+        let angleAction = SKAction.runBlock {
+            
+            self.gradientNode.startAngle += 0.1
+        }
+        
+        let delayAction = SKAction.waitForDuration(0.1)
+        
+        let actionGroup = SKAction.group([angleAction, centerAction, delayAction])
+        
+        gradientNode.runAction(SKAction.repeatActionForever(actionGroup))
+    }
+    
+    
+    func linearAnimation () {
+        
+        let startAction = SKAction.runBlock {
+            
+            let angle : CGFloat = 0.03
+            self.gradientNode.startPoint = self.rotatePoint(self.gradientNode.startPoint, byAngle: angle)
+            
+            let multiplier = sin(self.angleOfPoint(self.gradientNode.startPoint)) / 100
+            var normalizedPoint = self.gradientNode.startPoint
+            normalizedPoint.x -= 0.5
+            normalizedPoint.y -= 0.5
+            let length = sqrt(pow(normalizedPoint.x, 2) + pow(normalizedPoint.y, 2))
+            normalizedPoint.x /= length
+            normalizedPoint.y /= length
+            
+            self.gradientNode.startPoint.x += multiplier * normalizedPoint.x
+            self.gradientNode.startPoint.y += multiplier * normalizedPoint.y
+        }
+        
+        let endAction = SKAction.runBlock {
+            
+            let angle : CGFloat = 0.03
+            self.gradientNode.endPoint = self.rotatePoint(self.gradientNode.endPoint, byAngle: angle)
+            
+            let multiplier = sin(self.angleOfPoint(self.gradientNode.endPoint)) / 100
+            var normalizedPoint = self.gradientNode.endPoint
+            normalizedPoint.x -= 0.5
+            normalizedPoint.y -= 0.5
+            let length = sqrt(pow(normalizedPoint.x, 2) + pow(normalizedPoint.y, 2))
+            normalizedPoint.x /= length
+            normalizedPoint.y /= length
+            
+            self.gradientNode.endPoint.x -= multiplier * normalizedPoint.x
+            self.gradientNode.endPoint.y -= multiplier * normalizedPoint.y
+        }
+        
+        let delayAction = SKAction.waitForDuration(0.1)
+        
+        let actionGroup = SKAction.group([startAction, endAction, delayAction])
+        
+        gradientNode.runAction(SKAction.repeatActionForever(actionGroup))
+    }
+    
+    
+    // MARK: Colors
+    
+    func randomColorsButtonPressed () {
+        
+        colors = randomColorArray(numberOfColors)
+    }
+    
+    
+    func minusColorsButtonPressed () {
+        
+        if numberOfColors == 2 { return }
+        if numberOfColors == 3 { disableButtonForTag(98) }
+        
+        numberOfColors = numberOfColors - 1
+        randomColorsButtonPressed()
+    }
+    
+    
+    func plusColorsButtonPressed () {
+        
+        if numberOfColors == 2 { enableButtonForTag(98) }
+        
+        numberOfColors = numberOfColors + 1
+        randomColorsButtonPressed()
+    }
+    
     
     // MARK: Gradients
     
@@ -466,34 +617,6 @@ class GradientScene : SKScene {
         
         if currentType == "sweep" { return }
         adjustButtonsForGradient("sweep")
-    }
-    
-    
-    
-    // MARK: Colors
-    
-    func randomColorsButtonPressed () {
-        
-        colors = randomColorArray(numberOfColors)
-    }
-    
-    
-    func minusColorsButtonPressed () {
-        
-        if numberOfColors == 2 { return }
-        if numberOfColors == 3 { disableButtonForTag(98) }
-        
-        numberOfColors = numberOfColors - 1
-        randomColorsButtonPressed()
-    }
-    
-    
-    func plusColorsButtonPressed () {
-        
-        if numberOfColors == 2 { enableButtonForTag(98) }
-        
-        numberOfColors = numberOfColors + 1
-        randomColorsButtonPressed()
     }
     
     
@@ -553,6 +676,76 @@ class GradientScene : SKScene {
     }
 
     
+    // MARK: - Touch Handling
+    
+    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+        
+        for touch in touches {
+            
+            if let touch = touch as? UITouch {
+                let positionInScene = touch.locationInNode(self)
+                let touchedNode = self.nodeAtPoint(positionInScene)
+                
+                if let gradientNode = touchedNode as? BDGradientNode {
+                    
+                    var point = self.convertPoint(positionInScene, toNode: gradientNode)
+                    point.x = point.x / gradientNode.size.width + 0.5
+                    point.y = point.y / gradientNode.size.height + 0.5
+                    
+                    switch gradientNode.gradientType {
+                        
+                        case "gamut": gradientNode.center = point
+                        case "linear":
+                            let closest = chooseCloserPoint(point, otherPoint1: gradientNode.startPoint, otherPoint2: gradientNode.endPoint)
+                            if closest == 1 { gradientNode.startPoint = point }
+                            else if closest == 2 || closest == 3 { gradientNode.endPoint = point }
+                            case "sweep": gradientNode.center = point
+                        case "radial":
+                            let closest = chooseCloserPoint(point, otherPoint1: gradientNode.firstCenter, otherPoint2: gradientNode.secondCenter)
+                            if closest == 1 { gradientNode.firstCenter = point }
+                            else if closest == 2 || closest == 3 { gradientNode.secondCenter = point }
+                        default: return
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
+        
+        for touch in touches {
+            
+            if let touch = touch as? UITouch {
+                let positionInScene = touch.locationInNode(self)
+                let touchedNode = self.nodeAtPoint(positionInScene)
+                
+                if let gradientNode = touchedNode as? BDGradientNode {
+                    
+                    var point = self.convertPoint(positionInScene, toNode: gradientNode)
+                    point.x = point.x / gradientNode.size.width + 0.5
+                    point.y = point.y / gradientNode.size.height + 0.5
+                    
+                    switch gradientNode.gradientType {
+                        
+                        case "gamut": gradientNode.center = point
+                        case "linear":
+                            let closest = chooseCloserPoint(point, otherPoint1: gradientNode.startPoint, otherPoint2: gradientNode.endPoint)
+                            if closest == 1 { gradientNode.startPoint = point }
+                            else if closest == 2 || closest == 3 { gradientNode.endPoint = point }
+                        case "radial":
+                            let closest = chooseCloserPoint(point, otherPoint1: gradientNode.firstCenter, otherPoint2: gradientNode.secondCenter)
+                            if closest == 1 { gradientNode.firstCenter = point }
+                            else if closest == 2 || closest == 3 { gradientNode.secondCenter = point }
+                        case "sweep": gradientNode.center = point
+                        default: return
+                    }
+                }
+            }
+        }
+    }
+    
+    
     // MARK: - Helpers
     
     
@@ -564,6 +757,7 @@ class GradientScene : SKScene {
             if let label = view?.viewWithTag(20) as? UILabel { label.hidden = false }
             if let label = view?.viewWithTag(21) as? UILabel { label.hidden = true }
             if let label = view?.viewWithTag(22) as? UILabel { label.hidden = true }
+            if let button = view?.viewWithTag(30) as? UIButton { button.setTitle("Animate: No", forState: .Normal) }
             enableSliderForTag(50)
             disableSliderForTag(52)
             disableSliderForTag(54)
@@ -576,6 +770,7 @@ class GradientScene : SKScene {
             if let label = view?.viewWithTag(20) as? UILabel { label.hidden = true }
             if let label = view?.viewWithTag(21) as? UILabel { label.hidden = false }
             if let label = view?.viewWithTag(22) as? UILabel { label.hidden = true }
+            if let button = view?.viewWithTag(30) as? UIButton { button.setTitle("Animate: No", forState: .Normal) }
             disableSliderForTag(50)
             disableSliderForTag(52)
             disableSliderForTag(54)
@@ -588,6 +783,7 @@ class GradientScene : SKScene {
             if let label = view?.viewWithTag(20) as? UILabel { label.hidden = true }
             if let label = view?.viewWithTag(21) as? UILabel { label.hidden = true }
             if let label = view?.viewWithTag(22) as? UILabel { label.hidden = false }
+            if let button = view?.viewWithTag(30) as? UIButton { button.setTitle("Animate: No", forState: .Normal) }
             disableSliderForTag(50)
             enableSliderForTag(52)
             enableSliderForTag(54)
@@ -600,10 +796,11 @@ class GradientScene : SKScene {
             if let label = view?.viewWithTag(20) as? UILabel { label.hidden = false }
             if let label = view?.viewWithTag(21) as? UILabel { label.hidden = true }
             if let label = view?.viewWithTag(22) as? UILabel { label.hidden = true }
-            if !uiViewForTag(95)!.enabled { enableButtonForTag(94) }
+            if let button = view?.viewWithTag(30) as? UIButton { button.setTitle("Animate No", forState: .Normal) }
             enableSliderForTag(50)
             disableSliderForTag(52)
             disableSliderForTag(54)
+            if !uiViewForTag(95)!.enabled { enableButtonForTag(94) }
             enableButtonForTag(96)
             enableButtonForTag(97)
             enableButtonForTag(98)
@@ -694,13 +891,17 @@ class GradientScene : SKScene {
     
     func resetCurrentNode () {
         
+        gradientNode.removeAllActions()
+        
+        if let button = view?.viewWithTag(30) as? UIButton { button.setTitle("Animate: No", forState: .Normal) }
+        
         switch gradientNode.gradientType {
             
-            case "gamut": gamutGradientButtonPressed()
-            case "linear": linearGradientButtonPressed()
-            case "sweep": sweepGradientButtonPressed()
-            case "radial": radialGradientButtonPressed()
-            default: return
+        case "gamut": gamutGradientButtonPressed()
+        case "linear": linearGradientButtonPressed()
+        case "sweep": sweepGradientButtonPressed()
+        case "radial": radialGradientButtonPressed()
+        default: return
         }
     }
     
@@ -711,7 +912,7 @@ class GradientScene : SKScene {
     
     :param: numberOfColors The number of colors that will be in the array.
     
-    :returns: An array of the given number of random colors.    
+    :returns: An array of the given number of random colors.
     
     */
     func randomColorArray(numberOfColors: Int) -> [UIColor] {
@@ -740,83 +941,26 @@ class GradientScene : SKScene {
     
     */
     func random(#min: CGFloat, max: CGFloat) -> CGFloat {
-
+        
         let random = CGFloat(Float(arc4random()) / 0xFFFFFFFF)
         return random * (max - min) + min
     }
     
     
-    // MARK: - Touch Handling
+    /**
     
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+    The angle of a point around (0.5, 0.5).
+    
+    */
+    func angleOfPoint (point: CGPoint) -> CGFloat {
         
-        for touch in touches {
-            
-            if let touch = touch as? UITouch {
-                let positionInScene = touch.locationInNode(self)
-                let touchedNode = self.nodeAtPoint(positionInScene)
-                
-                if let gradientNode = touchedNode as? BDGradientNode {
-                    
-                    var point = self.convertPoint(positionInScene, toNode: gradientNode)
-                    point.x = point.x / gradientNode.size.width + 0.5
-                    point.y = point.y / gradientNode.size.height + 0.5
-                    
-                    switch gradientNode.gradientType {
-                        
-                        case "gamut": gradientNode.center = point
-                        case "linear":
-                            let closest = chooseCloserPoint(point, otherPoint1: gradientNode.startPoint, otherPoint2: gradientNode.endPoint)
-                            if closest == 1 { gradientNode.startPoint = point }
-                            else if closest == 2 || closest == 3 { gradientNode.endPoint = point }
-                            case "sweep": gradientNode.center = point
-                        case "radial":
-                            let closest = chooseCloserPoint(point, otherPoint1: gradientNode.firstCenter, otherPoint2: gradientNode.secondCenter)
-                            if closest == 1 { gradientNode.firstCenter = point }
-                            else if closest == 2 || closest == 3 { gradientNode.secondCenter = point }
-                        default: return
-                    }
-                }
-            }
-        }
+        var newPoint = point
+        newPoint.x -= 0.5
+        newPoint.y -= 0.5
+        
+        return abs(atan2(newPoint.x, newPoint.y) - CGFloat(M_PI))
     }
     
-    
-    override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
-        
-        for touch in touches {
-            
-            if let touch = touch as? UITouch {
-                let positionInScene = touch.locationInNode(self)
-                let touchedNode = self.nodeAtPoint(positionInScene)
-                
-                if let gradientNode = touchedNode as? BDGradientNode {
-                    
-                    var point = self.convertPoint(positionInScene, toNode: gradientNode)
-                    point.x = point.x / gradientNode.size.width + 0.5
-                    point.y = point.y / gradientNode.size.height + 0.5
-                    
-                    switch gradientNode.gradientType {
-                        
-                        case "gamut": gradientNode.center = point
-                        case "linear":
-                            let closest = chooseCloserPoint(point, otherPoint1: gradientNode.startPoint, otherPoint2: gradientNode.endPoint)
-                            if closest == 1 { gradientNode.startPoint = point }
-                            else if closest == 2 || closest == 3 { gradientNode.endPoint = point }
-                        case "radial":
-                            let closest = chooseCloserPoint(point, otherPoint1: gradientNode.firstCenter, otherPoint2: gradientNode.secondCenter)
-                            if closest == 1 { gradientNode.firstCenter = point }
-                            else if closest == 2 || closest == 3 { gradientNode.secondCenter = point }
-                        case "sweep": gradientNode.center = point
-                        default: return
-                    }
-                }
-            }
-        }
-    }
-    
-    
-    // MARK: Helpers
     
     /**
     
@@ -861,5 +1005,53 @@ class GradientScene : SKScene {
         let yDistance = secondPoint.y - firstPoint.y
         
         return sqrt(pow(xDistance, 2) + pow(yDistance, 2))
+    }
+    
+    
+    /**
+    
+    A random roll for 1.0 or -1.0
+    
+    :returns: Either 1.0 or -1.0 with 50/50 probability.
+    
+    */
+    func randomPlusMinus () -> CGFloat {
+        
+        let randomNumber = random(min: 0.0, max: 1.0)
+        if randomNumber >= 0.5 {
+            return 1.0
+        } else {
+            return -1.0
+        }
+    }
+    
+    
+    /**
+    
+    Rotates a point around (0.5, 0.5) by the given angle.
+    
+    :param: point The starting point.
+    
+    :param: angle The angle by which the point will be rotated in radians.
+    
+    :returns: A point rotated from the starting point, around (0.5, 0.5), by the given angle.
+    
+    */
+    func rotatePoint (point: CGPoint, byAngle angle: CGFloat) -> CGPoint {
+        
+        let sinAngle = sin(angle)
+        let cosAngle = cos(angle)
+        
+        var newPoint = point
+        newPoint.x -= 0.5
+        newPoint.y -= 0.5
+        
+        newPoint.x = newPoint.x * cosAngle - newPoint.y * sinAngle
+        newPoint.y = newPoint.x * sinAngle + newPoint.y * cosAngle
+        
+        newPoint.x += 0.5
+        newPoint.y += 0.5
+        
+        return newPoint
     }
 }
