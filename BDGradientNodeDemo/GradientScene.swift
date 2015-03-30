@@ -65,7 +65,11 @@ class GradientScene : SKScene {
         
         backgroundColor = UIColor.whiteColor()
         
-        nodeSize = CGSize(width: self.size.width - 10, height: self.size.width - 10)
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            nodeSize = CGSize(width: self.size.width * 2 / 3, height: self.size.width * 2 / 3)
+        } else {
+            nodeSize = CGSize(width: self.size.width - 10, height: self.size.width - 10)
+        }
         
         randomColorsButtonPressed()
         
@@ -108,7 +112,7 @@ class GradientScene : SKScene {
     
     func setupGamutGradientButton () {
         
-        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - self.size.width))
+        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - nodeSize.height * 11.5 / 10))
         let size = CGSize(width: self.size.width * 4 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
         setupButton(frame: frame, title: "Gamut", action: "gamutGradientButtonPressed")
@@ -117,7 +121,7 @@ class GradientScene : SKScene {
     
     func setupLinearGradientButton () {
         
-        let origin = convertPointToView(CGPoint(x: self.size.width * 6 / 21, y: self.size.height - self.size.width))
+        let origin = convertPointToView(CGPoint(x: self.size.width * 6 / 21, y: self.size.height - nodeSize.height * 11.5 / 10))
         let size = CGSize(width: self.size.width * 4 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
         setupButton(frame: frame, title: "Linear", action: "linearGradientButtonPressed")
@@ -126,7 +130,7 @@ class GradientScene : SKScene {
     
     func setupRadialGradientButton () {
         
-        let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - self.size.width))
+        let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - nodeSize.height * 11.5 / 10))
         let size = CGSize(width: self.size.width * 4 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
         setupButton(frame: frame, title: "Radial", action: "radialGradientButtonPressed")
@@ -135,7 +139,7 @@ class GradientScene : SKScene {
     
     func setupSweepGradientButton () {
         
-        let origin = convertPointToView(CGPoint(x: self.size.width * 16 / 21, y: self.size.height - self.size.width))
+        let origin = convertPointToView(CGPoint(x: self.size.width * 16 / 21, y: self.size.height - nodeSize.height * 11.5 / 10))
         let size = CGSize(width: self.size.width * 4 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
         setupButton(frame: frame, title: "Sweep", action: "sweepGradientButtonPressed")
@@ -147,7 +151,7 @@ class GradientScene : SKScene {
     
     func setupRandomColorButton () {
         
-        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - self.size.width - self.size.width * 3 / 21))
+        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - nodeSize.height * 12.5 / 10))
         let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
         let button = setupButton(frame: frame, title: "Random Colors", action: "randomColorsButtonPressed")
@@ -159,21 +163,21 @@ class GradientScene : SKScene {
         
         // Minus
         
-        let minusorigin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - self.size.width - self.size.width * 5 / 21))
+        let minusorigin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - nodeSize.height * 13.5 / 10))
         let MinusSize = CGSize(width: self.size.height * 1 / 21, height: self.size.height * 1 / 21)
         let MinusFrame = CGRect(origin: minusorigin, size: MinusSize)
         let minusButton = setupButton(frame: MinusFrame, title: "-", action: "minusColorsButtonPressed")
         minusButton.tag = 98
         
         // Number of Colors Label
-        let numberOrigin = convertPointToView(CGPoint(x: self.size.width * 4.5 / 21, y: self.size.height - self.size.width - self.size.width * 5 / 21))
+        let numberOrigin = convertPointToView(CGPoint(x: self.size.width * 4.5 / 21, y: self.size.height - nodeSize.height * 13.5 / 10))
         let numberSize = CGSize(width: self.size.height * 1 / 21, height: self.size.height * 1 / 21)
         let numberFrame = CGRect(origin: numberOrigin, size: numberSize)
         let numberOfButtonLabel = setupLabel(frame: numberFrame, text: "\(numberOfColors)")
         numberOfButtonLabel.tag = 99
         
         // Plus
-        let plusOrigin = convertPointToView(CGPoint(x: self.size.width * 8 / 21, y: self.size.height - self.size.width - self.size.width * 5 / 21))
+        let plusOrigin = convertPointToView(CGPoint(x: self.size.width * 8 / 21, y: self.size.height - nodeSize.height * 13.5 / 10))
         let plusSize = CGSize(width: self.size.height * 1 / 21, height: self.size.height * 1 / 21)
         let plusFrame = CGRect(origin: plusOrigin, size: plusSize)
         let plusButton = setupButton(frame: plusFrame, title: "+", action: "plusColorsButtonPressed")
@@ -185,7 +189,7 @@ class GradientScene : SKScene {
     
     func setupBlendedButton () {
         
-        let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - self.size.width - self.size.width * 3 / 21))
+        let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - nodeSize.height * 12.5 / 10))
         let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
         let button = setupButton(frame: frame, title: "Blend Colors: Yes", action: "blendColorsButtonPressed")
@@ -195,19 +199,20 @@ class GradientScene : SKScene {
     
     func setupKeepShapeButton () {
         
-        let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - self.size.width - self.size.width * 5 / 21))
+        let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - nodeSize.height * 13.5 / 10))
         let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
         let button = setupButton(frame: frame, title: "Keep Shape: Yes", action: "keepShapeButtonPressed")
         button.tag = 94
         disableButtonForTag(94)
         
-        let subOrigin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - self.size.width - self.size.width * 7 / 21))
+        let subOrigin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - nodeSize.height * 14.5 / 10))
         let subSize = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 0.5 / 21)
         let subFrame = CGRect(origin: subOrigin, size: subSize)
         let label = UILabel(frame: subFrame)
         label.text = "'Keep Shape' is ignored if 'Blend Colors' is true."
         label.adjustsFontSizeToFitWidth = true
+        label.textAlignment = .Center
         label.numberOfLines = 0
         view?.addSubview(label)
     }
@@ -225,7 +230,7 @@ class GradientScene : SKScene {
     
     func setupCenterLabel() {
         
-        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - self.size.width - self.size.width * 12 / 21))
+        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - nodeSize.height * 17 / 10))
         let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
         let label = UILabel(frame: frame)
@@ -241,7 +246,7 @@ class GradientScene : SKScene {
     
     func setupStartEndDragLabel() {
         
-        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - self.size.width - self.size.width * 12 / 21))
+        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - nodeSize.height * 17 / 10))
         let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
         let label = UILabel(frame: frame)
@@ -258,7 +263,7 @@ class GradientScene : SKScene {
     
     func setupCentersDragLabel() {
         
-        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - self.size.width - self.size.width * 12 / 21))
+        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - nodeSize.height * 17 / 10))
         let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
         let label = UILabel(frame: frame)
@@ -328,7 +333,7 @@ class GradientScene : SKScene {
     
     func setupStartAngleSlider () {
         
-        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - self.size.width - self.size.width * 9 / 21))
+        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - nodeSize.height * 15.5 / 10))
         let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
         let slider = UISlider(frame: frame)
@@ -339,7 +344,7 @@ class GradientScene : SKScene {
         slider.tag = 50
         view?.addSubview(slider)
         
-        let subOrigin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - self.size.width - self.size.width * 8 / 21))
+        let subOrigin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - nodeSize.height * 15 / 10))
         let subSize = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 0.5 / 21)
         let subFrame = CGRect(origin: subOrigin, size: subSize)
         let label = UILabel(frame: subFrame)
@@ -355,7 +360,7 @@ class GradientScene : SKScene {
     
     func setupFirstRadiusSlider () {
         
-        let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - self.size.width - self.size.width * 9 / 21))
+        let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - nodeSize.height * 15.5 / 10))
         let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
         let slider = UISlider(frame: frame)
@@ -366,7 +371,7 @@ class GradientScene : SKScene {
         slider.tag = 52
         view?.addSubview(slider)
         
-        let subOrigin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - self.size.width - self.size.width * 8 / 21))
+        let subOrigin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - nodeSize.height * 15 / 10))
         let subSize = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 0.5 / 21)
         let subFrame = CGRect(origin: subOrigin, size: subSize)
         let label = UILabel(frame: subFrame)
@@ -382,7 +387,7 @@ class GradientScene : SKScene {
     
     func setupSecondRadiusSlider () {
         
-        let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - self.size.width - self.size.width * 12 / 21))
+        let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - nodeSize.height * 17 / 10))
         let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
         let slider = UISlider(frame: frame)
@@ -393,7 +398,7 @@ class GradientScene : SKScene {
         slider.tag = 54
         view?.addSubview(slider)
         
-        let subOrigin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - self.size.width - self.size.width * 11 / 21))
+        let subOrigin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - nodeSize.height * 16.5 / 10))
         let subSize = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 0.5 / 21)
         let subFrame = CGRect(origin: subOrigin, size: subSize)
         let label = UILabel(frame: subFrame)
@@ -417,7 +422,7 @@ class GradientScene : SKScene {
         let currentType = gradientNode.gradientType
         gradientNode.removeFromParent()
         gradientNode = BDGradientNode(gamutGradientWithTexture: currentTexture, center: gradientNode.center, startAngle: gradientNode.startAngle, blended: gradientNode.blended, keepShape: gradientNode.keepShape, size: nodeSize)
-        gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - self.size.width / 2)
+        gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - nodeSize.height / 2 - nodeSize.height * 1 / 10)
         addChild(gradientNode)
         
         if currentType == "gamut" { return }
@@ -430,7 +435,7 @@ class GradientScene : SKScene {
         let currentType = gradientNode.gradientType
         gradientNode.removeFromParent()
         gradientNode = BDGradientNode(linearGradientWithTexture: currentTexture, colors: colors, locations: locations, startPoint: gradientNode.startPoint, endPoint: gradientNode.endPoint, blended: gradientNode.blended, keepShape: gradientNode.keepShape, size: nodeSize)
-        gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - self.size.width / 2)
+        gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - nodeSize.height / 2 - nodeSize.height * 1 / 10)
         addChild(gradientNode)
         
         if currentType == "linear" { return }
@@ -443,7 +448,7 @@ class GradientScene : SKScene {
         let currentType = gradientNode.gradientType
         gradientNode.removeFromParent()
         gradientNode = BDGradientNode(radialGradientWithTexture: currentTexture, colors: colors, locations: locations, firstCenter: gradientNode.firstCenter, firstRadius: gradientNode.firstRadius, secondCenter: gradientNode.secondCenter, secondRadius: gradientNode.secondRadius, blended: gradientNode.blended, size: nodeSize)
-        gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - self.size.width / 2)
+        gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - nodeSize.height / 2 - nodeSize.height * 1 / 10)
         addChild(gradientNode)
         
         if currentType == "radial" { return }
@@ -456,7 +461,7 @@ class GradientScene : SKScene {
         let currentType = gradientNode.gradientType
         gradientNode.removeFromParent()
         gradientNode = BDGradientNode(sweepGradientWithTexture: currentTexture, colors: colors, locations: locations, center: gradientNode.center, startAngle: gradientNode.startAngle, blended: gradientNode.blended, keepShape: gradientNode.keepShape, size: nodeSize)
-        gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - self.size.width / 2)
+        gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - nodeSize.height / 2 - nodeSize.height * 1 / 10)
         addChild(gradientNode)
         
         if currentType == "sweep" { return }
