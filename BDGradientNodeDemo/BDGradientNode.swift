@@ -35,7 +35,13 @@ class BDGradientNode : SKSpriteNode {
     // MARK: - Properties
     
     /// The type of gradient of the node: gamut, linear, radial, or sweep.
-    var gradientType = ""
+    private(set) var gradientType = ""
+    
+    /// The current array of colors (read only)
+    private(set) var colors : [UIColor]?
+    
+    /// The current array of locations (read only)
+    private(set) var locations : [CGFloat]?
     
     // MARK: Uniforms
     private var uniforms = [SKUniform]()
@@ -200,6 +206,8 @@ class BDGradientNode : SKSpriteNode {
         self.init(texture: texture, color: nil, size: size)
         
         gradientType = "linear"
+        self.colors = colors
+        self.locations = locations
         
         shader = linearGradientShader(colors: colors, locations: locations, startPoint: startPoint, endPoint: endPoint, blended: blended, keepShape: keepShape)
         shader?.uniforms = uniforms
@@ -234,6 +242,8 @@ class BDGradientNode : SKSpriteNode {
         self.init(texture: texture, color: nil, size: size)
 
         gradientType = "radial"
+        self.colors = colors
+        self.locations = locations
         
         shader = radialGradientShader(colors: colors, locations: locations, firstCenter: firstCenter, firstRadius: firstRadius, secondCenter: secondCenter, secondRadius: secondRadius, blended: blended)
         shader?.uniforms = uniforms
@@ -270,6 +280,8 @@ class BDGradientNode : SKSpriteNode {
         self.init(texture: texture, color: nil, size: size)
         
         gradientType = "sweep"
+        self.colors = colors
+        self.locations = locations
         
         shader = sweepGradientShader(colors: colors, locations: locations, center: center, startAngle: startAngle, blended: blended, keepShape: keepShape)
         shader?.uniforms = uniforms

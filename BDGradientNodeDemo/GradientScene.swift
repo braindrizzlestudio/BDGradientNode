@@ -11,36 +11,53 @@ import SpriteKit
 
 class GradientScene : SKScene {
     
+    
     // MARK: - Properties
     
+    // The pretty Apple blue for text/strokes
     var blue = UIColor(red: 0.0, green: 122/255, blue: 1.0, alpha: 1.0)
-    var displayedNode = BDGradientNode()
     
-    // BDGradientNode
-    var blended = true
-    var center = CGPoint(x: 0.5, y: 0.5)
+    
+    // The colors to pass to the BDGradientNode. Recompilation is required when colors are changed (except for gamut, which is always the gamut).
     var colors = [UIColor]() {
         didSet {
-            if displayedNode.gradientType != "gamut" { resetCurrentNode() }
+            if gradientNode.gradientType != "gamut" { resetCurrentNode() }
         }
     }
+    
+    
+    // The current number of colors. Changes the label when changed.
+    var numberOfColors = 6 {
+        didSet {
+            (view?.viewWithTag(99) as! UILabel).text = "\(numberOfColors)"
+        }
+    }
+    
+    
+    // Our BDGradientNode
+    var gradientNode = BDGradientNode()
+    
+    
+    // The currently displayed texture
+    var currentTexture = SKTexture(imageNamed: "Spaceship")
+    
+    
+    // BDGradientNode Initialization
+    var blended = true
+    var center = CGPoint(x: 0.5, y: 0.5)
     var endPoint = CGPoint(x: 0.5, y: 1.0)
     var firstCenter = CGPoint(x: 0.2, y: 0.2)
     var firstRadius : Float = 0.1
     var keepShape = true
     var locations = [CGFloat(0.5)]
     var nodeSize = CGSizeZero
-    var numberOfColors = 6 {
-        didSet {
-            (view?.viewWithTag(99) as! UILabel).text = "\(numberOfColors)"
-        }
-    }
     var secondCenter = CGPoint(x: 0.8, y: 0.8)
     var secondRadius : Float = 0.5
     var startAngle : Float = 0.0
     var startPoint = CGPoint(x: 0.5, y: 0.0)
-    var currentTexture = SKTexture(imageNamed: "Spaceship")
+    
   
+    
     // MARK: - ViewController
     
     
@@ -85,6 +102,7 @@ class GradientScene : SKScene {
         setupBlendedButton()
         setupKeepShapeButton()
     }
+    
     
     // MARK: Gradients
     
@@ -200,7 +218,8 @@ class GradientScene : SKScene {
     func setupLabels() {
         
         setupCenterLabel()
-        setupStartEndLabel()
+        setupStartEndDragLabel()
+        setupCentersDragLabel()
     }
     
     
@@ -220,19 +239,36 @@ class GradientScene : SKScene {
     }
     
     
-    func setupStartEndLabel() {
+    func setupStartEndDragLabel() {
         
         let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - self.size.width - self.size.width * 12 / 21))
         let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
         let label = UILabel(frame: frame)
-        label.text = "Drag on the image \rto move the start and end!"
+        label.text = "Drag the top and bottom to move the start/end points!"
         label.adjustsFontSizeToFitWidth = true
         label.hidden = true
         label.textAlignment = .Center
         label.textColor = blue
         label.numberOfLines = 0
         label.tag = 21
+        view?.addSubview(label)
+    }
+    
+    
+    func setupCentersDragLabel() {
+        
+        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - self.size.width - self.size.width * 12 / 21))
+        let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
+        let frame = CGRect(origin: origin, size: size)
+        let label = UILabel(frame: frame)
+        label.text = "Drag the two circles to move their centers!"
+        label.adjustsFontSizeToFitWidth = true
+        label.hidden = true
+        label.textAlignment = .Center
+        label.textColor = blue
+        label.numberOfLines = 0
+        label.tag = 22
         view?.addSubview(label)
     }
     
@@ -317,6 +353,7 @@ class GradientScene : SKScene {
         view?.addSubview(label)
     }
     
+    
     func setupFirstRadiusSlider () {
         
         let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - self.size.width - self.size.width * 9 / 21))
@@ -342,6 +379,7 @@ class GradientScene : SKScene {
         label.tag = 53
         view?.addSubview(label)
     }
+    
     
     func setupSecondRadiusSlider () {
         
@@ -379,46 +417,55 @@ class GradientScene : SKScene {
     
     func gamutGradientButtonPressed () {
         
-        displayedNode.removeFromParent()
-        displayedNode = BDGradientNode(gamutGradientWithTexture: currentTexture, center: center, startAngle: startAngle, blended: blended, keepShape: keepShape, size: nodeSize)
-        displayedNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - self.size.width / 2)
-        addChild(displayedNode)
+        let currentType = gradientNode.gradientType
+        gradientNode.removeFromParent()
+        gradientNode = BDGradientNode(gamutGradientWithTexture: currentTexture, center: gradientNode.center, startAngle: gradientNode.startAngle, blended: gradientNode.blended, keepShape: gradientNode.keepShape, size: nodeSize)
+        gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - self.size.width / 2)
+        addChild(gradientNode)
         
+        if currentType == "gamut" { return }
         adjustButtonsForGradient("gamut")
     }
     
     
     func linearGradientButtonPressed () {
         
-        displayedNode.removeFromParent()
-        displayedNode = BDGradientNode(linearGradientWithTexture: currentTexture, colors: colors, locations: locations, startPoint: startPoint, endPoint: endPoint, blended: blended, keepShape: keepShape, size: nodeSize)
-        displayedNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - self.size.width / 2)
-        addChild(displayedNode)
+        let currentType = gradientNode.gradientType
+        gradientNode.removeFromParent()
+        gradientNode = BDGradientNode(linearGradientWithTexture: currentTexture, colors: colors, locations: locations, startPoint: gradientNode.startPoint, endPoint: gradientNode.endPoint, blended: gradientNode.blended, keepShape: gradientNode.keepShape, size: nodeSize)
+        gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - self.size.width / 2)
+        addChild(gradientNode)
         
+        if currentType == "linear" { return }
         adjustButtonsForGradient("linear")
-    }
-    
-    
-    func sweepGradientButtonPressed () {
-        
-        displayedNode.removeFromParent()
-        displayedNode = BDGradientNode(sweepGradientWithTexture: currentTexture, colors: colors, locations: locations, center: center, startAngle: startAngle, blended: blended, keepShape: keepShape, size: nodeSize)
-        displayedNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - self.size.width / 2)
-        addChild(displayedNode)
-        
-        adjustButtonsForGradient("sweep")
     }
     
     
     func radialGradientButtonPressed () {
         
-        displayedNode.removeFromParent()
-        displayedNode = BDGradientNode(radialGradientWithTexture: currentTexture, colors: colors, locations: locations, firstCenter: firstCenter, firstRadius: firstRadius, secondCenter: secondCenter, secondRadius: secondRadius, blended: blended, size: nodeSize)
-        displayedNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - self.size.width / 2)
-        addChild(displayedNode)
+        let currentType = gradientNode.gradientType
+        gradientNode.removeFromParent()
+        gradientNode = BDGradientNode(radialGradientWithTexture: currentTexture, colors: colors, locations: locations, firstCenter: gradientNode.firstCenter, firstRadius: gradientNode.firstRadius, secondCenter: gradientNode.secondCenter, secondRadius: gradientNode.secondRadius, blended: gradientNode.blended, size: nodeSize)
+        gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - self.size.width / 2)
+        addChild(gradientNode)
         
+        if currentType == "radial" { return }
         adjustButtonsForGradient("radial")
     }
+    
+    
+    func sweepGradientButtonPressed () {
+        
+        let currentType = gradientNode.gradientType
+        gradientNode.removeFromParent()
+        gradientNode = BDGradientNode(sweepGradientWithTexture: currentTexture, colors: colors, locations: locations, center: gradientNode.center, startAngle: gradientNode.startAngle, blended: gradientNode.blended, keepShape: gradientNode.keepShape, size: nodeSize)
+        gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - self.size.width / 2)
+        addChild(gradientNode)
+        
+        if currentType == "sweep" { return }
+        adjustButtonsForGradient("sweep")
+    }
+    
     
     
     // MARK: Colors
@@ -433,6 +480,7 @@ class GradientScene : SKScene {
     func minusColorsButtonPressed () {
         
         if numberOfColors == 2 { return }
+        if numberOfColors == 3 { disableButtonForTag(98) }
         
         numberOfColors = numberOfColors - 1
         randomColorsButtonPressed()
@@ -440,6 +488,8 @@ class GradientScene : SKScene {
     
     
     func plusColorsButtonPressed () {
+        
+        if numberOfColors == 2 { enableButtonForTag(98) }
         
         numberOfColors = numberOfColors + 1
         randomColorsButtonPressed()
@@ -456,14 +506,14 @@ class GradientScene : SKScene {
         switch button.titleLabel!.text! {
             case "Blend Colors: Yes":
                 button.setTitle("Blend Colors: No", forState: .Normal)
-                if displayedNode.gradientType != "radial" { enableButtonForTag(94) }
+                if gradientNode.gradientType != "radial" { enableButtonForTag(94) }
             case "Blend Colors: No":
                 button.setTitle("Blend Colors: Yes", forState: .Normal)
                 disableButtonForTag(94)
             default: return
         }
         
-        displayedNode.blended = !displayedNode.blended
+        gradientNode.blended = !gradientNode.blended
     }
     
     func keepShapeButtonPressed () {
@@ -478,7 +528,7 @@ class GradientScene : SKScene {
         default: return
         }
         
-        displayedNode.keepShape = !displayedNode.keepShape
+        gradientNode.keepShape = !gradientNode.keepShape
     }
     
     
@@ -487,17 +537,17 @@ class GradientScene : SKScene {
     
     func startAngleSliderChanged () {
         
-        displayedNode.startAngle = (view?.viewWithTag(50) as! UISlider).value
+        gradientNode.startAngle = (view?.viewWithTag(50) as! UISlider).value
     }
     
     func firstRadiusSliderChanged () {
         
-        displayedNode.firstRadius = (view?.viewWithTag(52) as! UISlider).value
+        gradientNode.firstRadius = (view?.viewWithTag(52) as! UISlider).value
     }
     
     func secondRadiusSliderChanged () {
         
-        displayedNode.secondRadius = (view?.viewWithTag(54) as! UISlider).value
+        gradientNode.secondRadius = (view?.viewWithTag(54) as! UISlider).value
     }
 
     
@@ -507,11 +557,12 @@ class GradientScene : SKScene {
     
     func adjustButtonsForGradient (gradient: String) {
         
-        switch displayedNode.gradientType {
+        switch gradientNode.gradientType {
             
         case "gamut":
             if let label = view?.viewWithTag(20) as? UILabel { label.hidden = false }
             if let label = view?.viewWithTag(21) as? UILabel { label.hidden = true }
+            if let label = view?.viewWithTag(22) as? UILabel { label.hidden = true }
             enableSliderForTag(50)
             disableSliderForTag(52)
             disableSliderForTag(54)
@@ -523,6 +574,7 @@ class GradientScene : SKScene {
         case "linear":
             if let label = view?.viewWithTag(20) as? UILabel { label.hidden = true }
             if let label = view?.viewWithTag(21) as? UILabel { label.hidden = false }
+            if let label = view?.viewWithTag(22) as? UILabel { label.hidden = true }
             disableSliderForTag(50)
             disableSliderForTag(52)
             disableSliderForTag(54)
@@ -533,7 +585,8 @@ class GradientScene : SKScene {
             enableLabelForTag(99)
         case "radial":
             if let label = view?.viewWithTag(20) as? UILabel { label.hidden = true }
-            if let label = view?.viewWithTag(21) as? UILabel { label.hidden = false }
+            if let label = view?.viewWithTag(21) as? UILabel { label.hidden = true }
+            if let label = view?.viewWithTag(22) as? UILabel { label.hidden = false }
             disableSliderForTag(50)
             enableSliderForTag(52)
             enableSliderForTag(54)
@@ -545,6 +598,7 @@ class GradientScene : SKScene {
         case "sweep":
             if let label = view?.viewWithTag(20) as? UILabel { label.hidden = false }
             if let label = view?.viewWithTag(21) as? UILabel { label.hidden = true }
+            if let label = view?.viewWithTag(22) as? UILabel { label.hidden = true }
             if !uiViewForTag(95)!.enabled { enableButtonForTag(94) }
             enableSliderForTag(50)
             disableSliderForTag(52)
@@ -632,7 +686,7 @@ class GradientScene : SKScene {
     
     func resetCurrentNode () {
         
-        switch displayedNode.gradientType {
+        switch gradientNode.gradientType {
             
             case "gamut": gamutGradientButtonPressed()
             case "linear": linearGradientButtonPressed()
@@ -697,9 +751,9 @@ class GradientScene : SKScene {
                 
                 if let gradientNode = touchedNode as? BDGradientNode {
                     
-                    var point = self.convertPoint(positionInScene, toNode: displayedNode)
-                    point.x = point.x / displayedNode.size.width + 0.5
-                    point.y = point.y / displayedNode.size.height + 0.5
+                    var point = self.convertPoint(positionInScene, toNode: gradientNode)
+                    point.x = point.x / gradientNode.size.width + 0.5
+                    point.y = point.y / gradientNode.size.height + 0.5
                     
                     switch gradientNode.gradientType {
                         
@@ -731,9 +785,9 @@ class GradientScene : SKScene {
                 
                 if let gradientNode = touchedNode as? BDGradientNode {
                     
-                    var point = self.convertPoint(positionInScene, toNode: displayedNode)
-                    point.x = point.x / displayedNode.size.width + 0.5
-                    point.y = point.y / displayedNode.size.height + 0.5
+                    var point = self.convertPoint(positionInScene, toNode: gradientNode)
+                    point.x = point.x / gradientNode.size.width + 0.5
+                    point.y = point.y / gradientNode.size.height + 0.5
                     
                     switch gradientNode.gradientType {
                         
