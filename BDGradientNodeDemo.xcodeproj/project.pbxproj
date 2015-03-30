@@ -13,19 +13,8 @@
 		3CAC01321AC75E17002EB9EA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CAC01301AC75E17002EB9EA /* Main.storyboard */; };
 		3CAC01341AC75E17002EB9EA /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3CAC01331AC75E17002EB9EA /* Images.xcassets */; };
 		3CAC01371AC75E17002EB9EA /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CAC01351AC75E17002EB9EA /* LaunchScreen.xib */; };
-		3CAC01431AC75E18002EB9EA /* BDGradientNodeDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CAC01421AC75E18002EB9EA /* BDGradientNodeDemoTests.swift */; };
 		3CAC014D1AC75FC8002EB9EA /* BDGradientNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CAC014C1AC75FC8002EB9EA /* BDGradientNode.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		3CAC013D1AC75E18002EB9EA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3CAC011B1AC75E17002EB9EA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3CAC01221AC75E17002EB9EA;
-			remoteInfo = BDGradientNodeDemo;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		3CAC01231AC75E17002EB9EA /* BDGradientNodeDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BDGradientNodeDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -36,21 +25,11 @@
 		3CAC01311AC75E17002EB9EA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3CAC01331AC75E17002EB9EA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		3CAC01361AC75E17002EB9EA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		3CAC013C1AC75E18002EB9EA /* BDGradientNodeDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BDGradientNodeDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		3CAC01411AC75E18002EB9EA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3CAC01421AC75E18002EB9EA /* BDGradientNodeDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BDGradientNodeDemoTests.swift; sourceTree = "<group>"; };
 		3CAC014C1AC75FC8002EB9EA /* BDGradientNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BDGradientNode.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		3CAC01201AC75E17002EB9EA /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3CAC01391AC75E18002EB9EA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -64,7 +43,6 @@
 			isa = PBXGroup;
 			children = (
 				3CAC01251AC75E17002EB9EA /* BDGradientNodeDemo */,
-				3CAC013F1AC75E18002EB9EA /* BDGradientNodeDemoTests */,
 				3CAC01241AC75E17002EB9EA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -73,7 +51,6 @@
 			isa = PBXGroup;
 			children = (
 				3CAC01231AC75E17002EB9EA /* BDGradientNodeDemo.app */,
-				3CAC013C1AC75E18002EB9EA /* BDGradientNodeDemoTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -101,23 +78,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		3CAC013F1AC75E18002EB9EA /* BDGradientNodeDemoTests */ = {
-			isa = PBXGroup;
-			children = (
-				3CAC01421AC75E18002EB9EA /* BDGradientNodeDemoTests.swift */,
-				3CAC01401AC75E18002EB9EA /* Supporting Files */,
-			);
-			path = BDGradientNodeDemoTests;
-			sourceTree = "<group>";
-		};
-		3CAC01401AC75E18002EB9EA /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				3CAC01411AC75E18002EB9EA /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -138,24 +98,6 @@
 			productReference = 3CAC01231AC75E17002EB9EA /* BDGradientNodeDemo.app */;
 			productType = "com.apple.product-type.application";
 		};
-		3CAC013B1AC75E18002EB9EA /* BDGradientNodeDemoTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3CAC01491AC75E18002EB9EA /* Build configuration list for PBXNativeTarget "BDGradientNodeDemoTests" */;
-			buildPhases = (
-				3CAC01381AC75E18002EB9EA /* Sources */,
-				3CAC01391AC75E18002EB9EA /* Frameworks */,
-				3CAC013A1AC75E18002EB9EA /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				3CAC013E1AC75E18002EB9EA /* PBXTargetDependency */,
-			);
-			name = BDGradientNodeDemoTests;
-			productName = BDGradientNodeDemoTests;
-			productReference = 3CAC013C1AC75E18002EB9EA /* BDGradientNodeDemoTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -167,10 +109,6 @@
 				TargetAttributes = {
 					3CAC01221AC75E17002EB9EA = {
 						CreatedOnToolsVersion = 6.3;
-					};
-					3CAC013B1AC75E18002EB9EA = {
-						CreatedOnToolsVersion = 6.3;
-						TestTargetID = 3CAC01221AC75E17002EB9EA;
 					};
 				};
 			};
@@ -188,7 +126,6 @@
 			projectRoot = "";
 			targets = (
 				3CAC01221AC75E17002EB9EA /* BDGradientNodeDemo */,
-				3CAC013B1AC75E18002EB9EA /* BDGradientNodeDemoTests */,
 			);
 		};
 /* End PBXProject section */
@@ -201,13 +138,6 @@
 				3CAC01371AC75E17002EB9EA /* LaunchScreen.xib in Resources */,
 				3CAC01341AC75E17002EB9EA /* Images.xcassets in Resources */,
 				3CAC01321AC75E17002EB9EA /* Main.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3CAC013A1AC75E18002EB9EA /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,23 +155,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3CAC01381AC75E18002EB9EA /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3CAC01431AC75E18002EB9EA /* BDGradientNodeDemoTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		3CAC013E1AC75E18002EB9EA /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3CAC01221AC75E17002EB9EA /* BDGradientNodeDemo */;
-			targetProxy = 3CAC013D1AC75E18002EB9EA /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		3CAC01301AC75E17002EB9EA /* Main.storyboard */ = {
@@ -366,40 +280,6 @@
 			};
 			name = Release;
 		};
-		3CAC014A1AC75E18002EB9EA /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = BDGradientNodeDemoTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BDGradientNodeDemo.app/BDGradientNodeDemo";
-			};
-			name = Debug;
-		};
-		3CAC014B1AC75E18002EB9EA /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = BDGradientNodeDemoTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BDGradientNodeDemo.app/BDGradientNodeDemo";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -417,14 +297,6 @@
 			buildConfigurations = (
 				3CAC01471AC75E18002EB9EA /* Debug */,
 				3CAC01481AC75E18002EB9EA /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-		};
-		3CAC01491AC75E18002EB9EA /* Build configuration list for PBXNativeTarget "BDGradientNodeDemoTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3CAC014A1AC75E18002EB9EA /* Debug */,
-				3CAC014B1AC75E18002EB9EA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};

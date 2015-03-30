@@ -34,16 +34,19 @@ class BDGradientNode : SKSpriteNode {
     
     // MARK: - Properties
     
-    /// The type of gradient of the node: gamut, linear, radial, or sweep.
+    /// The type of gradient of the instantiated node: gamut, linear, radial, or sweep. (Read Only.)
     private(set) var gradientType = ""
     
-    /// The current array of colors (read only)
+    /// The gradient's colors. (Read Only)
     private(set) var colors : [UIColor]?
     
-    /// The current array of locations (read only)
+    /// The gradient's colors' locations. (Read Only)
     private(set) var locations : [CGFloat]?
     
+    
     // MARK: Uniforms
+    
+    // This array will be filled with the appropriate uniforms and passed to the shader.
     private var uniforms = [SKUniform]()
     
     private let u_blended = SKUniform(name: "u_blended", float: 1.0)
@@ -56,7 +59,7 @@ class BDGradientNode : SKSpriteNode {
     }
     
     private let u_center = SKUniform(name: "u_center", floatVector2: GLKVector2Make(0.5, 0.5))
-    /// (Gamut and Sweep Gradients) A point in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
+    /// (Gamut and Sweep Gradients) The center of the sweeping gradient in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     var center = CGPoint(x: 0.5, y: 0.5) {
         didSet {
             u_center.floatVector2Value = GLKVector2Make(Float(center.x), Float(center.y))
@@ -64,7 +67,7 @@ class BDGradientNode : SKSpriteNode {
     }
     
     private let u_endPoint = SKUniform(name: "u_endPoint", floatVector2: GLKVector2Make(0.5, 0.0))
-    /// (Linear Gradient) A point from which the gradient should start. If this is not nil then endPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 1.0).
+    /// (Linear Gradient) The point from which the gradient will start. If this is not nil then startPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 1.0).
     var endPoint = CGPoint(x: 0.5, y: 1.0) {
         didSet {
             u_endPoint.floatVector2Value = GLKVector2Make(Float(endPoint.x), Float(endPoint.y))
@@ -72,7 +75,7 @@ class BDGradientNode : SKSpriteNode {
     }
     
     private let u_firstCenter = SKUniform(name: "u_firstCenter", floatVector2: GLKVector2Make(0.5, 0.5))
-    /// (Radial Gradient) A point that specifies the center of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
+    /// (Radial Gradient) The center of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     var firstCenter = CGPoint(x: 0.5, y: 0.5) {
         didSet {
             u_firstCenter.floatVector2Value = GLKVector2Make(Float(firstCenter.x), Float(firstCenter.y))
@@ -80,7 +83,7 @@ class BDGradientNode : SKSpriteNode {
     }
     
     private let u_firstRadius = SKUniform(name: "u_firstRadius", float: 0.0)
-    /// (Radial Gradient) The radius of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.
+    /// (Radial Gradient) The radius of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is 0.
     var firstRadius : Float = 0.0 {
         didSet {
             u_firstRadius.floatValue = firstRadius
@@ -97,7 +100,7 @@ class BDGradientNode : SKSpriteNode {
     }
     
     private let u_secondCenter = SKUniform(name: "u_secondCenter", floatVector2: GLKVector2Make(0.5, 0.5))
-    /// (Radial Gradient) A point that specifies the center of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
+    /// (Radial Gradient) The center of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     var secondCenter = CGPoint(x: 0.5, y: 0.5) {
         didSet {
             u_secondCenter.floatVector2Value = GLKVector2Make(Float(secondCenter.x), Float(secondCenter.y))
@@ -105,7 +108,7 @@ class BDGradientNode : SKSpriteNode {
     }
     
     private let u_secondRadius = SKUniform(name: "u_secondRadius", float: 0.0)
-    /// (Radial Gradient) The radius of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 1.0.
+    /// (Radial Gradient) The radius of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 1.0.
     var secondRadius : Float = 1.0 {
         didSet {
             u_secondRadius.floatValue = secondRadius
@@ -113,7 +116,7 @@ class BDGradientNode : SKSpriteNode {
     }
     
     private let u_startAngle = SKUniform(name: "u_startAngle", float: 0.0)
-    /// (Gamut and Sweep Gradients) An angle in radians between 0 and 2Pi, where 0 is to the right along the x axis. Default is 0.
+    /// (Gamut and Sweep Gradients) The angle at which the first color of the gradient will start (red for gamut) in radians between 0 and 2Pi, where 0 is to the right along the x axis and the colors proceed counter-clockwise. Default is 0.
     var startAngle : Float = 0.0 {
         didSet {
             u_startAngle.floatValue = startAngle / Float(2 * M_PI) % 1.0
@@ -121,7 +124,7 @@ class BDGradientNode : SKSpriteNode {
     }
     
     private let u_startPoint = SKUniform(name: "u_startPoint", floatVector2: GLKVector2Make(0.5, 0.0))
-    /// (Linear Gradient) A point from which the gradient should start. If this is not nil then endPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 0.0).
+    /// (Linear Gradient) The point from which the gradient will start. If this is not nil then endPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 0.0).
     var startPoint = CGPoint(x: 0.5, y: 0.0) {
         didSet {
             u_startPoint.floatVector2Value = GLKVector2Make(Float(startPoint.x), Float(startPoint.y))
@@ -154,13 +157,13 @@ class BDGradientNode : SKSpriteNode {
     
     :param: texture The texture to be shaded.
     
-    :param: center A optional point in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
+    :param: center The center of the sweeping gradient in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: startAngle An optional angle in radians between 0 and 2Pi, where 0 is to the right along the x axis. Red will start at this angle. Default is 0. The related uniform is u_startAngle.
+    :param: startAngle The angle at which the red in the gradient will start in radians between 0 and 2Pi, where 0 is to the right along the x axis and the colors proceed counter-clockwise. Default is 0.
     
-    :param: blended If true, the given colors will be blended with the texture's existing colors; if false the node will have purely the given colors. Note that if true the keepShape value will be ignored. The related uniform is u_blended.
+    :param: blended If true, the given colors will be blended with the texture's existing colors; if false the node will have purely the given colors. Note that if true the keepShape value will be ignored.
     
-    :param: keepShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blended is true. The related uniform is u_keepShape.
+    :param: keepShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blended is true.
     
     :param: size The desired size of the node.
     
@@ -188,11 +191,11 @@ class BDGradientNode : SKSpriteNode {
     
     :param: colors An array of two or more colors.
     
-    :param: locations An optional array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end (neither 0.0 nor 1.0 should be included in this array). The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  CGFloats. If the number of locations is nil or different than required: colors will be spread out evenly.
+    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  CGFloats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
     
-    :param: startPoint An optional point from which the gradient should start. If this is not nil then endPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 0.0).
+    :param: startPoint The point from which the gradient will start. If this is not nil then endPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 0.0).
     
-    :param: endPoint An optional point at which the gradient should end. If this is not nil then startPoint must also have a value. If it is nil then it will default to the top center of the texture (0.5, 1.0).
+    :param: endPoint The point from which the gradient will start. If this is not nil then startPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 1.0).
     
     :param: blended If true, the given colors will be blended with the texture's existing colors; if false the node will have purely the given colors. Note that if true the keepShape value will be ignored.
     
@@ -224,15 +227,17 @@ class BDGradientNode : SKSpriteNode {
     
     :param: colors An array of two or more colors.
     
-    :param: locations An optional array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end (neither 0.0 nor 1.0 should be included in this array). The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  CGFloats. If the number of locations is nil or different than required: colors will be spread out evenly.
+    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  CGFloats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
     
-    :param: firstCenter An optional point that specifies the center of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is the center of the node.
+    :param: firstCenter The center of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: firstRadius An optional radius of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0. Related uniform is u_firstRadius.
+    :param: firstRadius The radius of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is 0.
     
-    :param: secondCenter An optional point that specifies the center of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is the center of the node.
+    :param: secondCenter The center of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: secondRadius An optional radius of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.
+    :param: secondRadius The radius of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 1.0.
+    
+    :param: blended If true, the given colors will be blended with the texture's existing colors; if false the node will have purely the given colors. Note that if true the keepShape value will be ignored.
     
     :param: size The desired size of the node. Note: if this size is not the size of the passed texture then the "circles" will be ellipses.
     
@@ -262,11 +267,11 @@ class BDGradientNode : SKSpriteNode {
     
     :param: colors An array of two or more colors.
     
-    :param: locations An optional array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; 0.0 = 1.0 (neither 0.0 nor 1.0 should be included in this array). The first color in colors is automatically at startAngle; the rest are at these locations. For that reason: locations must contain  colors.count - 1  CGFloats. If the number of locations is nil or different than required: colors will be spread out evenly.
+    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; 0.0 = 1.0; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at startAngle; the rest are at these locations. For that reason: locations must contain  colors.count - 1  CGFloats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
     
-    :param: center A optional point in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
+    :param: center The center of the sweeping gradient in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: startAngle An optional angle in radians between 0 and 2Pi, where 0 is to the right along the x axis. The first color will start at this angle; colors will progress counter-clockwise. Default is 0. The related uniform is u_startAngle.
+    :param: startAngle The angle at which the first color of the gradient will start in radians between 0 and 2Pi, where 0 is to the right along the x axis and the colors proceed counter-clockwise. Default is 0.
     
     :param: blended If true, the given colors will be blended with the texture's existing colors; if false the node will have purely the given colors. Note that if true the keepShape value will be ignored.
     
@@ -298,9 +303,9 @@ class BDGradientNode : SKSpriteNode {
     
     Returns a shader that produces a circle with the gamut of color.
     
-    :param: center A optional point in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
+    :param: center The center of the sweeping gradient in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: startAngle An optional angle in radians between 0 and 2Pi, where 0 is to the right along the x axis. Red will start at this angle. Default is 0.  The related uniform is u_startAngle.
+    :param: startAngle The angle at which the red in the gradient will start in radians between 0 and 2Pi, where 0 is to the right along the x axis and the colors proceed counter-clockwise. Default is 0.
     
     :param: blended If true, the given colors will be blended with the texture's existing colors; if false the node will have purely the given colors. Note that if true the keepShape value will be ignored.
     
@@ -357,11 +362,11 @@ class BDGradientNode : SKSpriteNode {
     
     :param: colors An array of two or more colors.
     
-    :param: locations An optional array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end (neither 0.0 nor 1.0 should be included in this array). The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  CGFloats. If the number of locations is nil or different than required: colors will be spread out evenly.
+    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  CGFloats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
     
-    :param: startPoint An optional point from which the gradient should start. If this is not nil then endPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 0.0).
+    :param: startPoint The point from which the gradient will start. If this is not nil then endPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 0.0).
     
-    :param: endPoint An optional point at which the gradient should end. If this is not nil then startPoint must also have a value. If it is nil then it will default to the top center of the texture (0.5, 1.0).
+    :param: endPoint The point from which the gradient will start. If this is not nil then startPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 1.0).
     
     :param: blended If true, the given colors will be blended with the texture's existing colors; if false the node will have purely the given colors. Note that if true the keepShape value will be ignored.
     
@@ -498,19 +503,17 @@ class BDGradientNode : SKSpriteNode {
     
     An SKShader for a radial gradient between two specified circles. At least one circle must have a radius specified.
     
-    :param: texture The texture to be shaded.
-    
     :param: colors An array of two or more colors.
     
-    :param: locations An optional array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end (neither 0.0 nor 1.0 should be included in this array). The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  CGFloats. If the number of locations is nil or different than required: colors will be spread out evenly.
+    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  CGFloats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
     
-    :param: firstCenter An optional point that specifies the center of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is the center of the node.
+    :param: firstCenter The center of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: firstRadius An optional radius of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.
+    :param: firstRadius The radius of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is 0.
     
-    :param: secondCenter An optional point that specifies the center of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is the center of the node.
+    :param: secondCenter The center of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: secondRadius An optional radius of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.
+    :param: secondRadius The radius of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 1.0.
     
     :param: blended If true, the given colors will be blended with the texture's existing colors; if false the node will have purely the given colors. Note that if true the keepShape value will be ignored.
     
@@ -637,11 +640,11 @@ class BDGradientNode : SKSpriteNode {
     
     :param: colors An array of two or more colors.
     
-    :param: locations An optional array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; 0.0 = 1.0 (neither 0.0 nor 1.0 should be included in this array). The first color in colors is automatically at startAngle; the rest are at these locations. For that reason: locations must contain  colors.count - 1  CGFloats. If the number of locations is nil or different than required: colors will be spread out evenly.
+    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; 0.0 = 1.0; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at startAngle; the rest are at these locations. For that reason: locations must contain  colors.count - 1  CGFloats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
     
-    :param: center A optional point in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
+    :param: center The center of the sweeping gradient in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: startAngle An optional angle in radians between 0 and 2Pi, where 0 is to the right along the x axis. The first color will start at this angle; colors will progress counter-clockwise. Default is 0. The related uniform is u_startAngle.
+    :param: startAngle The angle at which the first color of the gradient will start in radians between 0 and 2Pi, where 0 is to the right along the x axis and the colors proceed counter-clockwise. Default is 0.
     
     :param: blended If true, the given colors will be blended with the texture's existing colors; if false the node will have purely the given colors. Note that if true the keepShape value will be ignored.
     

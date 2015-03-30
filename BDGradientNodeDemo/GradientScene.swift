@@ -315,7 +315,6 @@ class GradientScene : SKScene {
     }
     
     
-    
     // MARK: - Sliders
     
     
@@ -408,12 +407,10 @@ class GradientScene : SKScene {
     }
     
     
-    
     // MARK: - Actions
     
     
     // MARK: Gradients
-    
     
     func gamutGradientButtonPressed () {
         
@@ -470,7 +467,6 @@ class GradientScene : SKScene {
     
     // MARK: Colors
     
-    
     func randomColorsButtonPressed () {
         
         colors = randomColorArray(numberOfColors)
@@ -498,7 +494,6 @@ class GradientScene : SKScene {
     
     // MARK: Options
     
-    
     func blendColorsButtonPressed () {
 
         let button = (view?.viewWithTag(95) as! UIButton)
@@ -515,6 +510,7 @@ class GradientScene : SKScene {
         
         gradientNode.blended = !gradientNode.blended
     }
+    
     
     func keepShapeButtonPressed () {
         
@@ -534,23 +530,23 @@ class GradientScene : SKScene {
     
     // MARK: Sliders
     
-    
     func startAngleSliderChanged () {
         
         gradientNode.startAngle = (view?.viewWithTag(50) as! UISlider).value
     }
+    
     
     func firstRadiusSliderChanged () {
         
         gradientNode.firstRadius = (view?.viewWithTag(52) as! UISlider).value
     }
     
+    
     func secondRadiusSliderChanged () {
         
         gradientNode.secondRadius = (view?.viewWithTag(54) as! UISlider).value
     }
 
-    
     
     // MARK: - Helpers
     
@@ -611,11 +607,13 @@ class GradientScene : SKScene {
         }
     }
     
+    
     func uiViewForTag (tag: Int) -> UIButton? {
         
         if let button = view?.viewWithTag(tag) as? UIButton { return button }
         else { return nil }
     }
+    
     
     func disableButtonForTag (tag: Int) {
         
@@ -626,6 +624,7 @@ class GradientScene : SKScene {
         }
     }
     
+    
     func disableLabelForTag (tag: Int) {
         
         if let label = (view?.viewWithTag(tag) as? UILabel) {
@@ -634,6 +633,7 @@ class GradientScene : SKScene {
             label.textColor = UIColor.lightGrayColor()
         }
     }
+    
     
     func disableSliderForTag (tag: Int) {
         
@@ -650,6 +650,7 @@ class GradientScene : SKScene {
         }
     }
     
+    
     func enableButtonForTag (tag: Int) {
         
         if let button = (view?.viewWithTag(tag) as? UIButton) {
@@ -659,6 +660,7 @@ class GradientScene : SKScene {
         }
     }
     
+    
     func enableLabelForTag (tag: Int) {
         
         if let label = (view?.viewWithTag(tag) as? UILabel) {
@@ -667,6 +669,7 @@ class GradientScene : SKScene {
             label.textColor = blue
         }
     }
+    
     
     func enableSliderForTag (tag: Int) {
         
@@ -723,13 +726,12 @@ class GradientScene : SKScene {
     /**
     
     Generates a random CGFloat between the given min and max.
-    Thanks to https://github.com/raywenderlich/SKTUtils
     
     :param: min The lowest possible return value.
     
     :param: max The highest possible return value.
     
-    :returns: A random CGFloat between the given.
+    :returns: A random CGFloat between the given min and max.
     
     */
     func random(#min: CGFloat, max: CGFloat) -> CGFloat {
@@ -808,6 +810,8 @@ class GradientScene : SKScene {
         }
     }
     
+    
+    // MARK: Helpers
     
     /**
     
