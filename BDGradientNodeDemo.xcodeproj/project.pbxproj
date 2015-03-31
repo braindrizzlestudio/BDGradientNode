@@ -299,6 +299,7 @@
 				3CAC01481AC75E18002EB9EA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

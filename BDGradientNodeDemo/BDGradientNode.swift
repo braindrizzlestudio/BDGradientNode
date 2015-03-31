@@ -108,8 +108,8 @@ class BDGradientNode : SKSpriteNode {
     }
     
     private let u_secondRadius = SKUniform(name: "u_secondRadius", float: 0.0)
-    /// (Radial Gradient) The radius of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 1.0.
-    var secondRadius : Float = 1.0 {
+    /// (Radial Gradient) The radius of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.5.
+    var secondRadius : Float = 0.5 {
         didSet {
             u_secondRadius.floatValue = secondRadius
         }
@@ -235,7 +235,7 @@ class BDGradientNode : SKSpriteNode {
     
     :param: secondCenter The center of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: secondRadius The radius of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 1.0.
+    :param: secondRadius The radius of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.5.
     
     :param: blended If true, the given colors will be blended with the texture's existing colors; if false the node will have purely the given colors. Note that if true the keepShape value will be ignored.
     
@@ -513,7 +513,7 @@ class BDGradientNode : SKSpriteNode {
     
     :param: secondCenter The center of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: secondRadius The radius of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 1.0.
+    :param: secondRadius The radius of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.5.
     
     :param: blended If true, the given colors will be blended with the texture's existing colors; if false the node will have purely the given colors. Note that if true the keepShape value will be ignored.
     

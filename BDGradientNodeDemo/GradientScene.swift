@@ -25,6 +25,18 @@ class GradientScene : SKScene {
         }
     }
     
+    // The currently displayed texture
+    var currentTexture = SKTexture(imageNamed: "Spaceship")
+    
+    // Our BDGradientNode
+    var gradientNode : BDGradientNode! = BDGradientNode()
+    
+    // The color locations (empty since we'll just let the BDGradientNode use defaults)
+    var locations = [CGFloat]()
+    
+    // The size of the BDGradientNode
+    var nodeSize = CGSizeZero
+    
     
     // The current number of colors. Changes the label when changed.
     var numberOfColors = 6 {
@@ -33,30 +45,6 @@ class GradientScene : SKScene {
         }
     }
     
-    
-    // Our BDGradientNode
-    var gradientNode = BDGradientNode()
-    
-    
-    // The currently displayed texture
-    var currentTexture = SKTexture(imageNamed: "Spaceship")
-    
-    
-    // BDGradientNode Initialization
-    var blended = true
-    var center = CGPoint(x: 0.5, y: 0.5)
-    var endPoint = CGPoint(x: 0.5, y: 1.0)
-    var firstCenter = CGPoint(x: 0.2, y: 0.2)
-    var firstRadius : Float = 0.1
-    var keepShape = true
-    var locations = [CGFloat(0.5)]
-    var nodeSize = CGSizeZero
-    var secondCenter = CGPoint(x: 0.8, y: 0.8)
-    var secondRadius : Float = 0.5
-    var startAngle : Float = 0.0
-    var startPoint = CGPoint(x: 0.5, y: 0.0)
-    
-  
     
     // MARK: - ViewController
     
@@ -239,11 +227,12 @@ class GradientScene : SKScene {
         
         setupCenterLabel()
         setupCentersDragLabel()
+        setupLinkLabel()
         setupStartEndDragLabel()
     }
     
     
-    func setupCenterLabel() {
+    func setupCenterLabel () {
         
         let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - nodeSize.height * 17 / 10))
         let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
@@ -259,9 +248,7 @@ class GradientScene : SKScene {
     }
     
     
-    
-    
-    func setupCentersDragLabel() {
+    func setupCentersDragLabel () {
         
         let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - nodeSize.height * 17 / 10))
         let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
@@ -278,7 +265,26 @@ class GradientScene : SKScene {
     }
     
     
-    func setupStartEndDragLabel() {
+    func setupLinkLabel () {
+        
+        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height * 21 / 21))
+        let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
+        let frame = CGRect(origin: origin, size: size)
+        let text = UITextView(frame: frame)
+        text.editable = false
+        text.dataDetectorTypes = .All
+        text.text = "braindrizzlestudio.com"
+        text.textAlignment = .Center
+        text.textColor = blue
+        text.tag = 10
+        view?.addSubview(text)
+        if let textView = view?.viewWithTag(10) as? UITextView {
+            view?.bringSubviewToFront(textView)
+        }
+    }
+    
+    
+    func setupStartEndDragLabel () {
         
         let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - nodeSize.height * 17 / 10))
         let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
@@ -357,7 +363,7 @@ class GradientScene : SKScene {
         let slider = UISlider(frame: frame)
         slider.minimumValue = Float(0.0)
         slider.maximumValue = Float(2 * M_PI)
-        slider.value = startAngle
+        slider.value = gradientNode.startAngle
         slider.addTarget(self, action: "startAngleSliderChanged", forControlEvents: .ValueChanged)
         slider.tag = 50
         view?.addSubview(slider)
@@ -384,7 +390,7 @@ class GradientScene : SKScene {
         let slider = UISlider(frame: frame)
         slider.minimumValue = Float(0.0)
         slider.maximumValue = Float(1.0)
-        slider.value = firstRadius
+        slider.value = gradientNode.firstRadius
         slider.addTarget(self, action: "firstRadiusSliderChanged", forControlEvents: .ValueChanged)
         slider.tag = 52
         view?.addSubview(slider)
@@ -411,7 +417,7 @@ class GradientScene : SKScene {
         let slider = UISlider(frame: frame)
         slider.minimumValue = Float(0.0)
         slider.maximumValue = Float(1.0)
-        slider.value = secondRadius
+        slider.value = gradientNode.secondRadius
         slider.addTarget(self, action: "secondRadiusSliderChanged", forControlEvents: .ValueChanged)
         slider.tag = 54
         view?.addSubview(slider)
@@ -435,7 +441,7 @@ class GradientScene : SKScene {
     // MARK: Animation
     
     func animateButtonPressed () {
-        
+
         if let animateButton = view?.viewWithTag(30) as? UIButton {
             
             switch animateButton.titleLabel!.text! {
@@ -446,9 +452,12 @@ class GradientScene : SKScene {
 
                 case "Animate: No":
                     animateButton.setTitle("Animate: Yes", forState: .Normal)
+                    
                     switch gradientNode.gradientType {
                         case "gamut": gamutAnimation()
                         case "linear": linearAnimation()
+                        case "radial": radialAnimation()
+                        case "sweep": sweepAnimation()
                         default: return
                     }
                 default: return
@@ -484,7 +493,10 @@ class GradientScene : SKScene {
         
         let angleAction = SKAction.runBlock {
             
-            self.gradientNode.startAngle += 0.1
+            self.gradientNode.startAngle = (self.gradientNode.startAngle + 0.1) % Float(2 * M_PI)
+            if let slider = self.view?.viewWithTag(50) as? UISlider {
+                slider.value = self.gradientNode.startAngle
+            }
         }
         
         let delayAction = SKAction.waitForDuration(0.1)
@@ -534,6 +546,111 @@ class GradientScene : SKScene {
         let delayAction = SKAction.waitForDuration(0.1)
         
         let actionGroup = SKAction.group([startAction, endAction, delayAction])
+        
+        gradientNode.runAction(SKAction.repeatActionForever(actionGroup))
+    }
+    
+    
+    func radialAnimation () {
+        
+        self.gradientNode.firstCenter.x += 0.001
+        self.gradientNode.firstCenter.y += 0.001
+        self.gradientNode.secondCenter.x -= 0.001
+        self.gradientNode.secondCenter.y -= 0.001
+        
+        let firstCenterAction = SKAction.runBlock {
+            
+            let angle : CGFloat = 0.03
+            self.gradientNode.firstCenter = self.rotatePoint(self.gradientNode.firstCenter, byAngle: angle)
+            
+            let multiplier = sin(self.angleOfPoint(self.gradientNode.firstCenter)) / 100
+            var normalizedPoint = self.gradientNode.firstCenter
+            normalizedPoint.x -= 0.5
+            normalizedPoint.y -= 0.5
+            let length = sqrt(pow(normalizedPoint.x, 2) + pow(normalizedPoint.y, 2))
+            normalizedPoint.x /= length
+            normalizedPoint.y /= length
+            
+            self.gradientNode.firstCenter.x += multiplier * normalizedPoint.x
+            self.gradientNode.firstCenter.y += multiplier * normalizedPoint.y
+        }
+        
+        let firstRadiusAction = SKAction.runBlock {
+            
+            let change = Float(sin(self.angleOfPoint(self.gradientNode.firstCenter))) / 50
+            self.gradientNode.firstRadius += change
+            if let slider = self.view?.viewWithTag(52) as? UISlider {
+                slider.value = self.gradientNode.firstRadius
+            }
+        }
+        
+        let secondCenterAction = SKAction.runBlock {
+            
+            let angle : CGFloat = 0.03
+            self.gradientNode.secondCenter = self.rotatePoint(self.gradientNode.secondCenter, byAngle: angle)
+            
+            let multiplier = sin(self.angleOfPoint(self.gradientNode.secondCenter)) / 100
+            var normalizedPoint = self.gradientNode.secondCenter
+            normalizedPoint.x -= 0.5
+            normalizedPoint.y -= 0.5
+            let length = sqrt(pow(normalizedPoint.x, 2) + pow(normalizedPoint.y, 2))
+            normalizedPoint.x /= length
+            normalizedPoint.y /= length
+            
+            self.gradientNode.secondCenter.x -= multiplier * normalizedPoint.x
+            self.gradientNode.secondCenter.y -= multiplier * normalizedPoint.y
+        }
+        
+        let secondRadiusAction = SKAction.runBlock {
+            
+            let change = Float(sin(self.angleOfPoint(self.gradientNode.secondCenter))) / 50
+            self.gradientNode.secondRadius += change
+            if let slider = self.view?.viewWithTag(54) as? UISlider {
+                slider.value = self.gradientNode.secondRadius
+            }
+        }
+        
+        let delayAction = SKAction.waitForDuration(0.1)
+        
+        let actionGroup = SKAction.group([firstCenterAction, firstRadiusAction, secondCenterAction, secondRadiusAction, delayAction])
+        
+        gradientNode.runAction(SKAction.repeatActionForever(actionGroup))
+    }
+    
+    
+    func sweepAnimation () {
+        
+        self.gradientNode.center.x += 0.001
+        self.gradientNode.center.y += 0.001
+        
+        let centerAction = SKAction.runBlock {
+            
+            let angle : CGFloat = 0.03
+            self.gradientNode.center = self.rotatePoint(self.gradientNode.center, byAngle: angle)
+            
+            let multiplier = CGFloat(sin(self.gradientNode.startAngle) / 100)
+            var normalizedPoint = self.gradientNode.center
+            normalizedPoint.x -= 0.5
+            normalizedPoint.y -= 0.5
+            let length = sqrt(pow(normalizedPoint.x, 2) + pow(normalizedPoint.y, 2))
+            normalizedPoint.x /= length
+            normalizedPoint.y /= length
+            
+            self.gradientNode.center.x += multiplier * normalizedPoint.x
+            self.gradientNode.center.y -= multiplier * normalizedPoint.y
+        }
+        
+        let angleAction = SKAction.runBlock {
+            
+            self.gradientNode.startAngle = (self.gradientNode.startAngle + 0.1) % Float(2 * M_PI)
+            if let slider = self.view?.viewWithTag(50) as? UISlider {
+                slider.value = self.gradientNode.startAngle
+            }
+        }
+        
+        let delayAction = SKAction.waitForDuration(0.1)
+        
+        let actionGroup = SKAction.group([angleAction, centerAction, delayAction])
         
         gradientNode.runAction(SKAction.repeatActionForever(actionGroup))
     }
@@ -796,7 +913,7 @@ class GradientScene : SKScene {
             if let label = view?.viewWithTag(20) as? UILabel { label.hidden = false }
             if let label = view?.viewWithTag(21) as? UILabel { label.hidden = true }
             if let label = view?.viewWithTag(22) as? UILabel { label.hidden = true }
-            if let button = view?.viewWithTag(30) as? UIButton { button.setTitle("Animate No", forState: .Normal) }
+            if let button = view?.viewWithTag(30) as? UIButton { button.setTitle("Animate: No", forState: .Normal) }
             enableSliderForTag(50)
             disableSliderForTag(52)
             disableSliderForTag(54)
