@@ -609,7 +609,7 @@ class BDGradientNode : SKSpriteNode {
         
         
         // Add the colors
-        stringRange = (radialGradientShader as NSString).rangeOfString("precision mediump float; ")
+        stringRange = (radialGradientShader as NSString).rangeOfString("precision highp float; ")
         for (index, components) in enumerate(colorFloats) {
             
             string = "vec4 color\(index) = vec4(\(components[0]), \(components[1]), \(components[2]), \(components[3])); "
@@ -618,14 +618,13 @@ class BDGradientNode : SKSpriteNode {
         
         
         // Add the locations
-        stringRange = (radialGradientShader as NSString).rangeOfString("precision mediump float; ")
+        stringRange = (radialGradientShader as NSString).rangeOfString("precision highp float; ")
         for (index, location) in enumerate(locationArray) {
             
             string = "float location\(index) = \(location); "
             radialGradientShader = radialGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
         }
         
-        println(radialGradientShader)
         return SKShader(source: radialGradientShader)
     }
     

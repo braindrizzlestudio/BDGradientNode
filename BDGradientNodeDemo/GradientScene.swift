@@ -499,7 +499,7 @@ class GradientScene : SKScene {
             }
         }
         
-        let delayAction = SKAction.waitForDuration(0.1)
+        let delayAction = SKAction.waitForDuration(0.05)
         
         let actionGroup = SKAction.group([angleAction, centerAction, delayAction])
         
@@ -878,7 +878,7 @@ class GradientScene : SKScene {
             enableSliderForTag(50)
             disableSliderForTag(52)
             disableSliderForTag(54)
-            if !uiViewForTag(95)!.enabled { enableButtonForTag(94) }
+            if uiViewForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
             disableButtonForTag(96)
             disableButtonForTag(97)
             disableButtonForTag(98)
@@ -891,7 +891,7 @@ class GradientScene : SKScene {
             disableSliderForTag(50)
             disableSliderForTag(52)
             disableSliderForTag(54)
-            if !uiViewForTag(95)!.enabled { enableButtonForTag(94) }
+            if uiViewForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
             enableButtonForTag(96)
             enableButtonForTag(97)
             enableButtonForTag(98)
@@ -917,7 +917,7 @@ class GradientScene : SKScene {
             enableSliderForTag(50)
             disableSliderForTag(52)
             disableSliderForTag(54)
-            if !uiViewForTag(95)!.enabled { enableButtonForTag(94) }
+            if uiViewForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
             enableButtonForTag(96)
             enableButtonForTag(97)
             enableButtonForTag(98)
