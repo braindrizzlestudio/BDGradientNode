@@ -474,6 +474,14 @@ class GradientScene : SKScene {
         self.gradientNode.center.x += 0.001
         self.gradientNode.center.y += 0.001
         
+        let angleAction = SKAction.runBlock {
+            
+            self.gradientNode.startAngle = (self.gradientNode.startAngle + 0.1) % Float(2 * M_PI)
+            if let slider = self.view?.viewWithTag(50) as? UISlider {
+                slider.value = self.gradientNode.startAngle
+            }
+        }
+        
         let centerAction = SKAction.runBlock {
             
             let angle : CGFloat = 0.03
@@ -491,17 +499,18 @@ class GradientScene : SKScene {
             self.gradientNode.center.y -= multiplier * normalizedPoint.y
         }
         
-        let angleAction = SKAction.runBlock {
+        let radiusAction = SKAction.runBlock {
             
-            self.gradientNode.startAngle = (self.gradientNode.startAngle + 0.1) % Float(2 * M_PI)
-            if let slider = self.view?.viewWithTag(50) as? UISlider {
-                slider.value = self.gradientNode.startAngle
+            let change = Float(sin(self.angleOfPoint(self.gradientNode.center))) / 100
+            self.gradientNode.radius += change
+            if let slider = self.view?.viewWithTag(52) as? UISlider {
+                slider.value = self.gradientNode.radius
             }
         }
         
         let delayAction = SKAction.waitForDuration(0.05)
         
-        let actionGroup = SKAction.group([angleAction, centerAction, delayAction])
+        let actionGroup = SKAction.group([angleAction, centerAction, radiusAction, delayAction])
         
         gradientNode.runAction(SKAction.repeatActionForever(actionGroup))
     }
@@ -543,7 +552,7 @@ class GradientScene : SKScene {
             self.gradientNode.endPoint.y -= multiplier * normalizedPoint.y
         }
         
-        let delayAction = SKAction.waitForDuration(0.1)
+        let delayAction = SKAction.waitForDuration(0.05)
         
         let actionGroup = SKAction.group([startAction, endAction, delayAction])
         
@@ -577,8 +586,8 @@ class GradientScene : SKScene {
         
         let firstRadiusAction = SKAction.runBlock {
             
-            let change = Float(sin(self.angleOfPoint(self.gradientNode.firstCenter))) / 50
-            self.gradientNode.firstRadius += change
+            let change = Float(sin(self.angleOfPoint(self.gradientNode.firstCenter))) / 100
+            self.gradientNode.firstRadius = min(max(self.gradientNode.firstRadius + change, 0.0), 1.0)
             if let slider = self.view?.viewWithTag(52) as? UISlider {
                 slider.value = self.gradientNode.firstRadius
             }
@@ -603,14 +612,14 @@ class GradientScene : SKScene {
         
         let secondRadiusAction = SKAction.runBlock {
             
-            let change = Float(sin(self.angleOfPoint(self.gradientNode.secondCenter))) / 50
-            self.gradientNode.secondRadius += change
+            let change = Float(sin(self.angleOfPoint(self.gradientNode.secondCenter))) / 100
+            self.gradientNode.secondRadius = min(max(self.gradientNode.secondRadius + change, 0.0), 1.0)
             if let slider = self.view?.viewWithTag(54) as? UISlider {
                 slider.value = self.gradientNode.secondRadius
             }
         }
         
-        let delayAction = SKAction.waitForDuration(0.1)
+        let delayAction = SKAction.waitForDuration(0.05)
         
         let actionGroup = SKAction.group([firstCenterAction, firstRadiusAction, secondCenterAction, secondRadiusAction, delayAction])
         
@@ -622,6 +631,14 @@ class GradientScene : SKScene {
         
         self.gradientNode.center.x += 0.001
         self.gradientNode.center.y += 0.001
+        
+        let angleAction = SKAction.runBlock {
+            
+            self.gradientNode.startAngle = (self.gradientNode.startAngle + 0.1) % Float(2 * M_PI)
+            if let slider = self.view?.viewWithTag(50) as? UISlider {
+                slider.value = self.gradientNode.startAngle
+            }
+        }
         
         let centerAction = SKAction.runBlock {
             
@@ -640,17 +657,18 @@ class GradientScene : SKScene {
             self.gradientNode.center.y -= multiplier * normalizedPoint.y
         }
         
-        let angleAction = SKAction.runBlock {
+        let radiusAction = SKAction.runBlock {
             
-            self.gradientNode.startAngle = (self.gradientNode.startAngle + 0.1) % Float(2 * M_PI)
-            if let slider = self.view?.viewWithTag(50) as? UISlider {
-                slider.value = self.gradientNode.startAngle
+            let change = Float(sin(self.angleOfPoint(self.gradientNode.center))) / 100
+            self.gradientNode.radius += change
+            if let slider = self.view?.viewWithTag(52) as? UISlider {
+                slider.value = self.gradientNode.radius
             }
         }
         
-        let delayAction = SKAction.waitForDuration(0.1)
+        let delayAction = SKAction.waitForDuration(0.05)
         
-        let actionGroup = SKAction.group([angleAction, centerAction, delayAction])
+        let actionGroup = SKAction.group([angleAction, centerAction, radiusAction, delayAction])
         
         gradientNode.runAction(SKAction.repeatActionForever(actionGroup))
     }
@@ -694,7 +712,7 @@ class GradientScene : SKScene {
         addChild(gradientNode)
         
         if currentType == "gamut" { return }
-        adjustButtonsForGradient("gamut")
+        adjustUIForGradient("gamut")
     }
     
     
@@ -707,7 +725,7 @@ class GradientScene : SKScene {
         addChild(gradientNode)
         
         if currentType == "linear" { return }
-        adjustButtonsForGradient("linear")
+        adjustUIForGradient("linear")
     }
     
     
@@ -720,7 +738,7 @@ class GradientScene : SKScene {
         addChild(gradientNode)
         
         if currentType == "radial" { return }
-        adjustButtonsForGradient("radial")
+        adjustUIForGradient("radial")
     }
     
     
@@ -733,7 +751,7 @@ class GradientScene : SKScene {
         addChild(gradientNode)
         
         if currentType == "sweep" { return }
-        adjustButtonsForGradient("sweep")
+        adjustUIForGradient("sweep")
     }
     
     
@@ -867,7 +885,14 @@ class GradientScene : SKScene {
     // MARK: - Helpers
     
     
-    func adjustButtonsForGradient (gradient: String) {
+    /**
+    
+    Adjusts the UI elements for the given gradient.
+    
+    :param: gradient A gradientType of BDGradientNode.
+    
+    */
+    func adjustUIForGradient (gradient: String) {
         
         switch gradientNode.gradientType {
             
@@ -881,7 +906,7 @@ class GradientScene : SKScene {
             if let slider = view?.viewWithTag(52) as? UISlider { slider.value = gradientNode.radius }
             if let label = view?.viewWithTag(53) as? UILabel { label.text = "Radius" }
             disableSliderForTag(54)
-            if uiViewForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
+            if uiButtonForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
             disableButtonForTag(96)
             disableButtonForTag(97)
             disableButtonForTag(98)
@@ -894,7 +919,7 @@ class GradientScene : SKScene {
             disableSliderForTag(50)
             disableSliderForTag(52)
             disableSliderForTag(54)
-            if uiViewForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
+            if uiButtonForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
             enableButtonForTag(96)
             enableButtonForTag(97)
             enableButtonForTag(98)
@@ -909,7 +934,7 @@ class GradientScene : SKScene {
             if let slider = view?.viewWithTag(52) as? UISlider { slider.value = gradientNode.firstRadius }
             if let label = view?.viewWithTag(53) as? UILabel { label.text = "First Radius" }
             enableSliderForTag(54)
-            enableButtonForTag(94)
+            if uiButtonForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
             enableButtonForTag(96)
             enableButtonForTag(97)
             enableButtonForTag(98)
@@ -924,7 +949,7 @@ class GradientScene : SKScene {
             if let slider = view?.viewWithTag(52) as? UISlider { slider.value = gradientNode.radius }
             if let label = view?.viewWithTag(53) as? UILabel { label.text = "Radius" }
             disableSliderForTag(54)
-            if uiViewForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
+            if uiButtonForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
             enableButtonForTag(96)
             enableButtonForTag(97)
             enableButtonForTag(98)
@@ -934,146 +959,13 @@ class GradientScene : SKScene {
     }
     
     
-    func uiViewForTag (tag: Int) -> UIButton? {
-        
-        if let button = view?.viewWithTag(tag) as? UIButton { return button }
-        else { return nil }
-    }
-    
-    
-    func disableButtonForTag (tag: Int) {
-        
-        if let button = (view?.viewWithTag(tag) as? UIButton) {
-            button.enabled = false
-            button.layer.borderColor = UIColor.lightGrayColor().CGColor!
-            button.setTitleColor(UIColor.lightGrayColor(), forState: .Normal)
-        }
-    }
-    
-    
-    func disableLabelForTag (tag: Int) {
-        
-        if let label = (view?.viewWithTag(tag) as? UILabel) {
-            label.enabled = false
-            label.layer.borderColor = UIColor.lightGrayColor().CGColor!
-            label.textColor = UIColor.lightGrayColor()
-        }
-    }
-    
-    
-    func disableSliderForTag (tag: Int) {
-        
-        if let slider = view?.viewWithTag(tag) as? UISlider {
-            if slider.userInteractionEnabled {
-                slider.userInteractionEnabled = false
-                slider.minimumTrackTintColor = UIColor.lightGrayColor()
-                slider.maximumTrackTintColor = UIColor.lightGrayColor()
-                
-                if let label = view?.viewWithTag(tag + 1) as? UILabel {
-                    label.textColor = UIColor.lightGrayColor()
-                }
-            }
-        }
-    }
-    
-    
-    func enableButtonForTag (tag: Int) {
-        
-        if let button = (view?.viewWithTag(tag) as? UIButton) {
-            button.enabled = true
-            button.layer.borderColor = blue.CGColor!
-            button.setTitleColor(blue, forState: .Normal)
-        }
-    }
-    
-    
-    func enableLabelForTag (tag: Int) {
-        
-        if let label = (view?.viewWithTag(tag) as? UILabel) {
-            label.enabled = true
-            label.layer.borderColor = blue.CGColor!
-            label.textColor = blue
-        }
-    }
-    
-    
-    func enableSliderForTag (tag: Int) {
-        
-        if let slider = view?.viewWithTag(tag) as? UISlider {
-            if slider.userInteractionEnabled == false {
-                slider.userInteractionEnabled = true
-                slider.minimumTrackTintColor = blue
-                slider.maximumTrackTintColor = UIColor.darkGrayColor()
-                
-                if let label = view?.viewWithTag(tag + 1) as? UILabel {
-                    label.textColor = blue
-                }
-            }
-        }
-    }
-    
-    
-    func resetCurrentNode () {
-        
-        gradientNode.removeAllActions()
-        
-        if let button = view?.viewWithTag(30) as? UIButton { button.setTitle("Animate: No", forState: .Normal) }
-        
-        switch gradientNode.gradientType {
-            
-        case "gamut": gamutGradientButtonPressed()
-        case "linear": linearGradientButtonPressed()
-        case "sweep": sweepGradientButtonPressed()
-        case "radial": radialGradientButtonPressed()
-        default: return
-        }
-    }
-    
-    
-    /**
-    
-    Creates an array of the given number of random colors.
-    
-    :param: numberOfColors The number of colors that will be in the array.
-    
-    :returns: An array of the given number of random colors.
-    
-    */
-    func randomColorArray(numberOfColors: Int) -> [UIColor] {
-        
-        var newColors = [UIColor]()
-        
-        for var i = 0; i < numberOfColors; i++ {
-            
-            let newColor = UIColor(hue: random(min: 0.0, max: 1.0), saturation: random(min: 0.33, max: 1.0), brightness: random(min: 0.75, max: 1.0), alpha: 1.0)
-            newColors.append(newColor)
-        }
-        
-        return newColors
-    }
-    
-    
-    /**
-    
-    Generates a random CGFloat between the given min and max.
-    
-    :param: min The lowest possible return value.
-    
-    :param: max The highest possible return value.
-    
-    :returns: A random CGFloat between the given min and max.
-    
-    */
-    func random(#min: CGFloat, max: CGFloat) -> CGFloat {
-        
-        let random = CGFloat(Float(arc4random()) / 0xFFFFFFFF)
-        return random * (max - min) + min
-    }
-    
-    
     /**
     
     The angle of a point around (0.5, 0.5).
+    
+    :param: point A point.
+    
+    :returns: The angle, in radians, of the vector of the given point around (0.5, 0.5).
     
     */
     func angleOfPoint (point: CGPoint) -> CGFloat {
@@ -1114,6 +1006,63 @@ class GradientScene : SKScene {
     
     /**
     
+    Disables the UIButton at the given tag.
+    
+    :param: tag The tag of the desired UIButton.
+    
+    */
+    func disableButtonForTag (tag: Int) {
+        
+        if let button = (view?.viewWithTag(tag) as? UIButton) {
+            button.enabled = false
+            button.layer.borderColor = UIColor.lightGrayColor().CGColor!
+            button.setTitleColor(UIColor.lightGrayColor(), forState: .Normal)
+        }
+    }
+    
+    
+    /**
+    
+    Disables the UILabel at the given tag.
+    
+    :param: tag The tag of the desired UILabel.
+    
+    */
+    func disableLabelForTag (tag: Int) {
+        
+        if let label = (view?.viewWithTag(tag) as? UILabel) {
+            label.enabled = false
+            label.layer.borderColor = UIColor.lightGrayColor().CGColor!
+            label.textColor = UIColor.lightGrayColor()
+        }
+    }
+    
+    
+    /**
+    
+    Disables the UISlider at the given tag.
+    
+    :param: tag The tag of the desired UISlider.
+    
+    */
+    func disableSliderForTag (tag: Int) {
+        
+        if let slider = view?.viewWithTag(tag) as? UISlider {
+            if slider.userInteractionEnabled {
+                slider.userInteractionEnabled = false
+                slider.minimumTrackTintColor = UIColor.lightGrayColor()
+                slider.maximumTrackTintColor = UIColor.lightGrayColor()
+                
+                if let label = view?.viewWithTag(tag + 1) as? UILabel {
+                    label.textColor = UIColor.lightGrayColor()
+                }
+            }
+        }
+    }
+    
+    
+    /**
+    
     The distance between two points.
     
     :param: firstPoint The first point.
@@ -1134,6 +1083,104 @@ class GradientScene : SKScene {
     
     /**
     
+    Enables the UIButton at the given tag.
+    
+    :param: tag The tag of the desired UIButton.
+    
+    */
+    func enableButtonForTag (tag: Int) {
+        
+        if let button = (view?.viewWithTag(tag) as? UIButton) {
+            button.enabled = true
+            button.layer.borderColor = blue.CGColor!
+            button.setTitleColor(blue, forState: .Normal)
+        }
+    }
+    
+    
+    /**
+    
+    Enables the UILabel at the given tag.
+    
+    :param: tag The tag of the desired UILabel.
+    
+    */
+    func enableLabelForTag (tag: Int) {
+        
+        if let label = (view?.viewWithTag(tag) as? UILabel) {
+            label.enabled = true
+            label.layer.borderColor = blue.CGColor!
+            label.textColor = blue
+        }
+    }
+    
+    
+    /**
+    
+    Enables the UISlider at the given tag.
+    
+    :param: tag The tag of the desired UISlider.
+    
+    */
+    func enableSliderForTag (tag: Int) {
+        
+        if let slider = view?.viewWithTag(tag) as? UISlider {
+            if slider.userInteractionEnabled == false {
+                slider.userInteractionEnabled = true
+                slider.minimumTrackTintColor = blue
+                slider.maximumTrackTintColor = UIColor.darkGrayColor()
+                
+                if let label = view?.viewWithTag(tag + 1) as? UILabel {
+                    label.textColor = blue
+                }
+            }
+        }
+    }
+    
+    
+    /**
+    
+    Generates a random CGFloat between the given min and max.
+    
+    :param: min The lowest possible return value.
+    
+    :param: max The highest possible return value.
+    
+    :returns: A random CGFloat between the given min and max.
+    
+    */
+    func random(#min: CGFloat, max: CGFloat) -> CGFloat {
+        
+        let random = CGFloat(Float(arc4random()) / 0xFFFFFFFF)
+        return random * (max - min) + min
+    }
+    
+    
+    /**
+    
+    Creates an array of the given number of random colors.
+    
+    :param: numberOfColors The number of colors that will be in the array.
+    
+    :returns: An array of the given number of random colors.
+    
+    */
+    func randomColorArray(numberOfColors: Int) -> [UIColor] {
+        
+        var newColors = [UIColor]()
+        
+        for var i = 0; i < numberOfColors; i++ {
+            
+            let newColor = UIColor(hue: random(min: 0.0, max: 1.0), saturation: random(min: 0.33, max: 1.0), brightness: random(min: 0.75, max: 1.0), alpha: 1.0)
+            newColors.append(newColor)
+        }
+        
+        return newColors
+    }
+    
+    
+    /**
+    
     A random roll for 1.0 or -1.0
     
     :returns: Either 1.0 or -1.0 with 50/50 probability.
@@ -1146,6 +1193,28 @@ class GradientScene : SKScene {
             return 1.0
         } else {
             return -1.0
+        }
+    }
+    
+    
+    /**
+    
+    Resets the currently selected BDGradientNode with the current settings. Note that only colors and locations are not updated in real-time.
+    
+    */
+    func resetCurrentNode () {
+        
+        gradientNode.removeAllActions()
+        
+        if let button = view?.viewWithTag(30) as? UIButton { button.setTitle("Animate: No", forState: .Normal) }
+        
+        switch gradientNode.gradientType {
+            
+        case "gamut": gamutGradientButtonPressed()
+        case "linear": linearGradientButtonPressed()
+        case "sweep": sweepGradientButtonPressed()
+        case "radial": radialGradientButtonPressed()
+        default: return
         }
     }
     
@@ -1177,5 +1246,21 @@ class GradientScene : SKScene {
         newPoint.y += 0.5
         
         return newPoint
+    }
+    
+    
+    /**
+    
+    A UIButton for a given tag.
+    
+    :param: tag The tag for the desired UIButton.
+    
+    :returns: The UIButton at the tag, if it exists; nil otherwise.
+    
+    */
+    func uiButtonForTag (tag: Int) -> UIButton? {
+        
+        if let button = view?.viewWithTag(tag) as? UIButton { return button }
+        else { return nil }
     }
 }
