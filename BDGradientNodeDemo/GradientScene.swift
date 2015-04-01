@@ -689,7 +689,7 @@ class GradientScene : SKScene {
         
         let currentType = gradientNode.gradientType
         gradientNode.removeFromParent()
-        gradientNode = BDGradientNode(gamutGradientWithTexture: currentTexture, center: gradientNode.center, startAngle: gradientNode.startAngle, blended: gradientNode.blended, keepShape: gradientNode.keepShape, size: nodeSize)
+        gradientNode = BDGradientNode(gamutGradientWithTexture: currentTexture, center: gradientNode.center, radius: gradientNode.radius, startAngle: gradientNode.startAngle, blended: gradientNode.blended, keepShape: gradientNode.keepShape, size: nodeSize)
         gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - nodeSize.height / 2 - nodeSize.height * 1 / 10)
         addChild(gradientNode)
         
@@ -728,7 +728,7 @@ class GradientScene : SKScene {
         
         let currentType = gradientNode.gradientType
         gradientNode.removeFromParent()
-        gradientNode = BDGradientNode(sweepGradientWithTexture: currentTexture, colors: colors, locations: locations, center: gradientNode.center, startAngle: gradientNode.startAngle, blended: gradientNode.blended, keepShape: gradientNode.keepShape, size: nodeSize)
+        gradientNode = BDGradientNode(sweepGradientWithTexture: currentTexture, colors: colors, locations: locations, center: gradientNode.center, radius: gradientNode.radius, startAngle: gradientNode.startAngle, blended: gradientNode.blended, keepShape: gradientNode.keepShape, size: nodeSize)
         gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - nodeSize.height / 2 - nodeSize.height * 1 / 10)
         addChild(gradientNode)
         
@@ -783,7 +783,8 @@ class GradientScene : SKScene {
     
     func firstRadiusSliderChanged () {
         
-        gradientNode.firstRadius = (view?.viewWithTag(52) as! UISlider).value
+        if gradientNode.gradientType == "gamut" || gradientNode.gradientType == "sweep" { gradientNode.radius = (view?.viewWithTag(52) as! UISlider).value }
+        if gradientNode.gradientType == "radial" { gradientNode.firstRadius = (view?.viewWithTag(52) as! UISlider).value }
     }
     
     
@@ -876,7 +877,9 @@ class GradientScene : SKScene {
             if let label = view?.viewWithTag(22) as? UILabel { label.hidden = true }
             if let button = view?.viewWithTag(30) as? UIButton { button.setTitle("Animate: No", forState: .Normal) }
             enableSliderForTag(50)
-            disableSliderForTag(52)
+            enableSliderForTag(52)
+            if let slider = view?.viewWithTag(52) as? UISlider { slider.value = gradientNode.radius }
+            if let label = view?.viewWithTag(53) as? UILabel { label.text = "Radius" }
             disableSliderForTag(54)
             if uiViewForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
             disableButtonForTag(96)
@@ -903,6 +906,8 @@ class GradientScene : SKScene {
             if let button = view?.viewWithTag(30) as? UIButton { button.setTitle("Animate: No", forState: .Normal) }
             disableSliderForTag(50)
             enableSliderForTag(52)
+            if let slider = view?.viewWithTag(52) as? UISlider { slider.value = gradientNode.firstRadius }
+            if let label = view?.viewWithTag(53) as? UILabel { label.text = "First Radius" }
             enableSliderForTag(54)
             enableButtonForTag(94)
             enableButtonForTag(96)
@@ -915,7 +920,9 @@ class GradientScene : SKScene {
             if let label = view?.viewWithTag(22) as? UILabel { label.hidden = true }
             if let button = view?.viewWithTag(30) as? UIButton { button.setTitle("Animate: No", forState: .Normal) }
             enableSliderForTag(50)
-            disableSliderForTag(52)
+            enableSliderForTag(52)
+            if let slider = view?.viewWithTag(52) as? UISlider { slider.value = gradientNode.radius }
+            if let label = view?.viewWithTag(53) as? UILabel { label.text = "Radius" }
             disableSliderForTag(54)
             if uiViewForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
             enableButtonForTag(96)
