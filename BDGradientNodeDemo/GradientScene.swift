@@ -715,7 +715,7 @@ class GradientScene : SKScene {
         
         let currentType = gradientNode.gradientType
         gradientNode.removeFromParent()
-        gradientNode = BDGradientNode(radialGradientWithTexture: currentTexture, colors: colors, locations: locations, firstCenter: gradientNode.firstCenter, firstRadius: gradientNode.firstRadius, secondCenter: gradientNode.secondCenter, secondRadius: gradientNode.secondRadius, blended: gradientNode.blended, size: nodeSize)
+        gradientNode = BDGradientNode(radialGradientWithTexture: currentTexture, colors: colors, locations: locations, firstCenter: gradientNode.firstCenter, firstRadius: gradientNode.firstRadius, secondCenter: gradientNode.secondCenter, secondRadius: gradientNode.secondRadius, blended: gradientNode.blended, keepShape: gradientNode.keepShape, size: nodeSize)
         gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - nodeSize.height / 2 - nodeSize.height * 1 / 10)
         addChild(gradientNode)
         
@@ -746,7 +746,7 @@ class GradientScene : SKScene {
         switch button.titleLabel!.text! {
             case "Blend Colors: Yes":
                 button.setTitle("Blend Colors: No", forState: .Normal)
-                if gradientNode.gradientType != "radial" { enableButtonForTag(94) }
+                enableButtonForTag(94)
             case "Blend Colors: No":
                 button.setTitle("Blend Colors: Yes", forState: .Normal)
                 disableButtonForTag(94)
@@ -904,7 +904,7 @@ class GradientScene : SKScene {
             disableSliderForTag(50)
             enableSliderForTag(52)
             enableSliderForTag(54)
-            disableButtonForTag(94)
+            enableButtonForTag(94)
             enableButtonForTag(96)
             enableButtonForTag(97)
             enableButtonForTag(98)
