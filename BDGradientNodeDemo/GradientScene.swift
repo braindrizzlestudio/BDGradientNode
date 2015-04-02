@@ -363,6 +363,7 @@ class GradientScene : SKScene {
         let slider = UISlider(frame: frame)
         slider.minimumValue = Float(0.0)
         slider.maximumValue = Float(2 * M_PI)
+        slider.maximumTrackTintColor = UIColor.darkGrayColor()
         slider.value = gradientNode.startAngle
         slider.addTarget(self, action: "startAngleSliderChanged", forControlEvents: .ValueChanged)
         slider.tag = 50
@@ -390,6 +391,7 @@ class GradientScene : SKScene {
         let slider = UISlider(frame: frame)
         slider.minimumValue = Float(0.0)
         slider.maximumValue = Float(1.0)
+        slider.maximumTrackTintColor = UIColor.darkGrayColor()
         slider.value = gradientNode.firstRadius
         slider.addTarget(self, action: "firstRadiusSliderChanged", forControlEvents: .ValueChanged)
         slider.tag = 52
@@ -417,6 +419,7 @@ class GradientScene : SKScene {
         let slider = UISlider(frame: frame)
         slider.minimumValue = Float(0.0)
         slider.maximumValue = Float(1.0)
+        slider.maximumTrackTintColor = UIColor.darkGrayColor()
         slider.value = gradientNode.secondRadius
         slider.addTarget(self, action: "secondRadiusSliderChanged", forControlEvents: .ValueChanged)
         slider.tag = 54
@@ -706,52 +709,62 @@ class GradientScene : SKScene {
     func gamutGradientButtonPressed () {
         
         let currentType = gradientNode.gradientType
-        gradientNode.removeFromParent()
-        gradientNode = BDGradientNode(gamutGradientWithTexture: currentTexture, center: gradientNode.center, radius: gradientNode.radius, startAngle: gradientNode.startAngle, blended: gradientNode.blended, keepShape: gradientNode.keepShape, size: nodeSize)
-        gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - nodeSize.height / 2 - nodeSize.height * 1 / 10)
-        addChild(gradientNode)
-        
+        switchToGradient("gamut")
         if currentType == "gamut" { return }
-        adjustUIForGradient("gamut")
     }
     
     
     func linearGradientButtonPressed () {
         
         let currentType = gradientNode.gradientType
-        gradientNode.removeFromParent()
-        gradientNode = BDGradientNode(linearGradientWithTexture: currentTexture, colors: colors, locations: locations, startPoint: gradientNode.startPoint, endPoint: gradientNode.endPoint, blended: gradientNode.blended, keepShape: gradientNode.keepShape, size: nodeSize)
-        gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - nodeSize.height / 2 - nodeSize.height * 1 / 10)
-        addChild(gradientNode)
-        
+        switchToGradient("linear")
         if currentType == "linear" { return }
-        adjustUIForGradient("linear")
     }
     
     
     func radialGradientButtonPressed () {
         
         let currentType = gradientNode.gradientType
-        gradientNode.removeFromParent()
-        gradientNode = BDGradientNode(radialGradientWithTexture: currentTexture, colors: colors, locations: locations, firstCenter: gradientNode.firstCenter, firstRadius: gradientNode.firstRadius, secondCenter: gradientNode.secondCenter, secondRadius: gradientNode.secondRadius, blended: gradientNode.blended, keepShape: gradientNode.keepShape, size: nodeSize)
-        gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - nodeSize.height / 2 - nodeSize.height * 1 / 10)
-        addChild(gradientNode)
-        
+        switchToGradient("radial")
         if currentType == "radial" { return }
-        adjustUIForGradient("radial")
     }
     
     
     func sweepGradientButtonPressed () {
         
         let currentType = gradientNode.gradientType
+        switchToGradient("sweep")
+        if currentType == "sweep" { return }
+    }
+    
+    // Doing is this way prevents some leaky memory
+    func switchToGradient(gradient: String) {
+        
+        let blended = gradientNode.blended
+        let center = gradientNode.center
+        let endPoint = gradientNode.endPoint
+        let firstCenter = gradientNode.firstCenter
+        let firstRadius = gradientNode.firstRadius
+        let keepShape = gradientNode.keepShape
+        let radius = gradientNode.radius
+        let secondCenter = gradientNode.secondCenter
+        let secondRadius = gradientNode.secondRadius
+        let startAngle = gradientNode.startAngle
+        let startPoint = gradientNode.startPoint
+        
         gradientNode.removeFromParent()
-        gradientNode = BDGradientNode(sweepGradientWithTexture: currentTexture, colors: colors, locations: locations, center: gradientNode.center, radius: gradientNode.radius, startAngle: gradientNode.startAngle, blended: gradientNode.blended, keepShape: gradientNode.keepShape, size: nodeSize)
+        gradientNode = nil  // This is what we needed
+        switch gradient {
+            
+            case "gamut": gradientNode = BDGradientNode(gamutGradientWithTexture: currentTexture, center: center, radius: radius, startAngle: startAngle, blended: blended, keepShape: keepShape, size: nodeSize)
+            case "linear": gradientNode = BDGradientNode(linearGradientWithTexture: currentTexture, colors: colors, locations: locations, startPoint: startPoint, endPoint: endPoint, blended: blended, keepShape: keepShape, size: nodeSize)
+            case "radial": gradientNode = BDGradientNode(radialGradientWithTexture: currentTexture, colors: colors, locations: locations, firstCenter: firstCenter, firstRadius: firstRadius, secondCenter: secondCenter, secondRadius: secondRadius, blended: blended, keepShape: keepShape, size: nodeSize)
+            case "sweep": gradientNode = BDGradientNode(sweepGradientWithTexture: currentTexture, colors: colors, locations: locations, center: center, radius: radius, startAngle: startAngle, blended: blended, keepShape: keepShape, size: nodeSize)
+            default: return
+        }
         gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - nodeSize.height / 2 - nodeSize.height * 1 / 10)
         addChild(gradientNode)
-        
-        if currentType == "sweep" { return }
-        adjustUIForGradient("sweep")
+        adjustUIForGradient(gradient)
     }
     
     
