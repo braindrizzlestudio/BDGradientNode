@@ -34,6 +34,7 @@ class BDGradientNode : SKSpriteNode {
     
     // MARK: - Properties
     
+    
     /// The type of gradient of the instantiated node: gamut, linear, radial, or sweep. (Read Only.)
     private(set) var gradientType = ""
     
@@ -44,7 +45,9 @@ class BDGradientNode : SKSpriteNode {
     private(set) var locations : [CGFloat]?
     
     
+    
     // MARK: Uniforms
+    
     
     // This array will be filled with the appropriate uniforms and passed to the shader.
     private var uniforms = [SKUniform]()
@@ -141,8 +144,8 @@ class BDGradientNode : SKSpriteNode {
     
     
     
-    
     // MARK: - Initialization
+    
     
     /// Use the appropriate convenience initializer to get your BDGradientNode; this isn't the initializer you're looking for.
     internal override init (texture: SKTexture!, color: UIColor!, size: CGSize) {
@@ -157,7 +160,7 @@ class BDGradientNode : SKSpriteNode {
     
     
     // MARK: Gamut Gradients
-
+    
     
     /**
     
@@ -193,6 +196,7 @@ class BDGradientNode : SKSpriteNode {
     
     // MARK: Linear Gradient
 
+    
     /**
     
     A SKSpriteNode with a linear gradient from bottom to top in the given texture.
@@ -227,7 +231,9 @@ class BDGradientNode : SKSpriteNode {
     }
        
     
+    
     // MARK: Radial Gradient
+    
     
     /**
     
@@ -307,6 +313,7 @@ class BDGradientNode : SKSpriteNode {
     }
     
     
+    
     // MARK: - Shaders
     
     
@@ -364,7 +371,7 @@ class BDGradientNode : SKSpriteNode {
         // Shader Creation
         
         
-        var gamutGradientShader = "precision highp float; vec3 hsv2rgb(vec3 c) { vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0); vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www); return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y); } float M_PI = 3.1415926535897932384626433832795; void main() { vec2 coord = v_tex_coord.xy - u_center; float angle = atan(coord.y, coord.x); angle = mod(angle / (2.0 * M_PI) - u_startAngle, 1.0); float distanceFromCenter = length(coord); vec4 color = vec4(hsv2rgb(vec3(angle, distanceFromCenter, 1.0)), 1.0); if (u_blended == 1.0) { color = color * texture2D(u_texture, v_tex_coord); } if (u_keepShape == 1.0) { vec4 textureColor = texture2D(u_texture, v_tex_coord); if (textureColor.w == 0.0) { discard; } } if (distance(coord, vec2(0.0, 0.0)) > u_radius) { discard; } gl_FragColor = color; }"
+        let gamutGradientShader = "precision highp float; vec3 hsv2rgb(vec3 c) { vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0); vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www); return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y); } float M_PI = 3.1415926535897932384626433832795; void main() { vec2 coord = v_tex_coord.xy - u_center; float angle = atan(coord.y, coord.x); angle = mod(angle / (2.0 * M_PI) - u_startAngle, 1.0); float distanceFromCenter = length(coord); vec4 color = vec4(hsv2rgb(vec3(angle, distanceFromCenter, 1.0)), 1.0); if (u_blended == 1.0) { color = color * texture2D(u_texture, v_tex_coord); } if (u_keepShape == 1.0) { vec4 textureColor = texture2D(u_texture, v_tex_coord); if (textureColor.w == 0.0) { discard; } } if (distance(coord, vec2(0.0, 0.0)) > u_radius) { discard; } gl_FragColor = color; }"
         
         var stringRange : NSRange
         var string = ""
@@ -372,7 +379,6 @@ class BDGradientNode : SKSpriteNode {
         
         return SKShader(source: gamutGradientShader)
     }
-    
     
     
     
@@ -456,7 +462,6 @@ class BDGradientNode : SKSpriteNode {
         self.endPoint = end
         uniforms.append(u_endPoint)
         
-
         
         // Shader Creation
         
@@ -513,11 +518,10 @@ class BDGradientNode : SKSpriteNode {
             linearGradientShader = linearGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
         }
         
-
         return SKShader(source: linearGradientShader)
     }
-
     
+   
     
     // MARK: Radial Gradient
     
@@ -581,7 +585,7 @@ class BDGradientNode : SKSpriteNode {
         // Colors in CGFloat-array form
         var colorFloats = [[CGFloat]]()
         for color in colors {
-            colorFloats.append(colorToRGBAComponentCGFloatArray(color))
+            colorFloats.insert(colorToRGBAComponentCGFloatArray(color), atIndex: 0)
         }
         
         
@@ -799,6 +803,7 @@ class BDGradientNode : SKSpriteNode {
 
     // MARK: - Helpers
 
+    
     /**
 
     Translates a UIColor into an array of its RGBA components.
@@ -817,6 +822,7 @@ class BDGradientNode : SKSpriteNode {
         return [red, green, blue, alpha]
     }
 }
+
 
 
 // MARK: - Extensions

@@ -6,7 +6,8 @@
 //  http://braindrizzlestudio.com
 //  Copyright (c) 2015 Braindrizzle Studio. All rights reserved.
 //
-
+//  This application is a demo of BDGradientNode.
+//
 
 import UIKit
 import SpriteKit

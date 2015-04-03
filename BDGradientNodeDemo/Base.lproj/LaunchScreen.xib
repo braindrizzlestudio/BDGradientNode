@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7525" systemVersion="14C1514" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7528.3" systemVersion="14C1514" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7516"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7518.3"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
@@ -10,23 +10,16 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gamut" translatesAutoresizingMaskIntoConstraints="NO" id="lR0-Lo-6bh">
-                    <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
-                </imageView>
-                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo-overlay-335x180" translatesAutoresizingMaskIntoConstraints="NO" id="NIT-2H-gUy">
+                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gamutlogo" translatesAutoresizingMaskIntoConstraints="NO" id="lR0-Lo-6bh">
                     <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
                 </imageView>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
-                <constraint firstItem="NIT-2H-gUy" firstAttribute="bottom" secondItem="lR0-Lo-6bh" secondAttribute="bottom" id="25Z-fh-Y6C"/>
-                <constraint firstItem="NIT-2H-gUy" firstAttribute="leading" secondItem="lR0-Lo-6bh" secondAttribute="leading" id="BfX-wU-f1b"/>
-                <constraint firstAttribute="bottom" secondItem="NIT-2H-gUy" secondAttribute="bottom" id="E17-jI-JG7"/>
-                <constraint firstItem="lR0-Lo-6bh" firstAttribute="top" secondItem="NIT-2H-gUy" secondAttribute="top" id="f2y-ah-myn"/>
-                <constraint firstItem="NIT-2H-gUy" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="oFg-Ku-tsh"/>
-                <constraint firstItem="lR0-Lo-6bh" firstAttribute="trailing" secondItem="NIT-2H-gUy" secondAttribute="trailing" id="pW9-Es-aGg"/>
-                <constraint firstAttribute="trailing" secondItem="NIT-2H-gUy" secondAttribute="trailing" id="pom-WW-CGc"/>
-                <constraint firstItem="NIT-2H-gUy" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="sSD-dN-y8s"/>
+                <constraint firstItem="lR0-Lo-6bh" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="2K9-rD-uXy"/>
+                <constraint firstAttribute="trailing" secondItem="lR0-Lo-6bh" secondAttribute="trailing" id="6uF-6Y-0cw"/>
+                <constraint firstAttribute="bottom" secondItem="lR0-Lo-6bh" secondAttribute="bottom" id="n72-rQ-KJL"/>
+                <constraint firstItem="lR0-Lo-6bh" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="ow7-e6-eB4"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
@@ -34,7 +27,6 @@
         </view>
     </objects>
     <resources>
-        <image name="gamut" width="855" height="854"/>
-        <image name="logo-overlay-335x180" width="335" height="180"/>
+        <image name="gamutlogo" width="855" height="854"/>
     </resources>
 </document>

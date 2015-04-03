@@ -6,6 +6,9 @@
 //  http://braindrizzlestudio.com
 //  Copyright (c) 2015 Braindrizzle Studio. All rights reserved.
 //
+//  This application is a demo of BDGradientNode.
+//
+
 
 import SpriteKit
 
@@ -13,6 +16,7 @@ class GradientScene : SKScene {
     
     
     // MARK: - Properties
+    
     
     // The pretty Apple blue for text/strokes
     var blue = UIColor(red: 0.0, green: 122/255, blue: 1.0, alpha: 1.0)
@@ -46,6 +50,7 @@ class GradientScene : SKScene {
     }
     
     
+    
     // MARK: - ViewController
     
     
@@ -75,6 +80,7 @@ class GradientScene : SKScene {
     }
     
     
+    
     // MARK: - Buttons and Labels
     
     
@@ -99,7 +105,9 @@ class GradientScene : SKScene {
     }
     
     
+    
     // MARK: Animation
+    
     
     func setupAnimationButton () {
         
@@ -109,6 +117,7 @@ class GradientScene : SKScene {
         let button = setupButton(frame: frame, title: "Animate: No", action: "animateButtonPressed")
         button.tag = 30
     }
+    
     
     
     // MARK: Colors
@@ -150,7 +159,9 @@ class GradientScene : SKScene {
     }
     
     
+    
     // MARK: Gradients
+    
     
     func setupGamutGradientButton () {
         
@@ -188,7 +199,9 @@ class GradientScene : SKScene {
     }
     
     
+    
     // MARK: Options
+    
     
     func setupBlendedButton () {
         
@@ -221,7 +234,9 @@ class GradientScene : SKScene {
     }
     
     
+    
     // MARK: Labels
+    
     
     func setupLabels() {
         
@@ -301,7 +316,9 @@ class GradientScene : SKScene {
     }
     
     
+    
     // MARK: Button and Label Makers
+    
     
     func setupButton (#frame: CGRect, title: String, action: Selector) -> UIButton {
 
@@ -342,6 +359,7 @@ class GradientScene : SKScene {
         
         return label
     }
+    
     
     
     // MARK: - Sliders
@@ -439,9 +457,12 @@ class GradientScene : SKScene {
     }
     
     
+    
     // MARK: - Actions
     
+    
     // MARK: Animation
+    
     
     func animateButtonPressed () {
 
@@ -677,7 +698,9 @@ class GradientScene : SKScene {
     }
     
     
+    
     // MARK: Colors
+    
     
     func randomColorsButtonPressed () {
         
@@ -704,7 +727,9 @@ class GradientScene : SKScene {
     }
     
     
+    
     // MARK: Gradients
+    
     
     func gamutGradientButtonPressed () {
         
@@ -737,7 +762,7 @@ class GradientScene : SKScene {
         if currentType == "sweep" { return }
     }
     
-    // Doing is this way prevents some leaky memory
+    
     func switchToGradient(gradient: String) {
         
         let blended = gradientNode.blended
@@ -753,7 +778,8 @@ class GradientScene : SKScene {
         let startPoint = gradientNode.startPoint
         
         gradientNode.removeFromParent()
-        gradientNode = nil  // This is what we needed
+        gradientNode = nil
+        
         switch gradient {
             
             case "gamut": gradientNode = BDGradientNode(gamutGradientWithTexture: currentTexture, center: center, radius: radius, startAngle: startAngle, blended: blended, keepShape: keepShape, size: nodeSize)
@@ -762,13 +788,16 @@ class GradientScene : SKScene {
             case "sweep": gradientNode = BDGradientNode(sweepGradientWithTexture: currentTexture, colors: colors, locations: locations, center: center, radius: radius, startAngle: startAngle, blended: blended, keepShape: keepShape, size: nodeSize)
             default: return
         }
+        
         gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - nodeSize.height / 2 - nodeSize.height * 1 / 10)
         addChild(gradientNode)
         adjustUIForGradient(gradient)
     }
     
     
+    
     // MARK: Options
+    
     
     func blendColorsButtonPressed () {
 
@@ -804,7 +833,9 @@ class GradientScene : SKScene {
     }
     
     
+    
     // MARK: Sliders
+    
     
     func startAngleSliderChanged () {
         
@@ -825,7 +856,9 @@ class GradientScene : SKScene {
     }
 
     
+    
     // MARK: - Touch Handling
+    
     
     override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
         
@@ -844,15 +877,19 @@ class GradientScene : SKScene {
                     switch gradientNode.gradientType {
                         
                         case "gamut": gradientNode.center = point
+                        
                         case "linear":
                             let closest = chooseCloserPoint(point, otherPoint1: gradientNode.startPoint, otherPoint2: gradientNode.endPoint)
                             if closest == 1 { gradientNode.startPoint = point }
                             else if closest == 2 || closest == 3 { gradientNode.endPoint = point }
-                            case "sweep": gradientNode.center = point
+                        
+                        case "sweep": gradientNode.center = point
+                        
                         case "radial":
                             let closest = chooseCloserPoint(point, otherPoint1: gradientNode.firstCenter, otherPoint2: gradientNode.secondCenter)
                             if closest == 1 { gradientNode.firstCenter = point }
                             else if closest == 2 || closest == 3 { gradientNode.secondCenter = point }
+                        
                         default: return
                     }
                 }
@@ -878,21 +915,26 @@ class GradientScene : SKScene {
                     switch gradientNode.gradientType {
                         
                         case "gamut": gradientNode.center = point
+                        
                         case "linear":
                             let closest = chooseCloserPoint(point, otherPoint1: gradientNode.startPoint, otherPoint2: gradientNode.endPoint)
                             if closest == 1 { gradientNode.startPoint = point }
                             else if closest == 2 || closest == 3 { gradientNode.endPoint = point }
+                        
                         case "radial":
                             let closest = chooseCloserPoint(point, otherPoint1: gradientNode.firstCenter, otherPoint2: gradientNode.secondCenter)
                             if closest == 1 { gradientNode.firstCenter = point }
                             else if closest == 2 || closest == 3 { gradientNode.secondCenter = point }
+                        
                         case "sweep": gradientNode.center = point
+                        
                         default: return
                     }
                 }
             }
         }
     }
+    
     
     
     // MARK: - Helpers
@@ -919,7 +961,7 @@ class GradientScene : SKScene {
             if let slider = view?.viewWithTag(52) as? UISlider { slider.value = gradientNode.radius }
             if let label = view?.viewWithTag(53) as? UILabel { label.text = "Radius" }
             disableSliderForTag(54)
-            if uiButtonForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
+            if buttonForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
             disableButtonForTag(96)
             disableButtonForTag(97)
             disableButtonForTag(98)
@@ -932,7 +974,7 @@ class GradientScene : SKScene {
             disableSliderForTag(50)
             disableSliderForTag(52)
             disableSliderForTag(54)
-            if uiButtonForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
+            if buttonForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
             enableButtonForTag(96)
             enableButtonForTag(97)
             enableButtonForTag(98)
@@ -947,7 +989,7 @@ class GradientScene : SKScene {
             if let slider = view?.viewWithTag(52) as? UISlider { slider.value = gradientNode.firstRadius }
             if let label = view?.viewWithTag(53) as? UILabel { label.text = "First Radius" }
             enableSliderForTag(54)
-            if uiButtonForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
+            if buttonForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
             enableButtonForTag(96)
             enableButtonForTag(97)
             enableButtonForTag(98)
@@ -962,7 +1004,7 @@ class GradientScene : SKScene {
             if let slider = view?.viewWithTag(52) as? UISlider { slider.value = gradientNode.radius }
             if let label = view?.viewWithTag(53) as? UILabel { label.text = "Radius" }
             disableSliderForTag(54)
-            if uiButtonForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
+            if buttonForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
             enableButtonForTag(96)
             enableButtonForTag(97)
             enableButtonForTag(98)
@@ -1194,24 +1236,6 @@ class GradientScene : SKScene {
     
     /**
     
-    A random roll for 1.0 or -1.0
-    
-    :returns: Either 1.0 or -1.0 with 50/50 probability.
-    
-    */
-    func randomPlusMinus () -> CGFloat {
-        
-        let randomNumber = random(min: 0.0, max: 1.0)
-        if randomNumber >= 0.5 {
-            return 1.0
-        } else {
-            return -1.0
-        }
-    }
-    
-    
-    /**
-    
     Resets the currently selected BDGradientNode with the current settings. Note that only colors and locations are not updated in real-time.
     
     */
@@ -1271,7 +1295,7 @@ class GradientScene : SKScene {
     :returns: The UIButton at the tag, if it exists; nil otherwise.
     
     */
-    func uiButtonForTag (tag: Int) -> UIButton? {
+    func buttonForTag (tag: Int) -> UIButton? {
         
         if let button = view?.viewWithTag(tag) as? UIButton { return button }
         else { return nil }
