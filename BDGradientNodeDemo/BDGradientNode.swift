@@ -39,11 +39,7 @@ class BDGradientNode : SKSpriteNode {
     private(set) var gradientType = ""
     
     /// The gradient's colors. (Read Only)
-    private(set) var colors : [UIColor]?
-    
-    /// The gradient's colors' locations. (Read Only)
-    private(set) var locations : [CGFloat]?
-    
+    private(set) var colors = [UIColor]()
     
     
     // MARK: Uniforms
@@ -74,6 +70,7 @@ class BDGradientNode : SKSpriteNode {
     var endPoint = CGPoint(x: 0.5, y: 1.0) {
         didSet {
             u_endPoint.floatVector2Value = GLKVector2Make(Float(endPoint.x), Float(endPoint.y))
+            updateLocations()
         }
     }
     
@@ -94,11 +91,19 @@ class BDGradientNode : SKSpriteNode {
     }
     
     private let u_keepShape = SKUniform(name: "u_keepShape", float: 1.0)
-    /// (Gamut, Linear, and Sweep Gradients) If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blended is true.
+    /// (All Gradients) If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blended is true.
     var keepShape = true {
         didSet {
             if keepShape == true { u_keepShape.floatValue = 1.0 }
             if keepShape == false { u_keepShape.floatValue = 0.0 }
+        }
+    }
+    
+    private var u_locations = [SKUniform]()
+    /// (Linear, Radial, and Sweep) An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. If the number of locations is not appropriate for the initialized gradient, or the values are out of range, locations will be set to nil and the colors will be evenly spread out. Linear and Radial must have (number of colors - 2) locations; Sweep must have (number of colors - 1) locations.
+    var locations : [Float]? {
+        didSet {
+            updateLocations()
         }
     }
     
@@ -139,6 +144,7 @@ class BDGradientNode : SKSpriteNode {
     var startPoint = CGPoint(x: 0.5, y: 0.0) {
         didSet {
             u_startPoint.floatVector2Value = GLKVector2Make(Float(startPoint.x), Float(startPoint.y))
+            updateLocations()
         }
     }
     
@@ -218,7 +224,7 @@ class BDGradientNode : SKSpriteNode {
     :param: size The desired size of the node.
     
     */
-    convenience init (linearGradientWithTexture texture: SKTexture, colors: [UIColor], locations: [CGFloat]?, startPoint: CGPoint?, endPoint: CGPoint?, blended: Bool, keepShape: Bool, size: CGSize) {
+    convenience init (linearGradientWithTexture texture: SKTexture, colors: [UIColor], locations: [Float]?, startPoint: CGPoint?, endPoint: CGPoint?, blended: Bool, keepShape: Bool, size: CGSize) {
         
         self.init(texture: texture, color: nil, size: size)
         
@@ -260,7 +266,7 @@ class BDGradientNode : SKSpriteNode {
     :param: size The desired size of the node. Note: if this size is not the size of the passed texture then the "circles" will be ellipses.
     
     */
-    convenience init (radialGradientWithTexture texture: SKTexture, colors: [UIColor], locations: [CGFloat]?, firstCenter: CGPoint?, firstRadius: Float?, secondCenter: CGPoint?, secondRadius: Float?, blended: Bool, keepShape: Bool, size: CGSize) {
+    convenience init (radialGradientWithTexture texture: SKTexture, colors: [UIColor], locations: [Float]?, firstCenter: CGPoint?, firstRadius: Float?, secondCenter: CGPoint?, secondRadius: Float?, blended: Bool, keepShape: Bool, size: CGSize) {
         
         self.init(texture: texture, color: nil, size: size)
 
@@ -300,7 +306,7 @@ class BDGradientNode : SKSpriteNode {
     :param: size The desired size of the node.
     
     */
-    convenience init (sweepGradientWithTexture texture: SKTexture, colors: [UIColor], locations: [CGFloat]?, center: CGPoint?, radius: Float?, startAngle: Float?, blended: Bool, keepShape: Bool, size: CGSize) {
+    convenience init (sweepGradientWithTexture texture: SKTexture, colors: [UIColor], locations: [Float]?, center: CGPoint?, radius: Float?, startAngle: Float?, blended: Bool, keepShape: Bool, size: CGSize) {
         
         self.init(texture: texture, color: nil, size: size)
         
@@ -404,11 +410,12 @@ class BDGradientNode : SKSpriteNode {
     :returns: An SKShader that will produce a linear gradient. Note: the current implementation simply uses the GLSL mix function, which is a linear interpolation. For colors near to each other on the spectrum the results are fine; for very different colors the results can be pretty ugly. If you need a gradient between very different colors then you can simply add more colors in between to narrow the relative distances.
     
     */
-    private func linearGradientShader(#colors: [UIColor], locations: [CGFloat]?, startPoint: CGPoint?, endPoint: CGPoint?, blended: Bool, keepShape: Bool) -> SKShader {
+    private func linearGradientShader(#colors: [UIColor], locations: [Float]?, startPoint: CGPoint?, endPoint: CGPoint?, blended: Bool, keepShape: Bool) -> SKShader {
         
         
-        // Sanitization
+        // Sanitization and Uniforms
         
+        // blended
         self.blended = blended
         uniforms.append(u_blended)
         
@@ -423,15 +430,17 @@ class BDGradientNode : SKSpriteNode {
             colorFloats.append(colorToRGBAComponentCGFloatArray(color))
         }
         
+        // keepShape
         self.keepShape = keepShape
         uniforms.append(u_keepShape)
         
+        
         // Locations
-        var locationArray = [CGFloat]()
+        var locationArray = [Float]()
         if locations != nil && locations!.count == colors.count - 2 {
             
-            var lastValue : CGFloat = 0.000001
-            var newValue : CGFloat = 0.0
+            var lastValue : Float = 0.000001
+            var newValue : Float = 0.0
             for location in locations! {
                 
                 newValue = min(max(location, lastValue), 1.0)
@@ -443,11 +452,10 @@ class BDGradientNode : SKSpriteNode {
             
             for var i = 0; i < colors.count - 2; i++ {
                 
-                let location = (CGFloat(i) + 1.0) / (CGFloat(colors.count) - 1.0)
+                let location = (Float(i) + 1.0) / (Float(colors.count) - 1.0)
                 locationArray.append(location)
             }
         }
-        
         
         // Start and end points
         var start = CGPoint(x: 0.5, y: 0.0)
@@ -461,6 +469,16 @@ class BDGradientNode : SKSpriteNode {
         uniforms.append(u_startPoint)
         self.endPoint = end
         uniforms.append(u_endPoint)
+        
+        // Location uniforms
+        let vector = CGPoint(x: self.endPoint.x - self.startPoint.x, y: self.endPoint.y - self.startPoint.y)
+        for (index, location) in enumerate(locationArray) {
+            
+            let vector2 = GLKVector2Make(Float(self.startPoint.x) + location * Float(vector.x), Float(self.startPoint.y) + location * Float(vector.y))
+            let locationUniform = SKUniform(name: "u_stop\(index + 1)", floatVector2: vector2)
+            u_locations.append(locationUniform)
+            uniforms.append(locationUniform)
+        }
         
         
         // Shader Creation
@@ -485,28 +503,19 @@ class BDGradientNode : SKSpriteNode {
                 
                 if i == 1 {
                     
-                 string = "color = mix(color0, color1, smoothstep(dot(u_startPoint, vector), dot(stop\(i), vector), dot(coord, vector))); "
+                 string = "color = mix(color0, color1, smoothstep(dot(u_startPoint, vector), dot(u_stop\(i), vector), dot(coord, vector))); "
                     
                 } else if i == colors.count - 1 {
                     
-                    string = "color = mix(color, color\(i), smoothstep(dot(stop\(i - 1), vector), dot(u_endPoint, vector), dot(coord, vector))); "
+                    string = "color = mix(color, color\(i), smoothstep(dot(u_stop\(i - 1), vector), dot(u_endPoint, vector), dot(coord, vector))); "
                     
                 } else {
                     
-                    string = "color = mix(color, color\(i), smoothstep(dot(stop\(i - 1), vector), dot(stop\(i), vector), dot(coord, vector))); "
+                    string = "color = mix(color, color\(i), smoothstep(dot(u_stop\(i - 1), vector), dot(u_stop\(i), vector), dot(coord, vector))); "
                 }
                 
                 linearGradientShader = linearGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
             }
-        }
-        
-        
-        // Add the locations
-        stringRange = (linearGradientShader as NSString).rangeOfString("vec2 vector = vec2(u_endPoint.x - u_startPoint.x, u_endPoint.y - u_startPoint.y); ")
-        for (index, location) in enumerate(locationArray) {
-            
-            string = "vec2 stop\(index + 1) = vec2(u_startPoint.x + \(location) * vector.x, u_startPoint.y + \(location) * vector.y); "
-            linearGradientShader = linearGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
         }
         
         
@@ -549,7 +558,7 @@ class BDGradientNode : SKSpriteNode {
     :returns: An SKShader that produced a radial gradient with colors begining at the first circle and ending at the second.
     
     */
-    private func radialGradientShader (#colors: [UIColor], locations: [CGFloat]?, firstCenter: CGPoint?, firstRadius: Float?, secondCenter: CGPoint?, secondRadius: Float?, blended: Bool, keepShape: Bool) -> SKShader {
+    private func radialGradientShader (#colors: [UIColor], locations: [Float]?, firstCenter: CGPoint?, firstRadius: Float?, secondCenter: CGPoint?, secondRadius: Float?, blended: Bool, keepShape: Bool) -> SKShader {
         
         
         // Sanitizaton
@@ -591,25 +600,25 @@ class BDGradientNode : SKSpriteNode {
         
         // Locations
         // colors.count - 2 is the expected number of locations. If the number is different: spread out evenly.
-        var locationArray = [CGFloat]()
+        var locationArray = [Float]()
         if locations != nil && locations!.count == colors.count - 2 {
             
-            locationArray.append(CGFloat(0.0))
-            var lastValue : CGFloat = 0.000001
-            var newValue : CGFloat = 0.0
+            locationArray.append(Float(0.0))
+            var lastValue : Float = 0.000001
+            var newValue : Float = 0.0
             for location in locations! {
                 
                 newValue = min(max(location, lastValue), 1.0)
                 locationArray.append(newValue)
                 lastValue = newValue + 0.000001
             }
-            locationArray.append(CGFloat(1.0))
+            locationArray.append(Float(1.0))
             
         } else {
             
             for var i = 0; i < colors.count; i++ {
                 
-                let location = CGFloat(i) / CGFloat(colors.count - 1)
+                let location = Float(i) / Float(colors.count - 1)
                 locationArray.append(location)
             }
         }
@@ -686,7 +695,7 @@ class BDGradientNode : SKSpriteNode {
     :returns: An SKShader that will produce a sweep gradient. Note: the current implementation simply uses the GLSL mix function, which is a linear interpolation. For colors near to each other on the spectrum the results are fine; for very different colors the results can be pretty ugly. If you need a gradient between very different colors then you can simply add more clors in between to narrow the relative distances.
     
     */
-    private func sweepGradientShader(#colors: [UIColor], locations: [CGFloat]?, center: CGPoint?, radius: Float?, startAngle: Float?, blended: Bool, keepShape: Bool) -> SKShader {
+    private func sweepGradientShader(#colors: [UIColor], locations: [Float]?, center: CGPoint?, radius: Float?, startAngle: Float?, blended: Bool, keepShape: Bool) -> SKShader {
         
         
         // Sanitization
@@ -718,12 +727,12 @@ class BDGradientNode : SKSpriteNode {
         
         // Locations
         // colors.count - 1 is the expected number of locations. If the number is different: spread out evenly.
-        var locationArray = [CGFloat]()
+        var locationArray = [Float]()
         if locations != nil && locations!.count == colors.count - 1 {
             
-            locationArray.append(CGFloat(0.0))
-            var lastValue : CGFloat = 0.000001
-            var newValue : CGFloat = 0.0
+            locationArray.append(Float(0.0))
+            var lastValue : Float = 0.000001
+            var newValue : Float = 0.0
             for location in locations! {
                 
                 newValue = min(max(location, lastValue), 1.0)
@@ -734,7 +743,7 @@ class BDGradientNode : SKSpriteNode {
             
             for var i = 0; i < colors.count; i++ {
                 
-                let location = CGFloat(i) / CGFloat(colors.count)
+                let location = Float(i) / Float(colors.count)
                 locationArray.append(location)
             }
         }
@@ -820,6 +829,59 @@ class BDGradientNode : SKSpriteNode {
         let components = color.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
         
         return [red, green, blue, alpha]
+    }
+    
+    
+    private func defaultLocations () {
+        
+        var locationArray = [Float]()
+        for var i = 0; i < colors.count - 2; i++ {
+            
+            let location = (Float(i) + 1.0) / (Float(colors.count) - 1.0)
+            locationArray.append(location)
+        }
+        
+        locations = locationArray
+    }
+    
+    
+    /**
+    
+    Updates the uniforms in u_locations with the values in self.locations.
+
+    */
+    private func updateLocations () {
+
+        // Sanitization
+        
+        if locations != nil {
+
+            if gradientType == "linear" || gradientType == "radial" { if locations!.count != colors.count - 2 { defaultLocations(); return } }
+            
+            else if gradientType == "sweep" { if locations!.count != colors.count - 1 { defaultLocations(); return } }
+            
+            else {
+                for location in locations! {
+                    if location <= 0 || location >= 1 { defaultLocations(); return }
+                }
+            }
+            
+        } else {
+            
+            defaultLocations()
+        }
+        
+        // Update uniforms
+        
+        if gradientType == "linear" || gradientType == "radial" {
+            
+            let vector = CGPoint(x: endPoint.x - startPoint.x, y: endPoint.y - startPoint.y)
+            for var i = 0; i < u_locations.count; i++ {
+                
+                let vector2 = GLKVector2Make(Float(startPoint.x) + locations![i] * Float(vector.x), Float(startPoint.y) + locations![i] * Float(vector.y))
+                u_locations[i].floatVector2Value = vector2
+            }
+        }
     }
 }
 
