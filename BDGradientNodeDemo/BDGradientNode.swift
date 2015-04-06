@@ -23,7 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Version: 1.0
+Version: 1.1
 
 */
 
@@ -211,7 +211,7 @@ class BDGradientNode : SKSpriteNode {
     
     :param: colors An array of two or more colors.
     
-    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  CGFloats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
+    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  Floats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
     
     :param: startPoint The point from which the gradient will start. If this is not nil then endPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 0.0).
     
@@ -230,7 +230,6 @@ class BDGradientNode : SKSpriteNode {
         
         gradientType = "linear"
         self.colors = colors
-        self.locations = locations
         
         shader = linearGradientShader(colors: colors, locations: locations, startPoint: startPoint, endPoint: endPoint, blended: blended, keepShape: keepShape)
         shader?.uniforms = uniforms
@@ -249,7 +248,7 @@ class BDGradientNode : SKSpriteNode {
     
     :param: colors An array of two or more colors.
     
-    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  CGFloats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
+    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  Floats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
     
     :param: firstCenter The center of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
@@ -272,7 +271,6 @@ class BDGradientNode : SKSpriteNode {
 
         gradientType = "radial"
         self.colors = colors
-        self.locations = locations
         
         shader = radialGradientShader(colors: colors, locations: locations, firstCenter: firstCenter, firstRadius: firstRadius, secondCenter: secondCenter, secondRadius: secondRadius, blended: blended, keepShape: keepShape)
         shader?.uniforms = uniforms
@@ -291,7 +289,7 @@ class BDGradientNode : SKSpriteNode {
     
     :param: colors An array of two or more colors.
     
-    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; 0.0 = 1.0; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at startAngle; the rest are at these locations. For that reason: locations must contain  colors.count - 1  CGFloats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
+    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; 0.0 = 1.0; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at startAngle; the rest are at these locations. For that reason: locations must contain  colors.count - 1  Floats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
     
     :param: center The center of the sweeping gradient in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
@@ -312,7 +310,6 @@ class BDGradientNode : SKSpriteNode {
         
         gradientType = "sweep"
         self.colors = colors
-        self.locations = locations
         
         shader = sweepGradientShader(colors: colors, locations: locations, center: center, radius: radius, startAngle: startAngle, blended: blended, keepShape: keepShape)
         shader?.uniforms = uniforms
@@ -397,7 +394,7 @@ class BDGradientNode : SKSpriteNode {
     
     :param: colors An array of two or more colors.
     
-    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  CGFloats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
+    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  Floats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
     
     :param: startPoint The point from which the gradient will start. If this is not nil then endPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 0.0).
     
@@ -456,6 +453,8 @@ class BDGradientNode : SKSpriteNode {
                 locationArray.append(location)
             }
         }
+        self.locations = locationArray
+        
         
         // Start and end points
         var start = CGPoint(x: 0.5, y: 0.0)
@@ -469,6 +468,7 @@ class BDGradientNode : SKSpriteNode {
         uniforms.append(u_startPoint)
         self.endPoint = end
         uniforms.append(u_endPoint)
+        
         
         // Location uniforms
         let vector = CGPoint(x: self.endPoint.x - self.startPoint.x, y: self.endPoint.y - self.startPoint.y)
@@ -541,7 +541,7 @@ class BDGradientNode : SKSpriteNode {
     
     :param: colors An array of two or more colors.
     
-    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  CGFloats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
+    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  Floats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
     
     :param: firstCenter The center of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
@@ -603,7 +603,6 @@ class BDGradientNode : SKSpriteNode {
         var locationArray = [Float]()
         if locations != nil && locations!.count == colors.count - 2 {
             
-            locationArray.append(Float(0.0))
             var lastValue : Float = 0.000001
             var newValue : Float = 0.0
             for location in locations! {
@@ -612,16 +611,24 @@ class BDGradientNode : SKSpriteNode {
                 locationArray.append(newValue)
                 lastValue = newValue + 0.000001
             }
-            locationArray.append(Float(1.0))
             
         } else {
             
-            for var i = 0; i < colors.count; i++ {
+            for var i = 1; i < colors.count - 1; i++ {
                 
                 let location = Float(i) / Float(colors.count - 1)
                 locationArray.append(location)
             }
         }
+        
+        // Location uniforms
+        for (index, location) in enumerate(locationArray) {
+            
+            let locationUniform = SKUniform(name: "u_location\(index + 1)", float: location)
+            u_locations.append(locationUniform)
+            uniforms.append(locationUniform)
+        }
+        self.locations = locationArray
         
        
         // Radii
@@ -633,7 +640,7 @@ class BDGradientNode : SKSpriteNode {
         
         // Shader Creation
         
-        var radialGradientShader = "precision highp float; float center0X = u_firstCenter.x; float center0Y = u_firstCenter.y; float center1X = u_secondCenter.x; float center1Y = u_secondCenter.y; void main() { float coordX = v_tex_coord.x; float coordY = v_tex_coord.y; float root = sqrt(u_secondRadius * u_secondRadius * ((center0X - coordX) * (center0X - coordX) + (center0Y - coordY) * (center0Y - coordY)) - 2.0 * u_firstRadius * u_secondRadius * ((center0X - coordX) * (center1X - coordX) + (center0Y - coordY) * (center1Y - coordY)) + u_firstRadius * u_firstRadius * ((center1X - coordX) * (center1X - coordX) + (center1Y - coordY) * (center1Y - coordY)) - ((center1X * center0Y - coordX * center0Y - center0X * center1Y + coordX * center1Y + center0X * coordY - center1X * coordY) * (center1X * center0Y - coordX * center0Y - center0X * center1Y + coordX * center1Y + center0X * coordY - center1X * coordY))); float t; if(distance(v_tex_coord.xy, vec2(center1X, center1Y)) > u_secondRadius) { t = (-u_secondRadius * (u_firstRadius - u_secondRadius) + (center0X - center1X) * (center1X - coordX) + (center0Y - center1Y) * (center1Y - coordY) + root) / ((u_firstRadius - u_secondRadius) * (u_firstRadius - u_secondRadius) - (center0X - center1X) * (center0X - center1X) - (center0Y - center1Y) * (center0Y - center1Y)); } else { t = (-u_secondRadius * (u_firstRadius - u_secondRadius) + (center0X - center1X) * (center1X - coordX) + (center0Y - center1Y) * (center1Y - coordY) - root) / ((u_firstRadius - u_secondRadius) * (u_firstRadius - u_secondRadius) - (center0X - center1X) * (center0X - center1X) - (center0Y - center1Y) * (center0Y - center1Y)); } if (t > 0.0 && t <= 1.0) { vec4 color = mix(color0, color1, smoothstep(location0, location1, t)); if (u_blended == 1.0) { color = color * texture2D(u_texture, v_tex_coord); } if (u_keepShape == 1.0) { vec4 textureColor = texture2D(u_texture, v_tex_coord); if (textureColor.w == 0.0) { discard; } } gl_FragColor = color; } else { discard; } }"
+        var radialGradientShader = "precision highp float; vec4 color; float center0X = u_firstCenter.x; float center0Y = u_firstCenter.y; float center1X = u_secondCenter.x; float center1Y = u_secondCenter.y; float location0 = 0.0; void main() { float coordX = v_tex_coord.x; float coordY = v_tex_coord.y; float root = sqrt(u_secondRadius * u_secondRadius * ((center0X - coordX) * (center0X - coordX) + (center0Y - coordY) * (center0Y - coordY)) - 2.0 * u_firstRadius * u_secondRadius * ((center0X - coordX) * (center1X - coordX) + (center0Y - coordY) * (center1Y - coordY)) + u_firstRadius * u_firstRadius * ((center1X - coordX) * (center1X - coordX) + (center1Y - coordY) * (center1Y - coordY)) - ((center1X * center0Y - coordX * center0Y - center0X * center1Y + coordX * center1Y + center0X * coordY - center1X * coordY) * (center1X * center0Y - coordX * center0Y - center0X * center1Y + coordX * center1Y + center0X * coordY - center1X * coordY))); float t; if(distance(v_tex_coord.xy, vec2(center1X, center1Y)) > u_secondRadius) { t = (-u_secondRadius * (u_firstRadius - u_secondRadius) + (center0X - center1X) * (center1X - coordX) + (center0Y - center1Y) * (center1Y - coordY) + root) / ((u_firstRadius - u_secondRadius) * (u_firstRadius - u_secondRadius) - (center0X - center1X) * (center0X - center1X) - (center0Y - center1Y) * (center0Y - center1Y)); } else { t = (-u_secondRadius * (u_firstRadius - u_secondRadius) + (center0X - center1X) * (center1X - coordX) + (center0Y - center1Y) * (center1Y - coordY) - root) / ((u_firstRadius - u_secondRadius) * (u_firstRadius - u_secondRadius) - (center0X - center1X) * (center0X - center1X) - (center0Y - center1Y) * (center0Y - center1Y)); } if (t > 0.0 && t <= 1.0) { if (u_blended == 1.0) { color = color * texture2D(u_texture, v_tex_coord); } if (u_keepShape == 1.0) { vec4 textureColor = texture2D(u_texture, v_tex_coord); if (textureColor.w == 0.0) { discard; } } gl_FragColor = color; } else { discard; } }"
         
         
         var stringRange : NSRange
@@ -641,13 +648,33 @@ class BDGradientNode : SKSpriteNode {
         
         
         // Add the gradients
-        stringRange = (radialGradientShader as NSString).rangeOfString("vec4 color = mix(color0, color1, smoothstep(location0, location1, t)); ")
-        for var i = colors.count - 1; i > 1 ; i-- {
+        if colors.count == 2 {
             
-            string = "color = mix(color, color\(i), smoothstep(location\(i - 1), location\(i), t)); "
+            stringRange = (radialGradientShader as NSString).rangeOfString("if (t > 0.0 && t <= 1.0) { ")
+            string = "color = mix(color0, color1, smoothstep(location0, location1, t)); "
+            radialGradientShader = radialGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
+            
+        } else {
+            
+            stringRange = (radialGradientShader as NSString).rangeOfString("if (t > 0.0 && t <= 1.0) { ")
+            
+            for var i = colors.count - 1; i > 1 ; i-- {
+                
+                if i == colors.count - 1 {
+                    
+                    string = "color = mix(color, color\(i), smoothstep(u_location\(i - 1), location\(i), t)); "
+                    radialGradientShader = radialGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
+                    
+                } else {
+                
+                    string = "color = mix(color, color\(i), smoothstep(u_location\(i - 1), u_location\(i), t)); "
+                    radialGradientShader = radialGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
+                }
+            }
+            
+            string = "vec4 color = mix(color0, color1, smoothstep(location0, u_location1, t)); "
             radialGradientShader = radialGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
         }
-        
         
         // Add the colors
         stringRange = (radialGradientShader as NSString).rangeOfString("precision highp float; ")
@@ -658,13 +685,11 @@ class BDGradientNode : SKSpriteNode {
         }
         
         
-        // Add the locations
-        stringRange = (radialGradientShader as NSString).rangeOfString("precision highp float; ")
-        for (index, location) in enumerate(locationArray) {
-            
-            string = "float location\(index) = \(location); "
-            radialGradientShader = radialGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
-        }
+        // Add the final locations
+        stringRange = (radialGradientShader as NSString).rangeOfString("float location0 = 0.0; ")
+        string = "float location\(colors.count - 1) = 1.0; "
+        radialGradientShader = radialGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
+        
         
         return SKShader(source: radialGradientShader)
     }
@@ -680,7 +705,7 @@ class BDGradientNode : SKSpriteNode {
     
     :param: colors An array of two or more colors.
     
-    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; 0.0 = 1.0; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at startAngle; the rest are at these locations. For that reason: locations must contain  colors.count - 1  CGFloats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
+    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; 0.0 = 1.0; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at startAngle; the rest are at these locations. For that reason: locations must contain  colors.count - 1  Floats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
     
     :param: center The center of the sweeping gradient in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
@@ -832,16 +857,32 @@ class BDGradientNode : SKSpriteNode {
     }
     
     
+    /**
+    
+    Sets up self.locations with default locations.
+    
+    */
     private func defaultLocations () {
         
         var locationArray = [Float]()
-        for var i = 0; i < colors.count - 2; i++ {
-            
-            let location = (Float(i) + 1.0) / (Float(colors.count) - 1.0)
-            locationArray.append(location)
-        }
         
-        locations = locationArray
+        if gradientType == "linear" || gradientType == "radial" {
+            for var i = 0; i < colors.count - 2; i++ {
+                
+                let location = (Float(i) + 1.0) / (Float(colors.count) - 1.0)
+                locationArray.append(location)
+            }
+            
+        } else if gradientType == "sweep" {
+            
+            for var i = 0; i < colors.count - 1; i++ {
+                
+                let location = (Float(i) + 1.0) / (Float(colors.count) - 1.0)
+                locationArray.append(location)
+            }
+        }
+    
+        if locationArray.count != 0 { locations = locationArray }
     }
     
     
@@ -871,15 +912,26 @@ class BDGradientNode : SKSpriteNode {
             defaultLocations()
         }
         
+        
         // Update uniforms
         
-        if gradientType == "linear" || gradientType == "radial" {
+        if !u_locations.isEmpty {
             
-            let vector = CGPoint(x: endPoint.x - startPoint.x, y: endPoint.y - startPoint.y)
-            for var i = 0; i < u_locations.count; i++ {
+            if gradientType == "linear" {
                 
-                let vector2 = GLKVector2Make(Float(startPoint.x) + locations![i] * Float(vector.x), Float(startPoint.y) + locations![i] * Float(vector.y))
-                u_locations[i].floatVector2Value = vector2
+                let vector = CGPoint(x: endPoint.x - startPoint.x, y: endPoint.y - startPoint.y)
+                for var i = 0; i < u_locations.count; i++ {
+                    
+                    let vector2 = GLKVector2Make(Float(startPoint.x) + locations![i] * Float(vector.x), Float(startPoint.y) + locations![i] * Float(vector.y))
+                    u_locations[i].floatVector2Value = vector2
+                }
+                
+            } else if gradientType == "radial" || gradientType == "sweep" {
+                
+                for var i = 0; i < u_locations.count; i++ {
+                    
+                    u_locations[i].floatValue = locations![i]
+                }
             }
         }
     }
