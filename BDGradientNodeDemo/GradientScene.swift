@@ -550,6 +550,14 @@ class GradientScene : SKScene {
     
     func linearAnimation () {
         
+        let colorAction = SKAction.runBlock {
+            
+            var newColors = self.randomColorArray(self.numberOfColors)
+            self.gradientNode.colors = newColors
+        }
+        let colorDelay = SKAction.waitForDuration(2.0)
+        let colorGroup = SKAction.group([colorAction, colorDelay])
+        
         let startAction = SKAction.runBlock {
             
             let angle : CGFloat = 0.03
@@ -589,6 +597,7 @@ class GradientScene : SKScene {
         let actionGroup = SKAction.group([startAction, endAction, delayAction])
         
         gradientNode.runAction(SKAction.repeatActionForever(actionGroup))
+        gradientNode.runAction(SKAction.repeatActionForever(colorGroup))
     }
     
     
@@ -598,6 +607,14 @@ class GradientScene : SKScene {
         self.gradientNode.firstCenter.y += 0.001
         self.gradientNode.secondCenter.x -= 0.001
         self.gradientNode.secondCenter.y -= 0.001
+        
+        let colorAction = SKAction.runBlock {
+            
+            var newColors = self.randomColorArray(self.numberOfColors)
+            self.gradientNode.colors = newColors
+        }
+        let colorDelay = SKAction.waitForDuration(2.0)
+        let colorGroup = SKAction.group([colorAction, colorDelay])
         
         let firstCenterAction = SKAction.runBlock {
             
@@ -656,6 +673,7 @@ class GradientScene : SKScene {
         let actionGroup = SKAction.group([firstCenterAction, firstRadiusAction, secondCenterAction, secondRadiusAction, delayAction])
         
         gradientNode.runAction(SKAction.repeatActionForever(actionGroup))
+        gradientNode.runAction(SKAction.repeatActionForever(colorGroup))
     }
     
     
@@ -689,6 +707,14 @@ class GradientScene : SKScene {
             self.gradientNode.center.y -= multiplier * normalizedPoint.y
         }
         
+        let colorAction = SKAction.runBlock {
+            
+            var newColors = self.randomColorArray(self.numberOfColors)
+            self.gradientNode.colors = newColors
+        }
+        let colorDelay = SKAction.waitForDuration(2.0)
+        let colorGroup = SKAction.group([colorAction, colorDelay])
+        
         let radiusAction = SKAction.runBlock {
             
             let change = Float(sin(self.angleOfPoint(self.gradientNode.center))) / 100
@@ -703,6 +729,7 @@ class GradientScene : SKScene {
         let actionGroup = SKAction.group([angleAction, centerAction, radiusAction, delayAction])
         
         gradientNode.runAction(SKAction.repeatActionForever(actionGroup))
+        gradientNode.runAction(SKAction.repeatActionForever(colorGroup))
     }
     
     
@@ -818,7 +845,7 @@ class GradientScene : SKScene {
                     var lastLocation : Float = 0.01
                     let jump = 0.25 / Float(gradientNode.colors.count)
                     for var i = 0; i < locations.count; i++ {
-                        lastLocation = Float(random(min: CGFloat(lastLocation + jump), max: min(CGFloat(lastLocation + 6.0 * jump), 0.99)))
+                        lastLocation = randomFloat(min: lastLocation + jump, max: min(lastLocation + 6.0 * jump, 0.99))
                         newLocations.append(lastLocation)
                     }
                     gradientNode.locations = newLocations
@@ -1248,9 +1275,27 @@ class GradientScene : SKScene {
     :returns: A random CGFloat between the given min and max.
     
     */
-    func random(#min: CGFloat, max: CGFloat) -> CGFloat {
+    func randomCGFloat(#min: CGFloat, max: CGFloat) -> CGFloat {
         
         let random = CGFloat(Float(arc4random()) / 0xFFFFFFFF)
+        return random * (max - min) + min
+    }
+    
+    
+    /**
+    
+    Generates a random Float between the given min and max.
+    
+    :param: min The lowest possible return value.
+    
+    :param: max The highest possible return value.
+    
+    :returns: A random Float between the given min and max.
+    
+    */
+    func randomFloat(#min: Float, max: Float) -> Float {
+        
+        let random = Float(arc4random()) / 0xFFFFFFFF
         return random * (max - min) + min
     }
     
@@ -1270,7 +1315,7 @@ class GradientScene : SKScene {
         
         for var i = 0; i < numberOfColors; i++ {
             
-            let newColor = UIColor(hue: random(min: 0.0, max: 1.0), saturation: random(min: 0.33, max: 1.0), brightness: random(min: 0.75, max: 1.0), alpha: 1.0)
+            let newColor = UIColor(hue: randomCGFloat(min: 0.0, max: 1.0), saturation: randomCGFloat(min: 0.33, max: 1.0), brightness: randomCGFloat(min: 0.75, max: 1.0), alpha: 1.0)
             newColors.append(newColor)
         }
         
