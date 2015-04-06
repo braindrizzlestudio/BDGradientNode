@@ -825,8 +825,9 @@ class GradientScene : SKScene {
                 
                     var newLocations = [Float]()
                     var lastLocation : Float = 0.01
+                    let jump = 0.25 / Float(gradientNode.colors.count)
                     for var i = 0; i < locations.count; i++ {
-                        lastLocation = Float(random(min: CGFloat(lastLocation), max: CGFloat(min(lastLocation + 0.2, 0.99))))
+                        lastLocation = Float(random(min: CGFloat(lastLocation + jump), max: min(CGFloat(lastLocation + 6.0 * jump), 0.99)))
                         newLocations.append(lastLocation)
                     }
                     gradientNode.locations = newLocations

@@ -620,6 +620,8 @@ class BDGradientNode : SKSpriteNode {
                 locationArray.append(location)
             }
         }
+        self.locations = locationArray
+        
         
         // Location uniforms
         for (index, location) in enumerate(locationArray) {
@@ -628,7 +630,6 @@ class BDGradientNode : SKSpriteNode {
             u_locations.append(locationUniform)
             uniforms.append(locationUniform)
         }
-        self.locations = locationArray
         
        
         // Radii
@@ -755,7 +756,6 @@ class BDGradientNode : SKSpriteNode {
         var locationArray = [Float]()
         if locations != nil && locations!.count == colors.count - 1 {
             
-            locationArray.append(Float(0.0))
             var lastValue : Float = 0.000001
             var newValue : Float = 0.0
             for location in locations! {
@@ -766,11 +766,21 @@ class BDGradientNode : SKSpriteNode {
             }
         } else {
             
-            for var i = 0; i < colors.count; i++ {
+            for var i = 1; i < colors.count; i++ {
                 
                 let location = Float(i) / Float(colors.count)
                 locationArray.append(location)
             }
+        }
+        self.locations = locationArray
+        
+        
+        // Location uniforms
+        for (index, location) in enumerate(locationArray) {
+            
+            let locationUniform = SKUniform(name: "u_location\(index + 1)", float: location)
+            u_locations.append(locationUniform)
+            uniforms.append(locationUniform)
         }
         
         
@@ -790,7 +800,7 @@ class BDGradientNode : SKSpriteNode {
         
         // Shader Construction
         
-        var sweepGradientShader = "precision highp float; float M_PI = 3.1415926535897932384626433832795; void main() { vec2 coord = v_tex_coord.xy - u_center; float angle = atan(coord.y, coord.x); angle = mod(angle / (2.0 * M_PI) - u_startAngle, 1.0); vec4 color = mix(color0, color1, smoothstep(location0, location1, angle)); if (u_blended == 1.0) { color = color * texture2D(u_texture, v_tex_coord); } if (u_keepShape == 1.0) { vec4 textureColor = texture2D(u_texture, v_tex_coord); if (textureColor.w == 0.0) { discard; } } if (distance(coord, vec2(0.0, 0.0)) > u_radius) { discard; } gl_FragColor = color; }"
+        var sweepGradientShader = "precision highp float; float M_PI = 3.1415926535897932384626433832795; float location0 = 0.0; void main() { vec2 coord = v_tex_coord.xy - u_center; float angle = atan(coord.y, coord.x); angle = mod(angle / (2.0 * M_PI) - u_startAngle, 1.0); vec4 color = mix(color0, color1, smoothstep(location0, u_location1, angle)); if (u_blended == 1.0) { color = color * texture2D(u_texture, v_tex_coord); } if (u_keepShape == 1.0) { vec4 textureColor = texture2D(u_texture, v_tex_coord); if (textureColor.w == 0.0) { discard; } } if (distance(coord, vec2(0.0, 0.0)) > u_radius) { discard; } gl_FragColor = color; }"
         
         
         var stringRange : NSRange
@@ -798,25 +808,16 @@ class BDGradientNode : SKSpriteNode {
         
         
         // Add the last gradient
-        string = "color = mix(color, color0, smoothstep(location\(colors.count - 1), location0 + 1.0, angle)); "
-        stringRange = (sweepGradientShader as NSString).rangeOfString("vec4 color = mix(color0, color1, smoothstep(location0, location1, angle)); ")
+        string = "color = mix(color, color0, smoothstep(u_location\(colors.count - 1), location0 + 1.0, angle)); "
+        stringRange = (sweepGradientShader as NSString).rangeOfString("vec4 color = mix(color0, color1, smoothstep(location0, u_location1, angle)); ")
         sweepGradientShader = sweepGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
         
         
         // Add the gradients
-        stringRange = (sweepGradientShader as NSString).rangeOfString("vec4 color = mix(color0, color1, smoothstep(location0, location1, angle)); ")
+        stringRange = (sweepGradientShader as NSString).rangeOfString("vec4 color = mix(color0, color1, smoothstep(location0, u_location1, angle)); ")
         for var i = colors.count - 1; i > 1; i-- {
             
-            string = "color = mix(color, color\(i), smoothstep(location\(i - 1), location\(i), angle)); "
-            sweepGradientShader = sweepGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
-        }
-        
-        
-        // Add the locations
-        stringRange = (sweepGradientShader as NSString).rangeOfString("float M_PI = 3.1415926535897932384626433832795; ")
-        for var i = 0; i < colors.count; i++ {
-            
-            string = "float location\(i) = \(locationArray[i]); "
+            string = "color = mix(color, color\(i), smoothstep(u_location\(i - 1), u_location\(i), angle)); "
             sweepGradientShader = sweepGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
         }
         
