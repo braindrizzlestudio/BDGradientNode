@@ -21,14 +21,6 @@ class GradientScene : SKScene {
     // The pretty Apple blue for text/strokes
     var blue = UIColor(red: 0.0, green: 122/255, blue: 1.0, alpha: 1.0)
     
-    
-    // The colors to pass to the BDGradientNode. Recompilation is required when colors are changed (except for gamut, which is always the gamut).
-    var colors = [UIColor]() {
-        didSet {
-            if gradientNode.gradientType != "gamut" { resetCurrentNode() }
-        }
-    }
-    
     // The currently displayed texture
     var currentTexture = SKTexture(imageNamed: "Spaceship")
     
@@ -720,7 +712,7 @@ class GradientScene : SKScene {
     
     func colorsButtonPressed () {
         
-        colors = randomColorArray(numberOfColors)
+        gradientNode.colors = randomColorArray(numberOfColors)
     }
     
     
@@ -730,7 +722,7 @@ class GradientScene : SKScene {
         if numberOfColors == 3 { disableButtonForTag(98) }
         
         numberOfColors = numberOfColors - 1
-        colorsButtonPressed()
+        resetCurrentNode()
     }
     
     
@@ -739,7 +731,7 @@ class GradientScene : SKScene {
         if numberOfColors == 2 { enableButtonForTag(98) }
         
         numberOfColors = numberOfColors + 1
-        colorsButtonPressed()
+        resetCurrentNode()
     }
     
     
@@ -751,7 +743,6 @@ class GradientScene : SKScene {
         
         let currentType = gradientNode.gradientType
         switchToGradient("gamut")
-        if currentType == "gamut" { return }
     }
     
     
@@ -759,7 +750,6 @@ class GradientScene : SKScene {
         
         let currentType = gradientNode.gradientType
         switchToGradient("linear")
-        if currentType == "linear" { return }
     }
     
     
@@ -767,7 +757,6 @@ class GradientScene : SKScene {
         
         let currentType = gradientNode.gradientType
         switchToGradient("radial")
-        if currentType == "radial" { return }
     }
     
     
@@ -775,7 +764,6 @@ class GradientScene : SKScene {
         
         let currentType = gradientNode.gradientType
         switchToGradient("sweep")
-        if currentType == "sweep" { return }
     }
     
     
@@ -783,6 +771,9 @@ class GradientScene : SKScene {
         
         let blended = gradientNode.blended
         let center = gradientNode.center
+        var colors : [UIColor]
+        if gradientNode.colors.count != numberOfColors { colors = randomColorArray(numberOfColors)}
+        else {colors = gradientNode.colors }
         let endPoint = gradientNode.endPoint
         let firstCenter = gradientNode.firstCenter
         let firstRadius = gradientNode.firstRadius

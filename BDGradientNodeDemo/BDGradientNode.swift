@@ -437,6 +437,17 @@ class BDGradientNode : SKSpriteNode {
             colorFloats.append(colorToRGBAComponentFloatArray(color))
         }
         
+        
+        // Color uniforms
+        for (index, color) in enumerate(colorFloats) {
+            
+            let vector4 = GLKVector4Make(color[0], color[1], color[2], color[3])
+            let colorUniform = SKUniform(name: "u_color\(index)", floatVector4: vector4)
+            u_colors.append(colorUniform)
+            uniforms.append(colorUniform)
+        }
+        
+        
         // keepShape
         self.keepShape = keepShape
         uniforms.append(u_keepShape)
@@ -501,10 +512,10 @@ class BDGradientNode : SKSpriteNode {
         
         
         // Add the gradients
-        stringRange = (linearGradientShader as NSString).rangeOfString("vec4 color; ")
+        stringRange = (linearGradientShader as NSString).rangeOfString("vec2 coord = v_tex_coord; ")
         if colors.count == 2 {
             
-            string = "color = mix(color0, color1, smoothstep(dot(u_startPoint, vector), dot(u_endPoint, vector), dot(coord, vector))); "
+            string = "color = mix(u_color0, u_color1, smoothstep(dot(u_startPoint, vector), dot(u_endPoint, vector), dot(coord, vector))); "
             linearGradientShader = linearGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
             
         } else {
@@ -513,28 +524,19 @@ class BDGradientNode : SKSpriteNode {
                 
                 if i == 1 {
                     
-                 string = "color = mix(color0, color1, smoothstep(dot(u_startPoint, vector), dot(u_stop\(i), vector), dot(coord, vector))); "
+                 string = "color = mix(u_color0, u_color1, smoothstep(dot(u_startPoint, vector), dot(u_stop\(i), vector), dot(coord, vector))); "
                     
                 } else if i == colors.count - 1 {
                     
-                    string = "color = mix(color, color\(i), smoothstep(dot(u_stop\(i - 1), vector), dot(u_endPoint, vector), dot(coord, vector))); "
+                    string = "color = mix(color, u_color\(i), smoothstep(dot(u_stop\(i - 1), vector), dot(u_endPoint, vector), dot(coord, vector))); "
                     
                 } else {
                     
-                    string = "color = mix(color, color\(i), smoothstep(dot(u_stop\(i - 1), vector), dot(u_stop\(i), vector), dot(coord, vector))); "
+                    string = "color = mix(color, u_color\(i), smoothstep(dot(u_stop\(i - 1), vector), dot(u_stop\(i), vector), dot(coord, vector))); "
                 }
                 
                 linearGradientShader = linearGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
             }
-        }
-        
-        
-        // Add the colors
-        stringRange = (linearGradientShader as NSString).rangeOfString("precision highp float; ")
-        for (index, components) in enumerate(colorFloats) {
-            
-            string = "vec4 color\(index) = vec4(\(components[0]), \(components[1]), \(components[2]), \(components[3])); "
-            linearGradientShader = linearGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
         }
         
 
@@ -609,6 +611,16 @@ class BDGradientNode : SKSpriteNode {
         }
         
         
+        // Color uniforms
+        for (index, color) in enumerate(colorFloats) {
+            
+            let vector4 = GLKVector4Make(color[0], color[1], color[2], color[3])
+            let colorUniform = SKUniform(name: "u_color\(index)", floatVector4: vector4)
+            u_colors.append(colorUniform)
+            uniforms.append(colorUniform)
+        }
+        
+        
         // Locations
         // colors.count - 2 is the expected number of locations. If the number is different: spread out evenly.
         var locationArray = [Float]()
@@ -663,7 +675,7 @@ class BDGradientNode : SKSpriteNode {
         if colors.count == 2 {
             
             stringRange = (radialGradientShader as NSString).rangeOfString("if (t > 0.0 && t <= 1.0) { ")
-            string = "color = mix(color0, color1, smoothstep(location0, location1, t)); "
+            string = "color = mix(u_color0, u_color1, smoothstep(location0, location1, t)); "
             radialGradientShader = radialGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
             
         } else {
@@ -674,25 +686,17 @@ class BDGradientNode : SKSpriteNode {
                 
                 if i == colors.count - 1 {
                     
-                    string = "color = mix(color, color\(i), smoothstep(u_location\(i - 1), location\(i), t)); "
+                    string = "color = mix(color, u_color\(i), smoothstep(u_location\(i - 1), location\(i), t)); "
                     radialGradientShader = radialGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
                     
                 } else {
                 
-                    string = "color = mix(color, color\(i), smoothstep(u_location\(i - 1), u_location\(i), t)); "
+                    string = "color = mix(color, u_color\(i), smoothstep(u_location\(i - 1), u_location\(i), t)); "
                     radialGradientShader = radialGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
                 }
             }
             
-            string = "vec4 color = mix(color0, color1, smoothstep(location0, u_location1, t)); "
-            radialGradientShader = radialGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
-        }
-        
-        // Add the colors
-        stringRange = (radialGradientShader as NSString).rangeOfString("precision highp float; ")
-        for (index, components) in enumerate(colorFloats) {
-            
-            string = "vec4 color\(index) = vec4(\(components[0]), \(components[1]), \(components[2]), \(components[3])); "
+            string = "vec4 color = mix(u_color0, u_color1, smoothstep(location0, u_location1, t)); "
             radialGradientShader = radialGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
         }
         
