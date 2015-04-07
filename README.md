@@ -183,7 +183,9 @@ Note: the UI of the demo was not designed to fit on iPhone 4S.
 
 ## Coming Updates
 
-We have plans for version 2.0; it will be released later in 2015. The biggest change will be switching from the linear interpolation of GLSL mix() to something a bit fancier, as long as it's performant. We might also include the ability to swap colors and locations on the fly by passing new arrays. (Though not the number of each--that would require recompilation.) We hope to receive suggestions from you, too!
+Version 1.1 will be release in April, 2015. It will include the ability to change colors and locations on the fly, without initializing a new BDGradientNode. The only limitation, then, will be that you can't change the number of colors/locations without reinitializing.
+
+We have plans for version 2.0; it will be released later in 2015. The biggest change will be switching from the linear interpolation of GLSL mix() to something a bit fancier, as long as it's performant. We hope to receive suggestions from you, too!
 
 
 ## Contact Us!
