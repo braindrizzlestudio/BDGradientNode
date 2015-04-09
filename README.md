@@ -2,7 +2,6 @@
 
 # BDGradientNode
 #### Version: 1.0
-Important: Written in Swift 1.2 using Xcode 6.3 beta.
 
 ### By: [Braindrizzle Studio:tm:](http://braindrizzlestudio.com)
 
@@ -20,6 +19,7 @@ I have tried to provide thorough documentation in the BDGradientNode.swift file.
 ## Installation
 
 Simply copy BDGradientNode.swift into your project. Done!
+Note: the project requires Xcode 6.3 and Swift 1.2.
 
 
 ## Use
