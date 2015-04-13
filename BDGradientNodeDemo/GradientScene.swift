@@ -768,28 +768,28 @@ class GradientScene : SKScene {
     
     func gamutGradientButtonPressed () {
         
-        let currentType = gradientNode.gradientType
+        if gradientNode.gradientType == "gamut" { return }
         switchToGradient("gamut")
     }
     
     
     func linearGradientButtonPressed () {
         
-        let currentType = gradientNode.gradientType
+        if gradientNode.gradientType == "linear" && gradientNode.colors.count == numberOfColors { return }
         switchToGradient("linear")
     }
     
     
     func radialGradientButtonPressed () {
         
-        let currentType = gradientNode.gradientType
+        if gradientNode.gradientType == "radial" && gradientNode.colors.count == numberOfColors { return }
         switchToGradient("radial")
     }
     
     
     func sweepGradientButtonPressed () {
         
-        let currentType = gradientNode.gradientType
+        if gradientNode.gradientType == "sweep" && gradientNode.colors.count == numberOfColors { return }
         switchToGradient("sweep")
     }
     
