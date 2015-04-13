@@ -21,22 +21,11 @@ class GradientScene : SKScene {
     // The pretty Apple blue for text/strokes
     var blue = UIColor(red: 0.0, green: 122/255, blue: 1.0, alpha: 1.0)
     
-    
-    // The colors to pass to the BDGradientNode. Recompilation is required when colors are changed (except for gamut, which is always the gamut).
-    var colors = [UIColor]() {
-        didSet {
-            if gradientNode.gradientType != "gamut" { resetCurrentNode() }
-        }
-    }
-    
     // The currently displayed texture
     var currentTexture = SKTexture(imageNamed: "Spaceship")
     
     // Our BDGradientNode
     var gradientNode : BDGradientNode! = BDGradientNode()
-    
-    // The color locations (empty since we'll just let the BDGradientNode use defaults)
-    var locations = [CGFloat]()
     
     // The size of the BDGradientNode
     var nodeSize = CGSizeZero
@@ -64,7 +53,7 @@ class GradientScene : SKScene {
             nodeSize = CGSize(width: self.size.width - 10, height: self.size.width - 10)
         }
         
-        randomColorsButtonPressed()
+        colorsButtonPressed()
         
         setupUI()
         
@@ -90,14 +79,17 @@ class GradientScene : SKScene {
         setupAnimationButton()
         
         // Colors
-        setupRandomColorButton()
+        setupColorsButton()
         setupNumberOfColorsButtons()
         
         // Gradients
         setupGamutGradientButton()
         setupLinearGradientButton()
-        setupSweepGradientButton()
         setupRadialGradientButton()
+        setupSweepGradientButton()
+        
+        // Locations
+        setupLocationsButton()
         
         // Options
         setupBlendedButton()
@@ -123,12 +115,12 @@ class GradientScene : SKScene {
     // MARK: Colors
     
     
-    func setupRandomColorButton () {
+    func setupColorsButton () {
         
         let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - nodeSize.height * 12.5 / 10))
-        let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
+        let size = CGSize(width: self.size.width * 4 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
-        let button = setupButton(frame: frame, title: "Random Colors", action: "randomColorsButtonPressed")
+        let button = setupButton(frame: frame, title: "Colors", action: "colorsButtonPressed")
         button.tag = 96
     }
     
@@ -200,6 +192,21 @@ class GradientScene : SKScene {
     
     
     
+    // MARK: Locations
+    
+    var locationsButtonStatus = "default"
+    func setupLocationsButton () {
+        
+        let origin = convertPointToView(CGPoint(x: self.size.width * 6 / 21, y: self.size.height - nodeSize.height * 12.5 / 10))
+        let size = CGSize(width: self.size.width * 4 / 21, height: self.size.height * 1 / 21)
+        let frame = CGRect(origin: origin, size: size)
+        let button = setupButton(frame: frame, title: "Locations", action: "locationsButtonPressed")
+        button.titleLabel?.adjustsFontSizeToFitWidth = true
+        button.tag = 93
+    }
+    
+    
+    
     // MARK: Options
     
     
@@ -209,6 +216,7 @@ class GradientScene : SKScene {
         let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
         let button = setupButton(frame: frame, title: "Blend Colors: Yes", action: "blendColorsButtonPressed")
+        button.titleLabel?.adjustsFontSizeToFitWidth = true
         button.tag = 95
     }
     
@@ -542,6 +550,14 @@ class GradientScene : SKScene {
     
     func linearAnimation () {
         
+        let colorAction = SKAction.runBlock {
+            
+            var newColors = self.randomColorArray(self.numberOfColors)
+            self.gradientNode.colors = newColors
+        }
+        let colorDelay = SKAction.waitForDuration(2.0)
+        let colorGroup = SKAction.group([colorAction, colorDelay])
+        
         let startAction = SKAction.runBlock {
             
             let angle : CGFloat = 0.03
@@ -581,6 +597,7 @@ class GradientScene : SKScene {
         let actionGroup = SKAction.group([startAction, endAction, delayAction])
         
         gradientNode.runAction(SKAction.repeatActionForever(actionGroup))
+        gradientNode.runAction(SKAction.repeatActionForever(colorGroup))
     }
     
     
@@ -590,6 +607,14 @@ class GradientScene : SKScene {
         self.gradientNode.firstCenter.y += 0.001
         self.gradientNode.secondCenter.x -= 0.001
         self.gradientNode.secondCenter.y -= 0.001
+        
+        let colorAction = SKAction.runBlock {
+            
+            var newColors = self.randomColorArray(self.numberOfColors)
+            self.gradientNode.colors = newColors
+        }
+        let colorDelay = SKAction.waitForDuration(2.0)
+        let colorGroup = SKAction.group([colorAction, colorDelay])
         
         let firstCenterAction = SKAction.runBlock {
             
@@ -648,6 +673,7 @@ class GradientScene : SKScene {
         let actionGroup = SKAction.group([firstCenterAction, firstRadiusAction, secondCenterAction, secondRadiusAction, delayAction])
         
         gradientNode.runAction(SKAction.repeatActionForever(actionGroup))
+        gradientNode.runAction(SKAction.repeatActionForever(colorGroup))
     }
     
     
@@ -681,6 +707,14 @@ class GradientScene : SKScene {
             self.gradientNode.center.y -= multiplier * normalizedPoint.y
         }
         
+        let colorAction = SKAction.runBlock {
+            
+            var newColors = self.randomColorArray(self.numberOfColors)
+            self.gradientNode.colors = newColors
+        }
+        let colorDelay = SKAction.waitForDuration(2.0)
+        let colorGroup = SKAction.group([colorAction, colorDelay])
+        
         let radiusAction = SKAction.runBlock {
             
             let change = Float(sin(self.angleOfPoint(self.gradientNode.center))) / 100
@@ -695,6 +729,7 @@ class GradientScene : SKScene {
         let actionGroup = SKAction.group([angleAction, centerAction, radiusAction, delayAction])
         
         gradientNode.runAction(SKAction.repeatActionForever(actionGroup))
+        gradientNode.runAction(SKAction.repeatActionForever(colorGroup))
     }
     
     
@@ -702,9 +737,9 @@ class GradientScene : SKScene {
     // MARK: Colors
     
     
-    func randomColorsButtonPressed () {
+    func colorsButtonPressed () {
         
-        colors = randomColorArray(numberOfColors)
+        gradientNode.colors = randomColorArray(numberOfColors)
     }
     
     
@@ -714,7 +749,7 @@ class GradientScene : SKScene {
         if numberOfColors == 3 { disableButtonForTag(98) }
         
         numberOfColors = numberOfColors - 1
-        randomColorsButtonPressed()
+        resetCurrentNode()
     }
     
     
@@ -723,7 +758,7 @@ class GradientScene : SKScene {
         if numberOfColors == 2 { enableButtonForTag(98) }
         
         numberOfColors = numberOfColors + 1
-        randomColorsButtonPressed()
+        resetCurrentNode()
     }
     
     
@@ -733,33 +768,29 @@ class GradientScene : SKScene {
     
     func gamutGradientButtonPressed () {
         
-        let currentType = gradientNode.gradientType
+        if gradientNode.gradientType == "gamut" { return }
         switchToGradient("gamut")
-        if currentType == "gamut" { return }
     }
     
     
     func linearGradientButtonPressed () {
         
-        let currentType = gradientNode.gradientType
+        if gradientNode.gradientType == "linear" && gradientNode.colors.count == numberOfColors { return }
         switchToGradient("linear")
-        if currentType == "linear" { return }
     }
     
     
     func radialGradientButtonPressed () {
         
-        let currentType = gradientNode.gradientType
+        if gradientNode.gradientType == "radial" && gradientNode.colors.count == numberOfColors { return }
         switchToGradient("radial")
-        if currentType == "radial" { return }
     }
     
     
     func sweepGradientButtonPressed () {
         
-        let currentType = gradientNode.gradientType
+        if gradientNode.gradientType == "sweep" && gradientNode.colors.count == numberOfColors { return }
         switchToGradient("sweep")
-        if currentType == "sweep" { return }
     }
     
     
@@ -767,6 +798,9 @@ class GradientScene : SKScene {
         
         let blended = gradientNode.blended
         let center = gradientNode.center
+        var colors : [UIColor]
+        if gradientNode.colors.count != numberOfColors { colors = randomColorArray(numberOfColors)}
+        else {colors = gradientNode.colors }
         let endPoint = gradientNode.endPoint
         let firstCenter = gradientNode.firstCenter
         let firstRadius = gradientNode.firstRadius
@@ -783,15 +817,48 @@ class GradientScene : SKScene {
         switch gradient {
             
             case "gamut": gradientNode = BDGradientNode(gamutGradientWithTexture: currentTexture, center: center, radius: radius, startAngle: startAngle, blended: blended, keepShape: keepShape, size: nodeSize)
-            case "linear": gradientNode = BDGradientNode(linearGradientWithTexture: currentTexture, colors: colors, locations: locations, startPoint: startPoint, endPoint: endPoint, blended: blended, keepShape: keepShape, size: nodeSize)
-            case "radial": gradientNode = BDGradientNode(radialGradientWithTexture: currentTexture, colors: colors, locations: locations, firstCenter: firstCenter, firstRadius: firstRadius, secondCenter: secondCenter, secondRadius: secondRadius, blended: blended, keepShape: keepShape, size: nodeSize)
-            case "sweep": gradientNode = BDGradientNode(sweepGradientWithTexture: currentTexture, colors: colors, locations: locations, center: center, radius: radius, startAngle: startAngle, blended: blended, keepShape: keepShape, size: nodeSize)
+            case "linear": gradientNode = BDGradientNode(linearGradientWithTexture: currentTexture, colors: colors, locations: nil, startPoint: startPoint, endPoint: endPoint, blended: blended, keepShape: keepShape, size: nodeSize)
+            case "radial": gradientNode = BDGradientNode(radialGradientWithTexture: currentTexture, colors: colors, locations: nil, firstCenter: firstCenter, firstRadius: firstRadius, secondCenter: secondCenter, secondRadius: secondRadius, blended: blended, keepShape: keepShape, size: nodeSize)
+            case "sweep": gradientNode = BDGradientNode(sweepGradientWithTexture: currentTexture, colors: colors, locations: nil, center: center, radius: radius, startAngle: startAngle, blended: blended, keepShape: keepShape, size: nodeSize)
             default: return
         }
         
         gradientNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - nodeSize.height / 2 - nodeSize.height * 1 / 10)
         addChild(gradientNode)
         adjustUIForGradient(gradient)
+    }
+    
+    
+    
+    // MARK: Locations
+    
+    // If the gradient is using default locations, add random locations; if random, add default.
+    func locationsButtonPressed () {
+
+        if let locations = gradientNode.locations {
+            
+            switch locationsButtonStatus {
+                
+                case "default":
+                
+                    var newLocations = [Float]()
+                    var lastLocation : Float = 0.01
+                    let jump = 0.25 / Float(gradientNode.colors.count)
+                    for var i = 0; i < locations.count; i++ {
+                        lastLocation = randomFloat(min: lastLocation + jump, max: min(lastLocation + 6.0 * jump, 0.99))
+                        newLocations.append(lastLocation)
+                    }
+                    gradientNode.locations = newLocations
+                    locationsButtonStatus = "random"
+                
+                case "random":
+                
+                    gradientNode.locations = nil
+                    locationsButtonStatus = "default"
+                
+                default: return
+            }
+        }
     }
     
     
@@ -961,6 +1028,7 @@ class GradientScene : SKScene {
             if let slider = view?.viewWithTag(52) as? UISlider { slider.value = gradientNode.radius }
             if let label = view?.viewWithTag(53) as? UILabel { label.text = "Radius" }
             disableSliderForTag(54)
+            disableButtonForTag(93)
             if buttonForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
             disableButtonForTag(96)
             disableButtonForTag(97)
@@ -974,6 +1042,7 @@ class GradientScene : SKScene {
             disableSliderForTag(50)
             disableSliderForTag(52)
             disableSliderForTag(54)
+            enableButtonForTag(93)
             if buttonForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
             enableButtonForTag(96)
             enableButtonForTag(97)
@@ -989,6 +1058,7 @@ class GradientScene : SKScene {
             if let slider = view?.viewWithTag(52) as? UISlider { slider.value = gradientNode.firstRadius }
             if let label = view?.viewWithTag(53) as? UILabel { label.text = "First Radius" }
             enableSliderForTag(54)
+            enableButtonForTag(93)
             if buttonForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
             enableButtonForTag(96)
             enableButtonForTag(97)
@@ -1004,6 +1074,7 @@ class GradientScene : SKScene {
             if let slider = view?.viewWithTag(52) as? UISlider { slider.value = gradientNode.radius }
             if let label = view?.viewWithTag(53) as? UILabel { label.text = "Radius" }
             disableSliderForTag(54)
+            enableButtonForTag(93)
             if buttonForTag(95)!.titleLabel!.text == "Blend Colors: No" { enableButtonForTag(94) }
             enableButtonForTag(96)
             enableButtonForTag(97)
@@ -1204,9 +1275,27 @@ class GradientScene : SKScene {
     :returns: A random CGFloat between the given min and max.
     
     */
-    func random(#min: CGFloat, max: CGFloat) -> CGFloat {
+    func randomCGFloat(#min: CGFloat, max: CGFloat) -> CGFloat {
         
         let random = CGFloat(Float(arc4random()) / 0xFFFFFFFF)
+        return random * (max - min) + min
+    }
+    
+    
+    /**
+    
+    Generates a random Float between the given min and max.
+    
+    :param: min The lowest possible return value.
+    
+    :param: max The highest possible return value.
+    
+    :returns: A random Float between the given min and max.
+    
+    */
+    func randomFloat(#min: Float, max: Float) -> Float {
+        
+        let random = Float(arc4random()) / 0xFFFFFFFF
         return random * (max - min) + min
     }
     
@@ -1226,7 +1315,7 @@ class GradientScene : SKScene {
         
         for var i = 0; i < numberOfColors; i++ {
             
-            let newColor = UIColor(hue: random(min: 0.0, max: 1.0), saturation: random(min: 0.33, max: 1.0), brightness: random(min: 0.75, max: 1.0), alpha: 1.0)
+            let newColor = UIColor(hue: randomCGFloat(min: 0.0, max: 1.0), saturation: randomCGFloat(min: 0.33, max: 1.0), brightness: randomCGFloat(min: 0.75, max: 1.0), alpha: 1.0)
             newColors.append(newColor)
         }
         
@@ -1242,6 +1331,8 @@ class GradientScene : SKScene {
     func resetCurrentNode () {
         
         gradientNode.removeAllActions()
+        
+        locationsButtonStatus = "default"
         
         if let button = view?.viewWithTag(30) as? UIButton { button.setTitle("Animate: No", forState: .Normal) }
         
