@@ -839,8 +839,8 @@ class GradientScene : SKScene {
             
         case "gamut": gradientNode = BDGradientNode(gamutGradientWithTexture: currentTexture, center: center, radius: radius, startAngle: startAngle, blending: blending, discardOutsideGradient: discardOutsideGradient, keepTextureShape: keepTextureShape, size: nodeSize)
             case "linear": gradientNode = BDGradientNode(linearGradientWithTexture: currentTexture, colors: colors, locations: nil, startPoint: startPoint, endPoint: endPoint, blending: blending, keepTextureShape: keepTextureShape, size: nodeSize)
-            case "radial": gradientNode = BDGradientNode(radialGradientWithTexture: currentTexture, colors: colors, locations: nil, firstCenter: firstCenter, firstRadius: firstRadius, secondCenter: secondCenter, secondRadius: secondRadius, blending: blending, keepTextureShape: keepTextureShape, size: nodeSize)
-            case "sweep": gradientNode = BDGradientNode(sweepGradientWithTexture: currentTexture, colors: colors, locations: nil, center: center, radius: radius, startAngle: startAngle, blending: blending, keepTextureShape: keepTextureShape, size: nodeSize)
+        case "radial": gradientNode = BDGradientNode(radialGradientWithTexture: currentTexture, colors: colors, locations: nil, firstCenter: firstCenter, firstRadius: firstRadius, secondCenter: secondCenter, secondRadius: secondRadius, blending: blending, discardOutsideGradient: discardOutsideGradient, keepTextureShape: keepTextureShape, size: nodeSize)
+        case "sweep": gradientNode = BDGradientNode(sweepGradientWithTexture: currentTexture, colors: colors, locations: nil, center: center, radius: radius, startAngle: startAngle, blending: blending, discardOutsideGradient: discardOutsideGradient, keepTextureShape: keepTextureShape, size: nodeSize)
             default: return
         }
         
