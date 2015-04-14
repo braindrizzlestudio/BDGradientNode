@@ -635,6 +635,14 @@ class GradientScene : SKScene {
         self.gradientNode.secondCenter.x -= 0.001
         self.gradientNode.secondCenter.y -= 0.001
         
+        let blendingAction = SKAction.runBlock {
+            
+            self.gradientNode.blending = Float(abs(sin(self.angleOfPoint(self.gradientNode.firstCenter))))
+            if let slider = self.view?.viewWithTag(56) as? UISlider {
+                slider.value = self.gradientNode.blending
+            }
+        }
+        
         let firstCenterAction = SKAction.runBlock {
             
             let angle : CGFloat = 0.03
@@ -689,7 +697,7 @@ class GradientScene : SKScene {
         
         let delayAction = SKAction.waitForDuration(0.05)
         
-        let actionGroup = SKAction.group([firstCenterAction, firstRadiusAction, secondCenterAction, secondRadiusAction, delayAction])
+        let actionGroup = SKAction.group([blendingAction, firstCenterAction, firstRadiusAction, secondCenterAction, secondRadiusAction, delayAction])
         
         gradientNode.runAction(SKAction.repeatActionForever(actionGroup))
     }
