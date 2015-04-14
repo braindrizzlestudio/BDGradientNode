@@ -46,7 +46,7 @@ class BDGradientNode : SKSpriteNode {
     private var uniforms = [SKUniform]()
     
     private let u_blending = SKUniform(name: "u_blending", float: 0.5)
-    /// (All Gradients) The amount of blending that the given colors will have with the texture's existing colors.
+    /// (All Gradients) A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     var blending : Float = 0.5 {
         didSet {
             u_blending.floatValue = blending
@@ -189,7 +189,7 @@ class BDGradientNode : SKSpriteNode {
     
     :param: startAngle The angle at which the red in the gradient will start in radians between 0 and 2Pi, where 0 is to the right along the x axis and the colors proceed counter-clockwise. Default is 0.
     
-    :param: blending If true, the given colors will be blending with the texture's existing colors; if false the node will have purely the given colors. Note that if true the keepShape value will be ignored.
+    :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
     :param: keepShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
@@ -226,7 +226,7 @@ class BDGradientNode : SKSpriteNode {
     
     :param: endPoint The point from which the gradient will start. If this is not nil then startPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 1.0).
     
-    :param: blending If true, the given colors will be blending with the texture's existing colors; if false the node will have purely the given colors. Note that if true the keepShape value will be ignored.
+    :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
     :param: keepShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
@@ -267,7 +267,7 @@ class BDGradientNode : SKSpriteNode {
     
     :param: secondRadius The radius of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.5.
     
-    :param: blending If true, the given colors will be blending with the texture's existing colors; if false the node will have purely the given colors. Note that if true the keepShape value will be ignored.
+    :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
     :param: keepShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
@@ -306,7 +306,7 @@ class BDGradientNode : SKSpriteNode {
     
     :param: startAngle The angle at which the first color of the gradient will start in radians between 0 and 2Pi, where 0 is to the right along the x axis and the colors proceed counter-clockwise. Default is 0.
     
-    :param: blending If true, the given colors will be blending with the texture's existing colors; if false the node will have purely the given colors. Note that if true the keepShape value will be ignored.
+    :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
     :param: keepShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
@@ -342,7 +342,7 @@ class BDGradientNode : SKSpriteNode {
     
     :param: startAngle The angle at which the red in the gradient will start in radians between 0 and 2Pi, where 0 is to the right along the x axis and the colors proceed counter-clockwise. Default is 0.
     
-    :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader does nothing; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended  with the given blending weight. Default is 0.5.
+    :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
     :param: keepShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
@@ -409,7 +409,7 @@ class BDGradientNode : SKSpriteNode {
     
     :param: endPoint The point from which the gradient will start. If this is not nil then startPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 1.0).
     
-    :param: blending If true, the given colors will be blending with the texture's existing colors; if false the node will have purely the given colors. Note that if true the keepShape value will be ignored.
+    :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
     :param: keepShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
@@ -422,7 +422,7 @@ class BDGradientNode : SKSpriteNode {
         // Sanitization and Uniforms
         
         // blending
-        self.blending = blending
+        self.blending = min(max(blending, 0.0), 1.0)
         uniforms.append(u_blending)
         
         
@@ -504,14 +504,14 @@ class BDGradientNode : SKSpriteNode {
         // Shader Creation
         
         
-        var linearGradientShader = "precision highp float; vec4 color; void main (void) { vec2 vector = vec2(u_endPoint.x - u_startPoint.x, u_endPoint.y - u_startPoint.y); vec2 coord = v_tex_coord; if (u_blending == 1.0) { color = color * texture2D(u_texture, v_tex_coord); } if (u_keepShape == 1.0) { vec4 textureColor = texture2D(u_texture, v_tex_coord); if (textureColor.w == 0.0) { discard; } } gl_FragColor = color; }"
+        var linearGradientShader = "precision highp float; vec4 color; void main (void) { vec2 coord = v_tex_coord; if (u_keepShape == 1.0) { vec4 textureColor = texture2D(u_texture, coord); if (textureColor.w == 0.0) { discard; } } if (u_blending == 0.0) { gl_FragColor = texture2D(u_texture, v_tex_coord); return; } vec2 vector = vec2(u_endPoint.x - u_startPoint.x, u_endPoint.y - u_startPoint.y); if (u_blending < 1.0) { color = mix(color, texture2D(u_texture, v_tex_coord), 1.0 - u_blending); } gl_FragColor = color; }"
         
         var stringRange : NSRange
         var string = ""
         
         
         // Add the gradients
-        stringRange = (linearGradientShader as NSString).rangeOfString("vec2 coord = v_tex_coord; ")
+        stringRange = (linearGradientShader as NSString).rangeOfString("vec2 vector = vec2(u_endPoint.x - u_startPoint.x, u_endPoint.y - u_startPoint.y); ")
         if colors.count == 2 {
             
             string = "color = mix(u_color0, u_color1, smoothstep(dot(u_startPoint, vector), dot(u_endPoint, vector), dot(coord, vector))); "
@@ -563,7 +563,7 @@ class BDGradientNode : SKSpriteNode {
     
     :param: secondRadius The radius of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.5.
     
-    :param: blending If true, the given colors will be blending with the texture's existing colors; if false the node will have purely the given colors. Note that if true the keepShape value will be ignored.
+    :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
     :param: keepShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
@@ -727,7 +727,7 @@ class BDGradientNode : SKSpriteNode {
     
     :param: startAngle The angle at which the first color of the gradient will start in radians between 0 and 2Pi, where 0 is to the right along the x axis and the colors proceed counter-clockwise. Default is 0.
     
-    :param: blending If true, the given colors will be blending with the texture's existing colors; if false the node will have purely the given colors. Note that if true the keepShape value will be ignored.
+    :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
     :param: keepShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
