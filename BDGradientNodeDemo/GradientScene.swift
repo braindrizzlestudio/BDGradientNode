@@ -578,13 +578,13 @@ class GradientScene : SKScene {
     
     func linearAnimation () {
         
-        let colorAction = SKAction.runBlock {
+        let blendingAction = SKAction.runBlock {
             
-            var newColors = self.randomColorArray(self.numberOfColors)
-            self.gradientNode.colors = newColors
+            self.gradientNode.blending = Float(abs(sin(self.angleOfPoint(self.gradientNode.startPoint))))
+            if let slider = self.view?.viewWithTag(56) as? UISlider {
+                slider.value = self.gradientNode.blending
+            }
         }
-        let colorDelay = SKAction.waitForDuration(2.0)
-        let colorGroup = SKAction.group([colorAction, colorDelay])
         
         let startAction = SKAction.runBlock {
             
@@ -622,10 +622,9 @@ class GradientScene : SKScene {
         
         let delayAction = SKAction.waitForDuration(0.05)
         
-        let actionGroup = SKAction.group([startAction, endAction, delayAction])
+        let actionGroup = SKAction.group([blendingAction, startAction, endAction, delayAction])
         
         gradientNode.runAction(SKAction.repeatActionForever(actionGroup))
-        gradientNode.runAction(SKAction.repeatActionForever(colorGroup))
     }
     
     
@@ -635,14 +634,6 @@ class GradientScene : SKScene {
         self.gradientNode.firstCenter.y += 0.001
         self.gradientNode.secondCenter.x -= 0.001
         self.gradientNode.secondCenter.y -= 0.001
-        
-        let colorAction = SKAction.runBlock {
-            
-            var newColors = self.randomColorArray(self.numberOfColors)
-            self.gradientNode.colors = newColors
-        }
-        let colorDelay = SKAction.waitForDuration(2.0)
-        let colorGroup = SKAction.group([colorAction, colorDelay])
         
         let firstCenterAction = SKAction.runBlock {
             
@@ -701,7 +692,6 @@ class GradientScene : SKScene {
         let actionGroup = SKAction.group([firstCenterAction, firstRadiusAction, secondCenterAction, secondRadiusAction, delayAction])
         
         gradientNode.runAction(SKAction.repeatActionForever(actionGroup))
-        gradientNode.runAction(SKAction.repeatActionForever(colorGroup))
     }
     
     
@@ -743,14 +733,6 @@ class GradientScene : SKScene {
             self.gradientNode.center.y -= multiplier * normalizedPoint.y
         }
         
-        let colorAction = SKAction.runBlock {
-            
-            var newColors = self.randomColorArray(self.numberOfColors)
-            self.gradientNode.colors = newColors
-        }
-        let colorDelay = SKAction.waitForDuration(2.0)
-        let colorGroup = SKAction.group([colorAction, colorDelay])
-        
         let radiusAction = SKAction.runBlock {
             
             let change = Float(sin(self.angleOfPoint(self.gradientNode.center))) / 100
@@ -765,7 +747,6 @@ class GradientScene : SKScene {
         let actionGroup = SKAction.group([angleAction, blendingAction, centerAction, radiusAction, delayAction])
         
         gradientNode.runAction(SKAction.repeatActionForever(actionGroup))
-        gradientNode.runAction(SKAction.repeatActionForever(colorGroup))
     }
     
     
