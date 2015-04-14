@@ -575,7 +575,7 @@ class BDGradientNode : SKSpriteNode {
         
         // Sanitizaton
         
-        self.blending = blending
+        self.blending = min(max(blending, 0.0), 1.0)
         uniforms.append(u_blending)
         
         self.keepShape = keepShape
@@ -663,7 +663,7 @@ class BDGradientNode : SKSpriteNode {
         
         // Shader Creation
         
-        var radialGradientShader = "precision highp float; vec4 color; float center0X = u_firstCenter.x; float center0Y = u_firstCenter.y; float center1X = u_secondCenter.x; float center1Y = u_secondCenter.y; float location0 = 0.0; void main() { float coordX = v_tex_coord.x; float coordY = v_tex_coord.y; float root = sqrt(u_secondRadius * u_secondRadius * ((center0X - coordX) * (center0X - coordX) + (center0Y - coordY) * (center0Y - coordY)) - 2.0 * u_firstRadius * u_secondRadius * ((center0X - coordX) * (center1X - coordX) + (center0Y - coordY) * (center1Y - coordY)) + u_firstRadius * u_firstRadius * ((center1X - coordX) * (center1X - coordX) + (center1Y - coordY) * (center1Y - coordY)) - ((center1X * center0Y - coordX * center0Y - center0X * center1Y + coordX * center1Y + center0X * coordY - center1X * coordY) * (center1X * center0Y - coordX * center0Y - center0X * center1Y + coordX * center1Y + center0X * coordY - center1X * coordY))); float t; if(distance(v_tex_coord.xy, vec2(center1X, center1Y)) > u_secondRadius) { t = (-u_secondRadius * (u_firstRadius - u_secondRadius) + (center0X - center1X) * (center1X - coordX) + (center0Y - center1Y) * (center1Y - coordY) + root) / ((u_firstRadius - u_secondRadius) * (u_firstRadius - u_secondRadius) - (center0X - center1X) * (center0X - center1X) - (center0Y - center1Y) * (center0Y - center1Y)); } else { t = (-u_secondRadius * (u_firstRadius - u_secondRadius) + (center0X - center1X) * (center1X - coordX) + (center0Y - center1Y) * (center1Y - coordY) - root) / ((u_firstRadius - u_secondRadius) * (u_firstRadius - u_secondRadius) - (center0X - center1X) * (center0X - center1X) - (center0Y - center1Y) * (center0Y - center1Y)); } if (t > 0.0 && t <= 1.0) { if (u_blending == 1.0) { color = color * texture2D(u_texture, v_tex_coord); } if (u_keepShape == 1.0) { vec4 textureColor = texture2D(u_texture, v_tex_coord); if (textureColor.w == 0.0) { discard; } } gl_FragColor = color; } else { discard; } }"
+        var radialGradientShader = "precision highp float; vec4 color; float center0X = u_firstCenter.x; float center0Y = u_firstCenter.y; float center1X = u_secondCenter.x; float center1Y = u_secondCenter.y; float location0 = 0.0; void main() { if (u_keepShape == 1.0) { vec4 textureColor = texture2D(u_texture, v_tex_coord); if (textureColor.w == 0.0) { discard; } } float coordX = v_tex_coord.x; float coordY = v_tex_coord.y; float root = sqrt(u_secondRadius * u_secondRadius * ((center0X - coordX) * (center0X - coordX) + (center0Y - coordY) * (center0Y - coordY)) - 2.0 * u_firstRadius * u_secondRadius * ((center0X - coordX) * (center1X - coordX) + (center0Y - coordY) * (center1Y - coordY)) + u_firstRadius * u_firstRadius * ((center1X - coordX) * (center1X - coordX) + (center1Y - coordY) * (center1Y - coordY)) - ((center1X * center0Y - coordX * center0Y - center0X * center1Y + coordX * center1Y + center0X * coordY - center1X * coordY) * (center1X * center0Y - coordX * center0Y - center0X * center1Y + coordX * center1Y + center0X * coordY - center1X * coordY))); float t; if(distance(v_tex_coord.xy, vec2(center1X, center1Y)) > u_secondRadius) { t = (-u_secondRadius * (u_firstRadius - u_secondRadius) + (center0X - center1X) * (center1X - coordX) + (center0Y - center1Y) * (center1Y - coordY) + root) / ((u_firstRadius - u_secondRadius) * (u_firstRadius - u_secondRadius) - (center0X - center1X) * (center0X - center1X) - (center0Y - center1Y) * (center0Y - center1Y)); } else { t = (-u_secondRadius * (u_firstRadius - u_secondRadius) + (center0X - center1X) * (center1X - coordX) + (center0Y - center1Y) * (center1Y - coordY) - root) / ((u_firstRadius - u_secondRadius) * (u_firstRadius - u_secondRadius) - (center0X - center1X) * (center0X - center1X) - (center0Y - center1Y) * (center0Y - center1Y)); } if (t > 0.0 && t <= 1.0) { if (u_blending == 0.0) { gl_FragColor = texture2D(u_texture, v_tex_coord); return; } if (u_blending < 1.0) { color = mix(color, texture2D(u_texture, v_tex_coord), 1.0 - u_blending); } gl_FragColor = color; } else { discard; } }"
         
         
         var stringRange : NSRange
@@ -673,13 +673,13 @@ class BDGradientNode : SKSpriteNode {
         // Add the gradients
         if colors.count == 2 {
             
-            stringRange = (radialGradientShader as NSString).rangeOfString("if (t > 0.0 && t <= 1.0) { ")
+            stringRange = (radialGradientShader as NSString).rangeOfString("if (u_blending == 0.0) { gl_FragColor = texture2D(u_texture, v_tex_coord); return; } ")
             string = "color = mix(u_color0, u_color1, smoothstep(location0, location1, t)); "
             radialGradientShader = radialGradientShader.insert(string: string, atIndex: stringRange.location + stringRange.length)
             
         } else {
             
-            stringRange = (radialGradientShader as NSString).rangeOfString("if (t > 0.0 && t <= 1.0) { ")
+            stringRange = (radialGradientShader as NSString).rangeOfString("if (u_blending == 0.0) { gl_FragColor = texture2D(u_texture, v_tex_coord); return; } ")
             
             for var i = colors.count - 1; i > 1 ; i-- {
                 
