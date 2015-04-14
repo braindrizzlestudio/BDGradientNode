@@ -1050,6 +1050,7 @@ class GradientScene : SKScene {
             if let slider = view?.viewWithTag(52) as? UISlider { slider.value = gradientNode.radius }
             if let label = view?.viewWithTag(53) as? UILabel { label.text = "Radius" }
             disableSliderForTag(54)
+            enableButtonForTag(92)
             disableButtonForTag(93)
             disableButtonForTag(96)
             disableButtonForTag(97)
@@ -1063,6 +1064,7 @@ class GradientScene : SKScene {
             disableSliderForTag(50)
             disableSliderForTag(52)
             disableSliderForTag(54)
+            disableButtonForTag(92)
             enableButtonForTag(93)
             enableButtonForTag(96)
             enableButtonForTag(97)
@@ -1078,6 +1080,7 @@ class GradientScene : SKScene {
             if let slider = view?.viewWithTag(52) as? UISlider { slider.value = gradientNode.firstRadius }
             if let label = view?.viewWithTag(53) as? UILabel { label.text = "First Radius" }
             enableSliderForTag(54)
+            enableButtonForTag(92)
             enableButtonForTag(93)
             enableButtonForTag(96)
             enableButtonForTag(97)
@@ -1093,6 +1096,7 @@ class GradientScene : SKScene {
             if let slider = view?.viewWithTag(52) as? UISlider { slider.value = gradientNode.radius }
             if let label = view?.viewWithTag(53) as? UILabel { label.text = "Radius" }
             disableSliderForTag(54)
+            enableButtonForTag(92)
             enableButtonForTag(93)
             enableButtonForTag(96)
             enableButtonForTag(97)
