@@ -528,9 +528,17 @@ class GradientScene : SKScene {
         
         let angleAction = SKAction.runBlock {
             
-            self.gradientNode.startAngle = (self.gradientNode.startAngle + 0.1) % Float(2 * M_PI)
+            self.gradientNode.startAngle = (self.gradientNode.startAngle + 0.05) % Float(2 * M_PI)
             if let slider = self.view?.viewWithTag(50) as? UISlider {
                 slider.value = self.gradientNode.startAngle
+            }
+        }
+        
+        let blendingAction = SKAction.runBlock {
+            
+            self.gradientNode.blending = abs(sin(self.gradientNode.startAngle / 2))
+            if let slider = self.view?.viewWithTag(56) as? UISlider {
+                slider.value = self.gradientNode.blending
             }
         }
         
@@ -539,7 +547,7 @@ class GradientScene : SKScene {
             let angle : CGFloat = 0.03
             self.gradientNode.center = self.rotatePoint(self.gradientNode.center, byAngle: angle)
             
-            let multiplier = CGFloat(sin(self.gradientNode.startAngle) / 100)
+            let multiplier = CGFloat(sin(self.gradientNode.startAngle) / 1000)
             var normalizedPoint = self.gradientNode.center
             normalizedPoint.x -= 0.5
             normalizedPoint.y -= 0.5
@@ -562,7 +570,7 @@ class GradientScene : SKScene {
         
         let delayAction = SKAction.waitForDuration(0.05)
         
-        let actionGroup = SKAction.group([angleAction, centerAction, radiusAction, delayAction])
+        let actionGroup = SKAction.group([angleAction, blendingAction, centerAction, radiusAction, delayAction])
         
         gradientNode.runAction(SKAction.repeatActionForever(actionGroup))
     }
@@ -704,9 +712,17 @@ class GradientScene : SKScene {
         
         let angleAction = SKAction.runBlock {
             
-            self.gradientNode.startAngle = (self.gradientNode.startAngle + 0.1) % Float(2 * M_PI)
+            self.gradientNode.startAngle = (self.gradientNode.startAngle + 0.05) % Float(2 * M_PI)
             if let slider = self.view?.viewWithTag(50) as? UISlider {
                 slider.value = self.gradientNode.startAngle
+            }
+        }
+        
+        let blendingAction = SKAction.runBlock {
+            
+            self.gradientNode.blending = abs(sin(self.gradientNode.startAngle / 2))
+            if let slider = self.view?.viewWithTag(56) as? UISlider {
+                slider.value = self.gradientNode.blending
             }
         }
         
@@ -715,7 +731,7 @@ class GradientScene : SKScene {
             let angle : CGFloat = 0.03
             self.gradientNode.center = self.rotatePoint(self.gradientNode.center, byAngle: angle)
             
-            let multiplier = CGFloat(sin(self.gradientNode.startAngle) / 100)
+            let multiplier = CGFloat(sin(self.gradientNode.startAngle) / 1000)
             var normalizedPoint = self.gradientNode.center
             normalizedPoint.x -= 0.5
             normalizedPoint.y -= 0.5
@@ -746,7 +762,7 @@ class GradientScene : SKScene {
         
         let delayAction = SKAction.waitForDuration(0.05)
         
-        let actionGroup = SKAction.group([angleAction, centerAction, radiusAction, delayAction])
+        let actionGroup = SKAction.group([angleAction, blendingAction, centerAction, radiusAction, delayAction])
         
         gradientNode.runAction(SKAction.repeatActionForever(actionGroup))
         gradientNode.runAction(SKAction.repeatActionForever(colorGroup))

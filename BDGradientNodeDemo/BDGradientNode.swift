@@ -100,9 +100,9 @@ class BDGradientNode : SKSpriteNode {
         }
     }
     
-    private let u_firstRadius = SKUniform(name: "u_firstRadius", float: 0.0)
-    /// (Radial) The radius of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is 0.
-    var firstRadius : Float = 0.0 {
+    private let u_firstRadius = SKUniform(name: "u_firstRadius", float: 0.1)
+    /// (Radial) The radius of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is 0.1.
+    var firstRadius : Float = 0.1 {
         didSet {
             u_firstRadius.floatValue = firstRadius
         }
@@ -272,7 +272,7 @@ class BDGradientNode : SKSpriteNode {
     
     :param: firstCenter The center of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: firstRadius The radius of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is 0.
+    :param: firstRadius The radius of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is 0.1.
     
     :param: secondCenter The center of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
@@ -578,7 +578,7 @@ class BDGradientNode : SKSpriteNode {
     
     :param: firstCenter The center of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: firstRadius The radius of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is 0.
+    :param: firstRadius The radius of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is 0.1.
     
     :param: secondCenter The center of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
