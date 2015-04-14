@@ -739,7 +739,7 @@ class BDGradientNode : SKSpriteNode {
         
         // Sanitization
         
-        self.blending = blending
+        self.blending = min(max(blending, 0.0), 1.0)
         uniforms.append(u_blending)
         
         // If there aren't at least two colors: return an empty shader.
@@ -823,7 +823,7 @@ class BDGradientNode : SKSpriteNode {
         
         // Shader Construction
         
-        var sweepGradientShader = "precision highp float; float M_PI = 3.1415926535897932384626433832795; float location0 = 0.0; void main() { vec2 coord = v_tex_coord.xy - u_center; float angle = atan(coord.y, coord.x); angle = mod(angle / (2.0 * M_PI) - u_startAngle, 1.0); vec4 color = mix(u_color0, u_color1, smoothstep(location0, u_location1, angle)); if (u_blending == 1.0) { color = color * texture2D(u_texture, v_tex_coord); } if (u_keepShape == 1.0) { vec4 textureColor = texture2D(u_texture, v_tex_coord); if (textureColor.w == 0.0) { discard; } } if (distance(coord, vec2(0.0, 0.0)) > u_radius) { discard; } gl_FragColor = color; }"
+        var sweepGradientShader = "precision highp float; float M_PI = 3.1415926535897932384626433832795; float location0 = 0.0; void main() { vec2 coord = v_tex_coord.xy - u_center; if (distance(coord, vec2(0.0, 0.0)) > u_radius) { discard; }  if (u_keepShape == 1.0) { vec4 textureColor = texture2D(u_texture, v_tex_coord); if (textureColor.w == 0.0) { discard; } } if (u_blending == 0.0) { gl_FragColor = texture2D(u_texture, v_tex_coord); return; } float angle = atan(coord.y, coord.x); angle = mod(angle / (2.0 * M_PI) - u_startAngle, 1.0); vec4 color = mix(u_color0, u_color1, smoothstep(location0, u_location1, angle)); if (u_blending < 1.0) { color = mix(color, texture2D(u_texture, v_tex_coord), 1.0 - u_blending); } gl_FragColor = color; }"
         
         
         var stringRange : NSRange
