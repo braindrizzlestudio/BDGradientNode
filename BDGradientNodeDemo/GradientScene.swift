@@ -92,7 +92,8 @@ class GradientScene : SKScene {
         setupLocationsButton()
         
         // Options
-        setupKeepShapeButton()
+        setupDiscardOutsideGradientButton()
+        setupKeepTextureShapeButton()
     }
     
     
@@ -209,24 +210,23 @@ class GradientScene : SKScene {
     // MARK: Options
     
     
-    func setupKeepShapeButton () {
+    func setupDiscardOutsideGradientButton () {
+        
+        let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - nodeSize.height * 12.5 / 10))
+        let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
+        let frame = CGRect(origin: origin, size: size)
+        let button = setupButton(frame: frame, title: "Discard Outside: Yes", action: "discardOutsideGradientButtonPressed")
+        button.tag = 92
+    }
+    
+    
+    func setupKeepTextureShapeButton () {
         
         let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - nodeSize.height * 13.5 / 10))
         let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
         let frame = CGRect(origin: origin, size: size)
-        let button = setupButton(frame: frame, title: "Keep Shape: Yes", action: "keepShapeButtonPressed")
+        let button = setupButton(frame: frame, title: "Keep Shape: Yes", action: "keepTextureShapeButtonPressed")
         button.tag = 94
-        disableButtonForTag(94)
-        
-        let subOrigin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - nodeSize.height * 14.5 / 10))
-        let subSize = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 0.5 / 21)
-        let subFrame = CGRect(origin: subOrigin, size: subSize)
-        let label = UILabel(frame: subFrame)
-        label.text = "'Keep Shape' is ignored if 'Blend Colors' is 0.0."
-        label.adjustsFontSizeToFitWidth = true
-        label.textAlignment = .Center
-        label.numberOfLines = 0
-        view?.addSubview(label)
     }
     
     
@@ -245,12 +245,13 @@ class GradientScene : SKScene {
     
     func setupCenterLabel () {
         
-        let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - nodeSize.height * 12.5 / 10))
-        let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
+        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - nodeSize.height * 11 / 10))
+        let size = CGSize(width: self.size.width * 20 / 21, height: self.size.height * 0.5 / 21)
         let frame = CGRect(origin: origin, size: size)
         let label = UILabel(frame: frame)
-        label.text = "Drag the image \rto move the center!"
+        label.text = "Drag the image to move the center!"
         label.adjustsFontSizeToFitWidth = true
+        label.font = UIFont(name: "Georgia", size: 10)
         label.textAlignment = .Center
         label.textColor = blue
         label.numberOfLines = 0
@@ -261,12 +262,13 @@ class GradientScene : SKScene {
     
     func setupCentersDragLabel () {
         
-        let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - nodeSize.height * 12.5 / 10))
-        let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
+        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - nodeSize.height * 11 / 10))
+        let size = CGSize(width: self.size.width * 20 / 21, height: self.size.height * 0.5 / 21)
         let frame = CGRect(origin: origin, size: size)
         let label = UILabel(frame: frame)
         label.text = "Drag the two circles to move their centers!"
         label.adjustsFontSizeToFitWidth = true
+        label.font = UIFont(name: "Georgia", size: 10)
         label.hidden = true
         label.textAlignment = .Center
         label.textColor = blue
@@ -297,12 +299,13 @@ class GradientScene : SKScene {
     
     func setupStartEndDragLabel () {
         
-        let origin = convertPointToView(CGPoint(x: self.size.width * 11 / 21, y: self.size.height - nodeSize.height * 12.5 / 10))
-        let size = CGSize(width: self.size.width * 9 / 21, height: self.size.height * 1 / 21)
+        let origin = convertPointToView(CGPoint(x: self.size.width * 1 / 21, y: self.size.height - nodeSize.height * 11 / 10))
+        let size = CGSize(width: self.size.width * 20 / 21, height: self.size.height * 0.5 / 21)
         let frame = CGRect(origin: origin, size: size)
         let label = UILabel(frame: frame)
         label.text = "Drag the top and bottom to move the start/end points!"
         label.adjustsFontSizeToFitWidth = true
+        label.font = UIFont(name: "Georgia", size: 10)
         label.hidden = true
         label.textAlignment = .Center
         label.textColor = blue
@@ -818,10 +821,11 @@ class GradientScene : SKScene {
         var colors : [UIColor]
         if gradientNode.colors.count != numberOfColors { colors = randomColorArray(numberOfColors)}
         else {colors = gradientNode.colors }
+        let discardOutsideGradient = gradientNode.discardOutsideGradient
         let endPoint = gradientNode.endPoint
         let firstCenter = gradientNode.firstCenter
         let firstRadius = gradientNode.firstRadius
-        let keepShape = gradientNode.keepShape
+        let keepTextureShape = gradientNode.keepTextureShape
         let radius = gradientNode.radius
         let secondCenter = gradientNode.secondCenter
         let secondRadius = gradientNode.secondRadius
@@ -833,10 +837,10 @@ class GradientScene : SKScene {
         
         switch gradient {
             
-            case "gamut": gradientNode = BDGradientNode(gamutGradientWithTexture: currentTexture, center: center, radius: radius, startAngle: startAngle, blending: blending, keepShape: keepShape, size: nodeSize)
-            case "linear": gradientNode = BDGradientNode(linearGradientWithTexture: currentTexture, colors: colors, locations: nil, startPoint: startPoint, endPoint: endPoint, blending: blending, keepShape: keepShape, size: nodeSize)
-            case "radial": gradientNode = BDGradientNode(radialGradientWithTexture: currentTexture, colors: colors, locations: nil, firstCenter: firstCenter, firstRadius: firstRadius, secondCenter: secondCenter, secondRadius: secondRadius, blending: blending, keepShape: keepShape, size: nodeSize)
-            case "sweep": gradientNode = BDGradientNode(sweepGradientWithTexture: currentTexture, colors: colors, locations: nil, center: center, radius: radius, startAngle: startAngle, blending: blending, keepShape: keepShape, size: nodeSize)
+        case "gamut": gradientNode = BDGradientNode(gamutGradientWithTexture: currentTexture, center: center, radius: radius, startAngle: startAngle, blending: blending, discardOutsideGradient: discardOutsideGradient, keepTextureShape: keepTextureShape, size: nodeSize)
+            case "linear": gradientNode = BDGradientNode(linearGradientWithTexture: currentTexture, colors: colors, locations: nil, startPoint: startPoint, endPoint: endPoint, blending: blending, keepTextureShape: keepTextureShape, size: nodeSize)
+            case "radial": gradientNode = BDGradientNode(radialGradientWithTexture: currentTexture, colors: colors, locations: nil, firstCenter: firstCenter, firstRadius: firstRadius, secondCenter: secondCenter, secondRadius: secondRadius, blending: blending, keepTextureShape: keepTextureShape, size: nodeSize)
+            case "sweep": gradientNode = BDGradientNode(sweepGradientWithTexture: currentTexture, colors: colors, locations: nil, center: center, radius: radius, startAngle: startAngle, blending: blending, keepTextureShape: keepTextureShape, size: nodeSize)
             default: return
         }
         
@@ -883,25 +887,23 @@ class GradientScene : SKScene {
     // MARK: Options
     
     
-    func blendColorsButtonPressed () {
-
-        let button = (view?.viewWithTag(95) as! UIButton)
+    func discardOutsideGradientButtonPressed () {
+        
+        let button = (view?.viewWithTag(92) as! UIButton)
         
         switch button.titleLabel!.text! {
-            case "Blend Colors: Yes":
-                button.setTitle("Blend Colors: No", forState: .Normal)
-                enableButtonForTag(94)
-            case "Blend Colors: No":
-                button.setTitle("Blend Colors: Yes", forState: .Normal)
-                disableButtonForTag(94)
-            default: return
+        case "Discard Outside: Yes":
+            button.setTitle("Discard Outside: No", forState: .Normal)
+        case "Discard Outside: No":
+            button.setTitle("Discard Outside: Yes", forState: .Normal)
+        default: return
         }
         
-        //gradientNode.blending = !gradientNode.blending
+        gradientNode.discardOutsideGradient = !gradientNode.discardOutsideGradient
     }
     
     
-    func keepShapeButtonPressed () {
+    func keepTextureShapeButtonPressed () {
         
         let button = (view?.viewWithTag(94) as! UIButton)
         
@@ -913,7 +915,7 @@ class GradientScene : SKScene {
         default: return
         }
         
-        gradientNode.keepShape = !gradientNode.keepShape
+        gradientNode.keepTextureShape = !gradientNode.keepTextureShape
     }
     
     

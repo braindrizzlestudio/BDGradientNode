@@ -54,7 +54,7 @@ class BDGradientNode : SKSpriteNode {
     }
     
     private let u_center = SKUniform(name: "u_center", floatVector2: GLKVector2Make(0.5, 0.5))
-    /// (Gamut and Sweep Gradients) The center of the sweeping gradient in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
+    /// (Gamut and Sweep) The center of the sweeping gradient in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     var center = CGPoint(x: 0.5, y: 0.5) {
         didSet {
             u_center.floatVector2Value = GLKVector2Make(Float(center.x), Float(center.y))
@@ -74,8 +74,17 @@ class BDGradientNode : SKSpriteNode {
         }
     }
     
+    private let u_discardOutsideGradient = SKUniform(name: "u_discardOutsideGradient", float: 1.0)
+    /// (Gamut, Radial, and Sweep) If true, the non-gradient areas will not be drawn. In particular: outside the radius of the gamut, sweep, or outer radial circle, and inside the inner radial circle; if false, the texture colors will be visible.
+    var discardOutsideGradient = true {
+        didSet {
+            if discardOutsideGradient == true { u_discardOutsideGradient.floatValue = 1.0 }
+            if discardOutsideGradient == false { u_discardOutsideGradient.floatValue = 0.0 }
+        }
+    }
+    
     private let u_endPoint = SKUniform(name: "u_endPoint", floatVector2: GLKVector2Make(0.5, 0.0))
-    /// (Linear Gradient) The point from which the gradient will start. If this is not nil then startPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 1.0).
+    /// (Linear) The point from which the gradient will start. If this is not nil then startPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 1.0).
     var endPoint = CGPoint(x: 0.5, y: 1.0) {
         didSet {
             u_endPoint.floatVector2Value = GLKVector2Make(Float(endPoint.x), Float(endPoint.y))
@@ -84,7 +93,7 @@ class BDGradientNode : SKSpriteNode {
     }
     
     private let u_firstCenter = SKUniform(name: "u_firstCenter", floatVector2: GLKVector2Make(0.5, 0.5))
-    /// (Radial Gradient) The center of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
+    /// (Radial) The center of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     var firstCenter = CGPoint(x: 0.5, y: 0.5) {
         didSet {
             u_firstCenter.floatVector2Value = GLKVector2Make(Float(firstCenter.x), Float(firstCenter.y))
@@ -92,19 +101,19 @@ class BDGradientNode : SKSpriteNode {
     }
     
     private let u_firstRadius = SKUniform(name: "u_firstRadius", float: 0.0)
-    /// (Radial Gradient) The radius of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is 0.
+    /// (Radial) The radius of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is 0.
     var firstRadius : Float = 0.0 {
         didSet {
             u_firstRadius.floatValue = firstRadius
         }
     }
     
-    private let u_keepShape = SKUniform(name: "u_keepShape", float: 1.0)
-    /// (All Gradients) If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
-    var keepShape = true {
+    private let u_keepTextureShape = SKUniform(name: "u_keepTextureShape", float: 1.0)
+    /// (All Gradients) If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size.
+    var keepTextureShape = true {
         didSet {
-            if keepShape == true { u_keepShape.floatValue = 1.0 }
-            if keepShape == false { u_keepShape.floatValue = 0.0 }
+            if keepTextureShape == true { u_keepTextureShape.floatValue = 1.0 }
+            if keepTextureShape == false { u_keepTextureShape.floatValue = 0.0 }
         }
     }
     
@@ -117,7 +126,7 @@ class BDGradientNode : SKSpriteNode {
     }
     
     private let u_radius = SKUniform(name: "u_radius", float: 1.0)
-    /// (Gamut and Sweep Gradients) The radius of the gradient circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 1.0.
+    /// (Gamut and Sweep) The radius of the gradient circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 1.0.
     var radius : Float = 0.5 {
         didSet {
             u_radius.floatValue = radius
@@ -133,7 +142,7 @@ class BDGradientNode : SKSpriteNode {
     }
     
     private let u_secondRadius = SKUniform(name: "u_secondRadius", float: 0.0)
-    /// (Radial Gradient) The radius of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.5.
+    /// (Radial) The radius of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.5.
     var secondRadius : Float = 0.5 {
         didSet {
             u_secondRadius.floatValue = secondRadius
@@ -141,7 +150,7 @@ class BDGradientNode : SKSpriteNode {
     }
     
     private let u_startAngle = SKUniform(name: "u_startAngle", float: 0.0)
-    /// (Gamut and Sweep Gradients) The angle at which the first color of the gradient will start (red for gamut) in radians between 0 and 2Pi, where 0 is to the right along the x axis and the colors proceed counter-clockwise. Default is 0.
+    /// (Gamut and Sweep) The angle at which the first color of the gradient will start (red for gamut) in radians between 0 and 2Pi, where 0 is to the right along the x axis and the colors proceed counter-clockwise. Default is 0.
     var startAngle : Float = 0.0 {
         didSet {
             u_startAngle.floatValue = startAngle / Float(2 * M_PI) % 1.0
@@ -149,7 +158,7 @@ class BDGradientNode : SKSpriteNode {
     }
     
     private let u_startPoint = SKUniform(name: "u_startPoint", floatVector2: GLKVector2Make(0.5, 0.0))
-    /// (Linear Gradient) The point from which the gradient will start. If this is not nil then endPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 0.0).
+    /// (Linear) The point from which the gradient will start. If this is not nil then endPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 0.0).
     var startPoint = CGPoint(x: 0.5, y: 0.0) {
         didSet {
             u_startPoint.floatVector2Value = GLKVector2Make(Float(startPoint.x), Float(startPoint.y))
@@ -191,19 +200,21 @@ class BDGradientNode : SKSpriteNode {
     
     :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
-    :param: keepShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
+    :param: discardOutsideGradient If true, the non-gradient areas will not be drawn. In particular: outside the radius of the gamut, sweep, or outer radial circle, and inside the inner radial circle; if false, the texture colors will be visible.
+    
+    :param: keepTextureShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
     :param: size The desired size of the node.
     
     */
-    convenience init (gamutGradientWithTexture texture: SKTexture, center: CGPoint?, radius: Float?, startAngle: Float?, blending: Float, keepShape: Bool, size: CGSize) {
+    convenience init (gamutGradientWithTexture texture: SKTexture, center: CGPoint?, radius: Float?, startAngle: Float?, blending: Float, discardOutsideGradient: Bool, keepTextureShape: Bool, size: CGSize) {
 
         self.init(texture: texture, color: nil, size: size)
         
         gradientType = "gamut"
         
         // Setup Shader
-        shader = gamutGradientShader(center: center, radius: radius, startAngle: startAngle, blending: blending, keepShape: keepShape)
+        shader = gamutGradientShader(center: center, radius: radius, startAngle: startAngle, blending: blending, discardOutsideGradient: discardOutsideGradient, keepTextureShape: keepTextureShape)
         shader?.uniforms = uniforms
     }
     
@@ -228,19 +239,19 @@ class BDGradientNode : SKSpriteNode {
     
     :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
-    :param: keepShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
+    :param: keepTextureShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
     :param: size The desired size of the node.
     
     */
-    convenience init (linearGradientWithTexture texture: SKTexture, colors: [UIColor], locations: [Float]?, startPoint: CGPoint?, endPoint: CGPoint?, blending: Float, keepShape: Bool, size: CGSize) {
+    convenience init (linearGradientWithTexture texture: SKTexture, colors: [UIColor], locations: [Float]?, startPoint: CGPoint?, endPoint: CGPoint?, blending: Float, keepTextureShape: Bool, size: CGSize) {
         
         self.init(texture: texture, color: nil, size: size)
         
         gradientType = "linear"
         self.colors = colors
         
-        shader = linearGradientShader(colors: colors, locations: locations, startPoint: startPoint, endPoint: endPoint, blending: blending, keepShape: keepShape)
+        shader = linearGradientShader(colors: colors, locations: locations, startPoint: startPoint, endPoint: endPoint, blending: blending, keepTextureShape: keepTextureShape)
         shader?.uniforms = uniforms
     }
        
@@ -269,19 +280,19 @@ class BDGradientNode : SKSpriteNode {
     
     :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
-    :param: keepShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
+    :param: keepTextureShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
     :param: size The desired size of the node. Note: if this size is not the size of the passed texture then the "circles" will be ellipses.
     
     */
-    convenience init (radialGradientWithTexture texture: SKTexture, colors: [UIColor], locations: [Float]?, firstCenter: CGPoint?, firstRadius: Float?, secondCenter: CGPoint?, secondRadius: Float?, blending: Float, keepShape: Bool, size: CGSize) {
+    convenience init (radialGradientWithTexture texture: SKTexture, colors: [UIColor], locations: [Float]?, firstCenter: CGPoint?, firstRadius: Float?, secondCenter: CGPoint?, secondRadius: Float?, blending: Float, keepTextureShape: Bool, size: CGSize) {
         
         self.init(texture: texture, color: nil, size: size)
 
         gradientType = "radial"
         self.colors = colors
         
-        shader = radialGradientShader(colors: colors, locations: locations, firstCenter: firstCenter, firstRadius: firstRadius, secondCenter: secondCenter, secondRadius: secondRadius, blending: blending, keepShape: keepShape)
+        shader = radialGradientShader(colors: colors, locations: locations, firstCenter: firstCenter, firstRadius: firstRadius, secondCenter: secondCenter, secondRadius: secondRadius, blending: blending, keepTextureShape: keepTextureShape)
         shader?.uniforms = uniforms
     }
     
@@ -308,19 +319,19 @@ class BDGradientNode : SKSpriteNode {
     
     :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
-    :param: keepShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
+    :param: keepTextureShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
     :param: size The desired size of the node.
     
     */
-    convenience init (sweepGradientWithTexture texture: SKTexture, colors: [UIColor], locations: [Float]?, center: CGPoint?, radius: Float?, startAngle: Float?, blending: Float, keepShape: Bool, size: CGSize) {
+    convenience init (sweepGradientWithTexture texture: SKTexture, colors: [UIColor], locations: [Float]?, center: CGPoint?, radius: Float?, startAngle: Float?, blending: Float, keepTextureShape: Bool, size: CGSize) {
         
         self.init(texture: texture, color: nil, size: size)
         
         gradientType = "sweep"
         self.colors = colors
         
-        shader = sweepGradientShader(colors: colors, locations: locations, center: center, radius: radius, startAngle: startAngle, blending: blending, keepShape: keepShape)
+        shader = sweepGradientShader(colors: colors, locations: locations, center: center, radius: radius, startAngle: startAngle, blending: blending, keepTextureShape: keepTextureShape)
         shader?.uniforms = uniforms
     }
     
@@ -344,16 +355,19 @@ class BDGradientNode : SKSpriteNode {
     
     :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
-    :param: keepShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
+    :param: discardOutsideGradient If true, the non-gradient areas will not be drawn. In particular: outside the radius of the gamut, sweep, or outer radial circle, and inside the inner radial circle; if false, the texture colors will be visible.
+    
+    :param: keepTextureShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
     :returns: A shader that produces a circle with the gamut of color. This shader makes use of the hsv2rgb method from http://stackoverflow.com/a/17897228/605869
     
     */
-    private func gamutGradientShader(#center: CGPoint?, radius: Float?, startAngle: Float?, blending: Float, keepShape: Bool) -> SKShader {
+    private func gamutGradientShader(#center: CGPoint?, radius: Float?, startAngle: Float?, blending: Float, discardOutsideGradient: Bool, keepTextureShape: Bool) -> SKShader {
         
         
         // Sanitization
         
+        // blending
         self.blending = min(max(blending, 0.0), 1.0)
         uniforms.append(u_blending)
         
@@ -363,9 +377,13 @@ class BDGradientNode : SKSpriteNode {
         }
         uniforms.append(u_center)
         
-        // keepShape
-        self.keepShape = keepShape
-        uniforms.append(u_keepShape)
+        // discardOutsideGradient
+        self.discardOutsideGradient = discardOutsideGradient
+        uniforms.append(u_discardOutsideGradient)
+        
+        // keepTextureShape
+        self.keepTextureShape = keepTextureShape
+        uniforms.append(u_keepTextureShape)
         
         // radius
         if radius != nil {
@@ -382,8 +400,7 @@ class BDGradientNode : SKSpriteNode {
         
         // Shader Creation
         
-        
-        let gamutGradientShader = "precision highp float; vec3 hsv2rgb(vec3 c) { vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0); vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www); return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y); } float M_PI = 3.1415926535897932384626433832795; vec4 color; void main() { vec2 coord = v_tex_coord.xy - u_center; if (u_keepShape == 1.0) { vec4 textureColor = texture2D(u_texture, v_tex_coord); if (textureColor.w == 0.0) { discard; } } if (distance(coord, vec2(0.0, 0.0)) > u_radius) { discard; } if (u_blending == 0.0) { gl_FragColor = texture2D(u_texture, v_tex_coord); return; } float angle = atan(coord.y, coord.x); angle = mod(angle / (2.0 * M_PI) - u_startAngle, 1.0); float distanceFromCenter = length(coord); color = vec4(hsv2rgb(vec3(angle, distanceFromCenter, 1.0)), 1.0); if (u_blending < 1.0) { color = mix(color, texture2D(u_texture, v_tex_coord), 1.0 - u_blending); } gl_FragColor = color; }"
+        let gamutGradientShader = "precision highp float; vec3 hsv2rgb(vec3 c) { vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0); vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www); return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y); } float M_PI = 3.1415926535897932384626433832795; vec4 color; void main() { vec2 coord = v_tex_coord.xy - u_center; if (u_keepTextureShape == 1.0) { vec4 textureColor = texture2D(u_texture, v_tex_coord); if (textureColor.w == 0.0) { discard; } } if (distance(coord, vec2(0.0, 0.0)) > u_radius) { if (u_discardOutsideGradient == 1.0) { discard; } else { gl_FragColor = texture2D(u_texture, v_tex_coord); return; } } if (u_blending == 0.0) { gl_FragColor = texture2D(u_texture, v_tex_coord); return; } float angle = atan(coord.y, coord.x); angle = mod(angle / (2.0 * M_PI) - u_startAngle, 1.0); float distanceFromCenter = length(coord); color = vec4(hsv2rgb(vec3(angle, distanceFromCenter, 1.0)), 1.0); if (u_blending < 1.0) { color = mix(color, texture2D(u_texture, v_tex_coord), 1.0 - u_blending); } gl_FragColor = color; }"
         
         var stringRange : NSRange
         var string = ""
@@ -411,12 +428,12 @@ class BDGradientNode : SKSpriteNode {
     
     :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
-    :param: keepShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
+    :param: keepTextureShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
     :returns: An SKShader that will produce a linear gradient. Note: the current implementation simply uses the GLSL mix function, which is a linear interpolation. For colors near to each other on the spectrum the results are fine; for very different colors the results can be pretty ugly. If you need a gradient between very different colors then you can simply add more colors in between to narrow the relative distances.
     
     */
-    private func linearGradientShader(#colors: [UIColor], locations: [Float]?, startPoint: CGPoint?, endPoint: CGPoint?, blending: Float, keepShape: Bool) -> SKShader {
+    private func linearGradientShader(#colors: [UIColor], locations: [Float]?, startPoint: CGPoint?, endPoint: CGPoint?, blending: Float, keepTextureShape: Bool) -> SKShader {
         
         
         // Sanitization and Uniforms
@@ -447,9 +464,9 @@ class BDGradientNode : SKSpriteNode {
         }
         
         
-        // keepShape
-        self.keepShape = keepShape
-        uniforms.append(u_keepShape)
+        // keepTextureShape
+        self.keepTextureShape = keepTextureShape
+        uniforms.append(u_keepTextureShape)
         
         
         // Locations
@@ -504,7 +521,7 @@ class BDGradientNode : SKSpriteNode {
         // Shader Creation
         
         
-        var linearGradientShader = "precision highp float; vec4 color; void main (void) { vec2 coord = v_tex_coord; if (u_keepShape == 1.0) { vec4 textureColor = texture2D(u_texture, coord); if (textureColor.w == 0.0) { discard; } } if (u_blending == 0.0) { gl_FragColor = texture2D(u_texture, v_tex_coord); return; } vec2 vector = vec2(u_endPoint.x - u_startPoint.x, u_endPoint.y - u_startPoint.y); if (u_blending < 1.0) { color = mix(color, texture2D(u_texture, v_tex_coord), 1.0 - u_blending); } gl_FragColor = color; }"
+        var linearGradientShader = "precision highp float; vec4 color; void main (void) { vec2 coord = v_tex_coord; if (u_keepTextureShape == 1.0) { vec4 textureColor = texture2D(u_texture, coord); if (textureColor.w == 0.0) { discard; } } if (u_blending == 0.0) { gl_FragColor = texture2D(u_texture, v_tex_coord); return; } vec2 vector = vec2(u_endPoint.x - u_startPoint.x, u_endPoint.y - u_startPoint.y); if (u_blending < 1.0) { color = mix(color, texture2D(u_texture, v_tex_coord), 1.0 - u_blending); } gl_FragColor = color; }"
         
         var stringRange : NSRange
         var string = ""
@@ -565,12 +582,12 @@ class BDGradientNode : SKSpriteNode {
     
     :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
-    :param: keepShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
+    :param: keepTextureShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
     :returns: An SKShader that produced a radial gradient with colors begining at the first circle and ending at the second.
     
     */
-    private func radialGradientShader (#colors: [UIColor], locations: [Float]?, firstCenter: CGPoint?, firstRadius: Float?, secondCenter: CGPoint?, secondRadius: Float?, blending: Float, keepShape: Bool) -> SKShader {
+    private func radialGradientShader (#colors: [UIColor], locations: [Float]?, firstCenter: CGPoint?, firstRadius: Float?, secondCenter: CGPoint?, secondRadius: Float?, blending: Float, keepTextureShape: Bool) -> SKShader {
         
         
         // Sanitizaton
@@ -578,8 +595,8 @@ class BDGradientNode : SKSpriteNode {
         self.blending = min(max(blending, 0.0), 1.0)
         uniforms.append(u_blending)
         
-        self.keepShape = keepShape
-        uniforms.append(u_keepShape)
+        self.keepTextureShape = keepTextureShape
+        uniforms.append(u_keepTextureShape)
         
         // If there aren't at least two colors: return an empty shader.
         if colors.count < 2 { return SKShader() }
@@ -663,7 +680,7 @@ class BDGradientNode : SKSpriteNode {
         
         // Shader Creation
         
-        var radialGradientShader = "precision highp float; vec4 color; float center0X = u_firstCenter.x; float center0Y = u_firstCenter.y; float center1X = u_secondCenter.x; float center1Y = u_secondCenter.y; float location0 = 0.0; void main() { if (u_keepShape == 1.0) { vec4 textureColor = texture2D(u_texture, v_tex_coord); if (textureColor.w == 0.0) { discard; } } float coordX = v_tex_coord.x; float coordY = v_tex_coord.y; float root = sqrt(u_secondRadius * u_secondRadius * ((center0X - coordX) * (center0X - coordX) + (center0Y - coordY) * (center0Y - coordY)) - 2.0 * u_firstRadius * u_secondRadius * ((center0X - coordX) * (center1X - coordX) + (center0Y - coordY) * (center1Y - coordY)) + u_firstRadius * u_firstRadius * ((center1X - coordX) * (center1X - coordX) + (center1Y - coordY) * (center1Y - coordY)) - ((center1X * center0Y - coordX * center0Y - center0X * center1Y + coordX * center1Y + center0X * coordY - center1X * coordY) * (center1X * center0Y - coordX * center0Y - center0X * center1Y + coordX * center1Y + center0X * coordY - center1X * coordY))); float t; if(distance(v_tex_coord.xy, vec2(center1X, center1Y)) > u_secondRadius) { t = (-u_secondRadius * (u_firstRadius - u_secondRadius) + (center0X - center1X) * (center1X - coordX) + (center0Y - center1Y) * (center1Y - coordY) + root) / ((u_firstRadius - u_secondRadius) * (u_firstRadius - u_secondRadius) - (center0X - center1X) * (center0X - center1X) - (center0Y - center1Y) * (center0Y - center1Y)); } else { t = (-u_secondRadius * (u_firstRadius - u_secondRadius) + (center0X - center1X) * (center1X - coordX) + (center0Y - center1Y) * (center1Y - coordY) - root) / ((u_firstRadius - u_secondRadius) * (u_firstRadius - u_secondRadius) - (center0X - center1X) * (center0X - center1X) - (center0Y - center1Y) * (center0Y - center1Y)); } if (t > 0.0 && t <= 1.0) { if (u_blending == 0.0) { gl_FragColor = texture2D(u_texture, v_tex_coord); return; } if (u_blending < 1.0) { color = mix(color, texture2D(u_texture, v_tex_coord), 1.0 - u_blending); } gl_FragColor = color; } else { discard; } }"
+        var radialGradientShader = "precision highp float; vec4 color; float center0X = u_firstCenter.x; float center0Y = u_firstCenter.y; float center1X = u_secondCenter.x; float center1Y = u_secondCenter.y; float location0 = 0.0; void main() { if (u_keepTextureShape == 1.0) { vec4 textureColor = texture2D(u_texture, v_tex_coord); if (textureColor.w == 0.0) { discard; } } float coordX = v_tex_coord.x; float coordY = v_tex_coord.y; float root = sqrt(u_secondRadius * u_secondRadius * ((center0X - coordX) * (center0X - coordX) + (center0Y - coordY) * (center0Y - coordY)) - 2.0 * u_firstRadius * u_secondRadius * ((center0X - coordX) * (center1X - coordX) + (center0Y - coordY) * (center1Y - coordY)) + u_firstRadius * u_firstRadius * ((center1X - coordX) * (center1X - coordX) + (center1Y - coordY) * (center1Y - coordY)) - ((center1X * center0Y - coordX * center0Y - center0X * center1Y + coordX * center1Y + center0X * coordY - center1X * coordY) * (center1X * center0Y - coordX * center0Y - center0X * center1Y + coordX * center1Y + center0X * coordY - center1X * coordY))); float t; if(distance(v_tex_coord.xy, vec2(center1X, center1Y)) > u_secondRadius) { t = (-u_secondRadius * (u_firstRadius - u_secondRadius) + (center0X - center1X) * (center1X - coordX) + (center0Y - center1Y) * (center1Y - coordY) + root) / ((u_firstRadius - u_secondRadius) * (u_firstRadius - u_secondRadius) - (center0X - center1X) * (center0X - center1X) - (center0Y - center1Y) * (center0Y - center1Y)); } else { t = (-u_secondRadius * (u_firstRadius - u_secondRadius) + (center0X - center1X) * (center1X - coordX) + (center0Y - center1Y) * (center1Y - coordY) - root) / ((u_firstRadius - u_secondRadius) * (u_firstRadius - u_secondRadius) - (center0X - center1X) * (center0X - center1X) - (center0Y - center1Y) * (center0Y - center1Y)); } if (t > 0.0 && t <= 1.0) { if (u_blending == 0.0) { gl_FragColor = texture2D(u_texture, v_tex_coord); return; } if (u_blending < 1.0) { color = mix(color, texture2D(u_texture, v_tex_coord), 1.0 - u_blending); } gl_FragColor = color; } else { discard; } }"
         
         
         var stringRange : NSRange
@@ -729,12 +746,12 @@ class BDGradientNode : SKSpriteNode {
     
     :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
-    :param: keepShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
+    :param: keepTextureShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
     :returns: An SKShader that will produce a sweep gradient. Note: the current implementation simply uses the GLSL mix function, which is a linear interpolation. For colors near to each other on the spectrum the results are fine; for very different colors the results can be pretty ugly. If you need a gradient between very different colors then you can simply add more clors in between to narrow the relative distances.
     
     */
-    private func sweepGradientShader(#colors: [UIColor], locations: [Float]?, center: CGPoint?, radius: Float?, startAngle: Float?, blending: Float, keepShape: Bool) -> SKShader {
+    private func sweepGradientShader(#colors: [UIColor], locations: [Float]?, center: CGPoint?, radius: Float?, startAngle: Float?, blending: Float, keepTextureShape: Bool) -> SKShader {
         
         
         // Sanitization
@@ -770,8 +787,8 @@ class BDGradientNode : SKSpriteNode {
         }
         
         
-        self.keepShape = keepShape
-        uniforms.append(u_keepShape)
+        self.keepTextureShape = keepTextureShape
+        uniforms.append(u_keepTextureShape)
         
         
         // Locations
@@ -823,7 +840,7 @@ class BDGradientNode : SKSpriteNode {
         
         // Shader Construction
         
-        var sweepGradientShader = "precision highp float; float M_PI = 3.1415926535897932384626433832795; float location0 = 0.0; void main() { vec2 coord = v_tex_coord.xy - u_center; if (distance(coord, vec2(0.0, 0.0)) > u_radius) { discard; }  if (u_keepShape == 1.0) { vec4 textureColor = texture2D(u_texture, v_tex_coord); if (textureColor.w == 0.0) { discard; } } if (u_blending == 0.0) { gl_FragColor = texture2D(u_texture, v_tex_coord); return; } float angle = atan(coord.y, coord.x); angle = mod(angle / (2.0 * M_PI) - u_startAngle, 1.0); vec4 color = mix(u_color0, u_color1, smoothstep(location0, u_location1, angle)); if (u_blending < 1.0) { color = mix(color, texture2D(u_texture, v_tex_coord), 1.0 - u_blending); } gl_FragColor = color; }"
+        var sweepGradientShader = "precision highp float; float M_PI = 3.1415926535897932384626433832795; float location0 = 0.0; void main() { vec2 coord = v_tex_coord.xy - u_center; if (distance(coord, vec2(0.0, 0.0)) > u_radius) { discard; }  if (u_keepTextureShape == 1.0) { vec4 textureColor = texture2D(u_texture, v_tex_coord); if (textureColor.w == 0.0) { discard; } } if (u_blending == 0.0) { gl_FragColor = texture2D(u_texture, v_tex_coord); return; } float angle = atan(coord.y, coord.x); angle = mod(angle / (2.0 * M_PI) - u_startAngle, 1.0); vec4 color = mix(u_color0, u_color1, smoothstep(location0, u_location1, angle)); if (u_blending < 1.0) { color = mix(color, texture2D(u_texture, v_tex_coord), 1.0 - u_blending); } gl_FragColor = color; }"
         
         
         var stringRange : NSRange
