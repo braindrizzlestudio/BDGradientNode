@@ -534,9 +534,11 @@ class GradientScene : SKScene {
             }
         }
         
+        var blendingMultiplier : Float = 1.0
         let blendingAction = SKAction.runBlock {
             
-            self.gradientNode.blending = abs(sin(self.gradientNode.startAngle / 2))
+            if self.gradientNode.blending > 1.0 || self.gradientNode.blending < 0.0 { blendingMultiplier *= -1.0 }
+            self.gradientNode.blending += blendingMultiplier * 0.01
             if let slider = self.view?.viewWithTag(56) as? UISlider {
                 slider.value = self.gradientNode.blending
             }
@@ -578,9 +580,11 @@ class GradientScene : SKScene {
     
     func linearAnimation () {
         
+        var blendingMultiplier : Float = 1.0
         let blendingAction = SKAction.runBlock {
             
-            self.gradientNode.blending = Float(abs(sin(self.angleOfPoint(self.gradientNode.startPoint))))
+            if self.gradientNode.blending > 1.0 || self.gradientNode.blending < 0.0 { blendingMultiplier *= -1.0 }
+            self.gradientNode.blending += blendingMultiplier * 0.01
             if let slider = self.view?.viewWithTag(56) as? UISlider {
                 slider.value = self.gradientNode.blending
             }
@@ -635,9 +639,11 @@ class GradientScene : SKScene {
         self.gradientNode.secondCenter.x -= 0.001
         self.gradientNode.secondCenter.y -= 0.001
         
+        var blendingMultiplier : Float = 1.0
         let blendingAction = SKAction.runBlock {
             
-            self.gradientNode.blending = Float(abs(sin(self.angleOfPoint(self.gradientNode.firstCenter))))
+            if self.gradientNode.blending > 1.0 || self.gradientNode.blending < 0.0 { blendingMultiplier *= -1.0 }
+            self.gradientNode.blending += blendingMultiplier * 0.01
             if let slider = self.view?.viewWithTag(56) as? UISlider {
                 slider.value = self.gradientNode.blending
             }
@@ -716,9 +722,11 @@ class GradientScene : SKScene {
             }
         }
         
+        var blendingMultiplier : Float = 1.0
         let blendingAction = SKAction.runBlock {
             
-            self.gradientNode.blending = abs(sin(self.gradientNode.startAngle / 2))
+            if self.gradientNode.blending > 1.0 || self.gradientNode.blending < 0.0 { blendingMultiplier *= -1.0 }
+            self.gradientNode.blending += blendingMultiplier * 0.01
             if let slider = self.view?.viewWithTag(56) as? UISlider {
                 slider.value = self.gradientNode.blending
             }
