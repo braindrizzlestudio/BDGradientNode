@@ -84,7 +84,7 @@ addChild(myGradientNode)
 
 #### Animation
 
-After instantiating the BDGradientNode you can simply change the properties of that type of node while your program is running and the gradient will change in real-time. This makes animation very simple. The only exceptions--at least for v1.0--are the colors and locations; these can't currently be animated as they require recompilation of the shader. (More on this in the Limitations section below.)
+After instantiating the BDGradientNode you can simply change the properties of that type of node while your program is running and the gradient will change in real-time. This makes animation very simple. The only limitation is changing the number of colors/locations; the colors and locations themselves can be swapped by passing new arrays during runtime, but the arrays have to be the same size as the BDGradientNode you instantiated. (More on this in the Limitations section below.)
 
 To use SKActions to animate you can use runBlock, as in the demo app code.
 
@@ -176,14 +176,14 @@ The gamut gradient uses the gamut of the HSB spectrum rather than requiring spec
 
 ## The Demo
 
-The demo app was created solely to give an idea of what you can easily do with BDGradient Node. Make sure you play with all the settings, touch the image, and watch the animations! (We especially like the radial gradient animation with blended and keepShape false.) You can change the settings, including with image-touches for the gradients that take them, while the animations are running.
+The demo app was created solely to give an idea of what you can easily do with BDGradient Node. Make sure you play with all the settings, touch the image, and watch the animations! (We especially like the radial gradient animation with blended and keepShape false.) Make sure to try changing the settings, including with image-touches for the gradients that take them, while the animations are running!
 
 Note: the UI of the demo was not designed to fit on iPhone 4S.
 
 
 ## Coming Updates
 
-Version 1.2 will be released in April, 2015. It will include the ability to vary blending percentage, rather than just having it off or on. The only limitation, then, will be that you can't change the number of colors/locations without reinitializing.
+Version 1.2 will be released in the second half of April, 2015. It will include the ability to vary blending percentage, rather than just having it off or on. It will also include the option to keep or discard the texture colors outside of the gradient. For example: suppose you have a radial gradient; you'll have the option of whether or not to show the texture through the hole in the middle. The only limitation, then, will be that you can't change the number of colors/locations without reinitializing.
 
 We have plans for version 2.0; it will be released later in 2015. The biggest change will be switching from the linear interpolation of GLSL mix() to something a bit fancier, as long as it's performant. We hope to receive suggestions from you, too!
 
