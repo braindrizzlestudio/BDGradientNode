@@ -23,7 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Version: 1.2
+Version: 1.3
 
 */
 
@@ -172,7 +172,7 @@ class BDGradientNode : SKSpriteNode {
     
     
     /// Use the appropriate convenience initializer to get your BDGradientNode; this isn't the initializer you're looking for.
-    internal override init (texture: SKTexture!, color: UIColor!, size: CGSize) {
+    internal override init (texture: SKTexture?, color: UIColor, size: CGSize) {
         
         super.init(texture: texture, color: color, size: size)
     }
@@ -190,26 +190,26 @@ class BDGradientNode : SKSpriteNode {
     
     An SKSpriteNode with the gamut of the spectrum.
     
-    :param: texture The texture to be shaded.
+    - parameter texture: The texture to be shaded.
     
-    :param: center The center of the sweeping gradient in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
+    - parameter center: The center of the sweeping gradient in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: radius The radius of the gradient circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.5.
+    - parameter radius: The radius of the gradient circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.5.
     
-    :param: startAngle The angle at which the red in the gradient will start in radians between 0 and 2Pi, where 0 is to the right along the x axis and the colors proceed counter-clockwise. Default is 0.
+    - parameter startAngle: The angle at which the red in the gradient will start in radians between 0 and 2Pi, where 0 is to the right along the x axis and the colors proceed counter-clockwise. Default is 0.
     
-    :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
+    - parameter blending: A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
-    :param: discardOutsideGradient If true, the non-gradient areas will not be drawn. In particular: outside the radius of the gamut, sweep, or outer radial circle, and inside the inner radial circle; if false, the texture colors will be visible.
+    - parameter discardOutsideGradient: If true, the non-gradient areas will not be drawn. In particular: outside the radius of the gamut, sweep, or outer radial circle, and inside the inner radial circle; if false, the texture colors will be visible.
     
-    :param: keepTextureShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
+    - parameter keepTextureShape: If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
-    :param: size The desired size of the node.
+    - parameter size: The desired size of the node.
     
     */
     convenience init (gamutGradientWithTexture texture: SKTexture, center: CGPoint?, radius: Float?, startAngle: Float?, blending: Float, discardOutsideGradient: Bool, keepTextureShape: Bool, size: CGSize) {
 
-        self.init(texture: texture, color: nil, size: size)
+        self.init(texture: texture, color: UIColor.clearColor(), size: size)
         
         gradientType = "gamut"
         
@@ -227,26 +227,26 @@ class BDGradientNode : SKSpriteNode {
     
     A SKSpriteNode with a linear gradient from bottom to top in the given texture.
     
-    :param: texture The texture to be shaded.
+    - parameter texture: The texture to be shaded.
     
-    :param: colors An array of two or more colors.
+    - parameter colors: An array of two or more colors.
     
-    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  Floats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
+    - parameter locations: An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  Floats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
     
-    :param: startPoint The point from which the gradient will start. If this is not nil then endPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 0.0).
+    - parameter startPoint: The point from which the gradient will start. If this is not nil then endPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 0.0).
     
-    :param: endPoint The point from which the gradient will start. If this is not nil then startPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 1.0).
+    - parameter endPoint: The point from which the gradient will start. If this is not nil then startPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 1.0).
     
-    :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
+    - parameter blending: A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
-    :param: keepTextureShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
+    - parameter keepTextureShape: If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
-    :param: size The desired size of the node.
+    - parameter size: The desired size of the node.
     
     */
     convenience init (linearGradientWithTexture texture: SKTexture, colors: [UIColor], locations: [Float]?, startPoint: CGPoint?, endPoint: CGPoint?, blending: Float, keepTextureShape: Bool, size: CGSize) {
         
-        self.init(texture: texture, color: nil, size: size)
+        self.init(texture: texture, color: UIColor.clearColor(), size: size)
         
         gradientType = "linear"
         self.colors = colors
@@ -264,32 +264,32 @@ class BDGradientNode : SKSpriteNode {
     
     An SKSpriteNode with a radial gradient between the two specified circles. At least one circle must have a radius specified. Note that the coordinate system for the firstCenter and secondCenter has its anchor point (0.0, 0.0) at the bottom left of the texture; (texture.size().width, texture.size().height) is at the top right.
     
-    :param: texture The texture to be shaded.
+    - parameter texture: The texture to be shaded.
     
-    :param: colors An array of two or more colors.
+    - parameter colors: An array of two or more colors.
     
-    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  Floats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
+    - parameter locations: An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  Floats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
     
-    :param: firstCenter The center of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
+    - parameter firstCenter: The center of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: firstRadius The radius of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is 0.1.
+    - parameter firstRadius: The radius of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is 0.1.
     
-    :param: secondCenter The center of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
+    - parameter secondCenter: The center of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: secondRadius The radius of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.5.
+    - parameter secondRadius: The radius of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.5.
     
-    :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
+    - parameter blending: A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
-    :param: discardOutsideGradient If true, the non-gradient areas will not be drawn. In particular: outside the radius of the gamut, sweep, or outer radial circle, and inside the inner radial circle; if false, the texture colors will be visible.
+    - parameter discardOutsideGradient: If true, the non-gradient areas will not be drawn. In particular: outside the radius of the gamut, sweep, or outer radial circle, and inside the inner radial circle; if false, the texture colors will be visible.
     
-    :param: keepTextureShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
+    - parameter keepTextureShape: If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
-    :param: size The desired size of the node. Note: if this size is not the size of the passed texture then the "circles" will be ellipses.
+    - parameter size: The desired size of the node. Note: if this size is not the size of the passed texture then the "circles" will be ellipses.
     
     */
     convenience init (radialGradientWithTexture texture: SKTexture, colors: [UIColor], locations: [Float]?, firstCenter: CGPoint?, firstRadius: Float?, secondCenter: CGPoint?, secondRadius: Float?, blending: Float, discardOutsideGradient: Bool, keepTextureShape: Bool, size: CGSize) {
         
-        self.init(texture: texture, color: nil, size: size)
+        self.init(texture: texture, color: UIColor.clearColor(), size: size)
 
         gradientType = "radial"
         self.colors = colors
@@ -307,30 +307,30 @@ class BDGradientNode : SKSpriteNode {
     
     An SKSpriteNode shaded wtih a sweeping gradient (i.e. a gradient determined by angle).
     
-    :param: texture The texture to be shaded.
+    - parameter texture: The texture to be shaded.
     
-    :param: colors An array of two or more colors.
+    - parameter colors: An array of two or more colors.
     
-    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; 0.0 = 1.0; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at startAngle; the rest are at these locations. For that reason: locations must contain  colors.count - 1  Floats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
+    - parameter locations: An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; 0.0 = 1.0; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at startAngle; the rest are at these locations. For that reason: locations must contain  colors.count - 1  Floats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
     
-    :param: center The center of the sweeping gradient in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
+    - parameter center: The center of the sweeping gradient in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: radius The radius of the gradient circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.5.
+    - parameter radius: The radius of the gradient circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.5.
     
-    :param: startAngle The angle at which the first color of the gradient will start in radians between 0 and 2Pi, where 0 is to the right along the x axis and the colors proceed counter-clockwise. Default is 0.
+    - parameter startAngle: The angle at which the first color of the gradient will start in radians between 0 and 2Pi, where 0 is to the right along the x axis and the colors proceed counter-clockwise. Default is 0.
     
-    :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
+    - parameter blending: A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
-    :param: discardOutsideGradient If true, the non-gradient areas will not be drawn. In particular: outside the radius of the gamut, sweep, or outer radial circle, and inside the inner radial circle; if false, the texture colors will be visible.
+    - parameter discardOutsideGradient: If true, the non-gradient areas will not be drawn. In particular: outside the radius of the gamut, sweep, or outer radial circle, and inside the inner radial circle; if false, the texture colors will be visible.
     
-    :param: keepTextureShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
+    - parameter keepTextureShape: If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
-    :param: size The desired size of the node.
+    - parameter size: The desired size of the node.
     
     */
     convenience init (sweepGradientWithTexture texture: SKTexture, colors: [UIColor], locations: [Float]?, center: CGPoint?, radius: Float?, startAngle: Float?, blending: Float, discardOutsideGradient: Bool, keepTextureShape: Bool, size: CGSize) {
         
-        self.init(texture: texture, color: nil, size: size)
+        self.init(texture: texture, color: UIColor.clearColor(), size: size)
         
         gradientType = "sweep"
         self.colors = colors
@@ -351,22 +351,22 @@ class BDGradientNode : SKSpriteNode {
     
     Returns a shader that produces a circle with the gamut of color.
     
-    :param: center The center of the sweeping gradient in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
+    - parameter center: The center of the sweeping gradient in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: radius The radius of the gradient circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.5.
+    - parameter radius: The radius of the gradient circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.5.
     
-    :param: startAngle The angle at which the red in the gradient will start in radians between 0 and 2Pi, where 0 is to the right along the x axis and the colors proceed counter-clockwise. Default is 0.
+    - parameter startAngle: The angle at which the red in the gradient will start in radians between 0 and 2Pi, where 0 is to the right along the x axis and the colors proceed counter-clockwise. Default is 0.
     
-    :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
+    - parameter blending: A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
-    :param: discardOutsideGradient If true, the non-gradient areas will not be drawn. In particular: outside the radius of the gamut, sweep, or outer radial circle, and inside the inner radial circle; if false, the texture colors will be visible.
+    - parameter discardOutsideGradient: If true, the non-gradient areas will not be drawn. In particular: outside the radius of the gamut, sweep, or outer radial circle, and inside the inner radial circle; if false, the texture colors will be visible.
     
-    :param: keepTextureShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
+    - parameter keepTextureShape: If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
-    :returns: A shader that produces a circle with the gamut of color. This shader makes use of the hsv2rgb method from http://stackoverflow.com/a/17897228/605869
+    - returns: A shader that produces a circle with the gamut of color. This shader makes use of the hsv2rgb method from http://stackoverflow.com/a/17897228/605869
     
     */
-    private func gamutGradientShader(#center: CGPoint?, radius: Float?, startAngle: Float?, blending: Float, discardOutsideGradient: Bool, keepTextureShape: Bool) -> SKShader {
+    private func gamutGradientShader(center center: CGPoint?, radius: Float?, startAngle: Float?, blending: Float, discardOutsideGradient: Bool, keepTextureShape: Bool) -> SKShader {
         
         
         // Sanitization
@@ -406,9 +406,6 @@ class BDGradientNode : SKSpriteNode {
         
         let gamutGradientShader = "precision highp float; vec3 hsv2rgb(vec3 c) { vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0); vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www); return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y); } float M_PI = 3.1415926535897932384626433832795; vec4 color; void main() { vec2 coord = v_tex_coord.xy - u_center; if (u_keepTextureShape == 1.0) { vec4 textureColor = texture2D(u_texture, v_tex_coord); if (textureColor.w == 0.0) { discard; } } if (distance(coord, vec2(0.0, 0.0)) > u_radius) { if (u_discardOutsideGradient == 1.0) { discard; } else { gl_FragColor = texture2D(u_texture, v_tex_coord); return; } } if (u_blending == 0.0) { gl_FragColor = texture2D(u_texture, v_tex_coord); return; } float angle = atan(coord.y, coord.x); angle = mod(angle / (2.0 * M_PI) - u_startAngle, 1.0); float distanceFromCenter = length(coord); color = vec4(hsv2rgb(vec3(angle, distanceFromCenter, 1.0)), 1.0); if (u_blending < 1.0) { color = mix(color, texture2D(u_texture, v_tex_coord), 1.0 - u_blending); } gl_FragColor = color; }"
         
-        var stringRange : NSRange
-        var string = ""
-        
         
         return SKShader(source: gamutGradientShader)
     }
@@ -422,22 +419,22 @@ class BDGradientNode : SKSpriteNode {
     
     Returns an SKShader that creates a linear gradient in the node's texture, from bottom to top, of the colors given.
     
-    :param: colors An array of two or more colors.
+    - parameter colors: An array of two or more colors.
     
-    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  Floats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
+    - parameter locations: An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  Floats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
     
-    :param: startPoint The point from which the gradient will start. If this is not nil then endPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 0.0).
+    - parameter startPoint: The point from which the gradient will start. If this is not nil then endPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 0.0).
     
-    :param: endPoint The point from which the gradient will start. If this is not nil then startPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 1.0).
+    - parameter endPoint: The point from which the gradient will start. If this is not nil then startPoint must also have a value. If it is nil then it will default to the bottom center of the texture (0.5, 1.0).
     
-    :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
+    - parameter blending: A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
-    :param: keepTextureShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
+    - parameter keepTextureShape: If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
-    :returns: An SKShader that will produce a linear gradient. Note: the current implementation simply uses the GLSL mix function, which is a linear interpolation. For colors near to each other on the spectrum the results are fine; for very different colors the results can be pretty ugly. If you need a gradient between very different colors then you can simply add more colors in between to narrow the relative distances.
+    - returns: An SKShader that will produce a linear gradient. Note: the current implementation simply uses the GLSL mix function, which is a linear interpolation. For colors near to each other on the spectrum the results are fine; for very different colors the results can be pretty ugly. If you need a gradient between very different colors then you can simply add more colors in between to narrow the relative distances.
     
     */
-    private func linearGradientShader(#colors: [UIColor], locations: [Float]?, startPoint: CGPoint?, endPoint: CGPoint?, blending: Float, keepTextureShape: Bool) -> SKShader {
+    private func linearGradientShader(colors colors: [UIColor], locations: [Float]?, startPoint: CGPoint?, endPoint: CGPoint?, blending: Float, keepTextureShape: Bool) -> SKShader {
         
         
         // Sanitization and Uniforms
@@ -459,7 +456,7 @@ class BDGradientNode : SKSpriteNode {
         
         
         // Color uniforms
-        for (index, color) in enumerate(colorFloats) {
+        for (index, color) in colorFloats.enumerate() {
             
             let vector4 = GLKVector4Make(color[0], color[1], color[2], color[3])
             let colorUniform = SKUniform(name: "u_color\(index)", floatVector4: vector4)
@@ -513,7 +510,7 @@ class BDGradientNode : SKSpriteNode {
         
         // Location uniforms
         let vector = CGPoint(x: self.endPoint.x - self.startPoint.x, y: self.endPoint.y - self.startPoint.y)
-        for (index, location) in enumerate(locationArray) {
+        for (index, location) in locationArray.enumerate() {
             
             let vector2 = GLKVector2Make(Float(self.startPoint.x) + location * Float(vector.x), Float(self.startPoint.y) + location * Float(vector.y))
             let locationUniform = SKUniform(name: "u_stop\(index + 1)", floatVector2: vector2)
@@ -572,28 +569,28 @@ class BDGradientNode : SKSpriteNode {
     
     An SKShader for a radial gradient between two specified circles. At least one circle must have a radius specified.
     
-    :param: colors An array of two or more colors.
+    - parameter colors: An array of two or more colors.
     
-    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  Floats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
+    - parameter locations: An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at 0.0; the last is automatically at 1.0; the rest are at the locations in this array. For that reason: locations must contain  colors.count - 2  Floats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
     
-    :param: firstCenter The center of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
+    - parameter firstCenter: The center of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: firstRadius The radius of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is 0.1.
+    - parameter firstRadius: The radius of the first circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is 0.1.
     
-    :param: secondCenter The center of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
+    - parameter secondCenter: The center of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: secondRadius The radius of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.5.
+    - parameter secondRadius: The radius of the second circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.5.
     
-    :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
+    - parameter blending: A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
-    :param: discardOutsideGradient If true, the non-gradient areas will not be drawn. In particular: outside the radius of the gamut, sweep, or outer radial circle, and inside the inner radial circle; if false, the texture colors will be visible.
+    - parameter discardOutsideGradient: If true, the non-gradient areas will not be drawn. In particular: outside the radius of the gamut, sweep, or outer radial circle, and inside the inner radial circle; if false, the texture colors will be visible.
     
-    :param: keepTextureShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
+    - parameter keepTextureShape: If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
-    :returns: An SKShader that produced a radial gradient with colors begining at the first circle and ending at the second.
+    - returns: An SKShader that produced a radial gradient with colors begining at the first circle and ending at the second.
     
     */
-    private func radialGradientShader (#colors: [UIColor], locations: [Float]?, firstCenter: CGPoint?, firstRadius: Float?, secondCenter: CGPoint?, secondRadius: Float?, blending: Float, discardOutsideGradient: Bool, keepTextureShape: Bool) -> SKShader {
+    private func radialGradientShader (colors colors: [UIColor], locations: [Float]?, firstCenter: CGPoint?, firstRadius: Float?, secondCenter: CGPoint?, secondRadius: Float?, blending: Float, discardOutsideGradient: Bool, keepTextureShape: Bool) -> SKShader {
         
         
         // Sanitizaton
@@ -643,7 +640,7 @@ class BDGradientNode : SKSpriteNode {
         
         
         // Color uniforms
-        for (index, color) in enumerate(colorFloats) {
+        for (index, color) in colorFloats.enumerate() {
             
             let vector4 = GLKVector4Make(color[0], color[1], color[2], color[3])
             let colorUniform = SKUniform(name: "u_color\(index)", floatVector4: vector4)
@@ -678,7 +675,7 @@ class BDGradientNode : SKSpriteNode {
         
         
         // Location uniforms
-        for (index, location) in enumerate(locationArray) {
+        for (index, location) in locationArray.enumerate() {
             
             let locationUniform = SKUniform(name: "u_location\(index + 1)", float: location)
             u_locations.append(locationUniform)
@@ -749,26 +746,26 @@ class BDGradientNode : SKSpriteNode {
     
     Returns an SKShader that creates a sweep gradient, starting from the left along the x axis and moving counter-clockwise, of the colors given in the texture of the node.
     
-    :param: colors An array of two or more colors.
+    - parameter colors: An array of two or more colors.
     
-    :param: locations An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; 0.0 = 1.0; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at startAngle; the rest are at these locations. For that reason: locations must contain  colors.count - 1  Floats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
+    - parameter locations: An array of monotonically increasing color locations, where 0.0 is the start and 1.0 is the end; 0.0 = 1.0; neither 0.0 nor 1.0 should be included in this array. The first color in colors is automatically at startAngle; the rest are at these locations. For that reason: locations must contain  colors.count - 1  Floats. If the array is nil or the number of locations is different than required: colors will be spread out evenly.
     
-    :param: center The center of the sweeping gradient in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
+    - parameter center: The center of the sweeping gradient in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the texture and (1.0, 1.0) is the top right. Default is (0.5, 0.5).
     
-    :param: radius The radius of the gradient circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.5.
+    - parameter radius: The radius of the gradient circle in the coordinate system of (0.0, 0.0) to (1.0, 1.0), where (0.0, 0.0) is the bottom left corner of the sprite and (1.0, 1.0) is the top right. Default is 0.5.
     
-    :param: startAngle The angle at which the first color of the gradient will start in radians between 0 and 2Pi, where 0 is to the right along the x axis and the colors proceed counter-clockwise. Default is 0.
+    - parameter startAngle: The angle at which the first color of the gradient will start in radians between 0 and 2Pi, where 0 is to the right along the x axis and the colors proceed counter-clockwise. Default is 0.
     
-    :param: blending A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
+    - parameter blending: A number between 0.0 and 1.0. If blending == 0.0, the shader adds no color to the texture; if blending == 1.0, the passed colors are solid; otherwise, the passed colors are blended with those of the texture using the given blending weight. Default is 0.5.
     
-    :param: discardOutsideGradient If true, the non-gradient areas will not be drawn. In particular: outside the radius of the gamut, sweep, or outer radial circle, and inside the inner radial circle; if false, the texture colors will be visible.
+    - parameter discardOutsideGradient: If true, the non-gradient areas will not be drawn. In particular: outside the radius of the gamut, sweep, or outer radial circle, and inside the inner radial circle; if false, the texture colors will be visible.
     
-    :param: keepTextureShape If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
+    - parameter keepTextureShape: If true, the resulting node will have the shape of the given texture by only drawing where the texture alpha channel is non-zero; if false it will fill the given size. Note that this value will be ignored if blending is true.
     
-    :returns: An SKShader that will produce a sweep gradient. Note: the current implementation simply uses the GLSL mix function, which is a linear interpolation. For colors near to each other on the spectrum the results are fine; for very different colors the results can be pretty ugly. If you need a gradient between very different colors then you can simply add more clors in between to narrow the relative distances.
+    - returns: An SKShader that will produce a sweep gradient. Note: the current implementation simply uses the GLSL mix function, which is a linear interpolation. For colors near to each other on the spectrum the results are fine; for very different colors the results can be pretty ugly. If you need a gradient between very different colors then you can simply add more clors in between to narrow the relative distances.
     
     */
-    private func sweepGradientShader(#colors: [UIColor], locations: [Float]?, center: CGPoint?, radius: Float?, startAngle: Float?, blending: Float, discardOutsideGradient: Bool, keepTextureShape: Bool) -> SKShader {
+    private func sweepGradientShader(colors colors: [UIColor], locations: [Float]?, center: CGPoint?, radius: Float?, startAngle: Float?, blending: Float, discardOutsideGradient: Bool, keepTextureShape: Bool) -> SKShader {
         
         
         // Sanitization
@@ -802,7 +799,7 @@ class BDGradientNode : SKSpriteNode {
         
         
         // Color uniforms
-        for (index, color) in enumerate(colorFloats) {
+        for (index, color) in colorFloats.enumerate() {
             
             let vector4 = GLKVector4Make(color[0], color[1], color[2], color[3])
             let colorUniform = SKUniform(name: "u_color\(index)", floatVector4: vector4)
@@ -840,7 +837,7 @@ class BDGradientNode : SKSpriteNode {
         
         
         // Location uniforms
-        for (index, location) in enumerate(locationArray) {
+        for (index, location) in locationArray.enumerate() {
             
             let locationUniform = SKUniform(name: "u_location\(index + 1)", float: location)
             u_locations.append(locationUniform)
@@ -898,9 +895,9 @@ class BDGradientNode : SKSpriteNode {
 
     Translates a UIColor into an array of its RGBA components.
 
-    :param: color A color.
+    - parameter color: A color.
 
-    :returns: An array of the RGBA components, with values from 0.0 to 1.0, of the given color.
+    - returns: An array of the RGBA components, with values from 0.0 to 1.0, of the given color.
 
     */
     private func colorToRGBAComponentFloatArray (color: UIColor) -> [Float] {
@@ -1016,15 +1013,15 @@ extension String {
     
     Creates a new String by inserting a String at the given index into the messaged String. Note that I don't believe that this method is unicode-safe.
     
-    :param: string The string to insert.
+    - parameter string: The string to insert.
     
-    :param: atIndex The index at which the string should be inserted.
+    - parameter atIndex: The index at which the string should be inserted.
     
-    :returns: The original string with the new string inserted at the given index.
+    - returns: The original string with the new string inserted at the given index.
     
     */
-    func insert(#string: String, atIndex index: Int) -> String {
+    func insert(string string: String, atIndex index: Int) -> String {
         
-        return  prefix(self, index) + string + suffix(self, count(self) - index)
+        return  String(self.characters.prefix(index)) + string + String(self.characters.suffix(self.characters.count - index))
     }
 }

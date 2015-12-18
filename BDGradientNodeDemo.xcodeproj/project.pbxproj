@@ -104,6 +104,7 @@
 		3CAC011B1AC75E17002EB9EA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftMigration = 0720;
 				LastUpgradeCheck = 0630;
 				ORGANIZATIONNAME = "Braindrizzle Studio";
 				TargetAttributes = {

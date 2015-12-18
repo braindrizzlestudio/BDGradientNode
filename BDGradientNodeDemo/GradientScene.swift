@@ -319,13 +319,13 @@ class GradientScene : SKScene {
     // MARK: Button and Label Makers
     
     
-    func setupButton (#frame: CGRect, title: String, action: Selector) -> UIButton {
+    func setupButton (frame frame: CGRect, title: String, action: Selector) -> UIButton {
 
         let button = UIButton(frame: frame)
         
         button.layer.cornerRadius = 8.0
         button.layer.borderWidth = 0.5
-        button.layer.borderColor = blue.CGColor!
+        button.layer.borderColor = blue.CGColor
         
         button.setTitle(title, forState: .Normal)
         button.setTitleColor(blue, forState: .Normal)
@@ -341,13 +341,13 @@ class GradientScene : SKScene {
     }
     
     
-    func setupLabel (#frame: CGRect, text: String) -> UILabel {
+    func setupLabel (frame frame: CGRect, text: String) -> UILabel {
         
         let label = UILabel(frame: frame)
         
         label.layer.cornerRadius = 8.0
         label.layer.borderWidth = 0.5
-        label.layer.borderColor = blue.CGColor!
+        label.layer.borderColor = blue.CGColor
         
         label.text = text
         label.adjustsFontSizeToFitWidth = true
@@ -962,11 +962,11 @@ class GradientScene : SKScene {
     // MARK: - Touch Handling
     
     
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         
         for touch in touches {
             
-            if let touch = touch as? UITouch {
+            if let touch = touch as UITouch? {
                 let positionInScene = touch.locationInNode(self)
                 let touchedNode = self.nodeAtPoint(positionInScene)
                 
@@ -1000,11 +1000,11 @@ class GradientScene : SKScene {
     }
     
     
-    override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
         
         for touch in touches {
             
-            if let touch = touch as? UITouch {
+            if let touch = touch as UITouch? {
                 let positionInScene = touch.locationInNode(self)
                 let touchedNode = self.nodeAtPoint(positionInScene)
                 
@@ -1046,7 +1046,7 @@ class GradientScene : SKScene {
     
     Adjusts the UI elements for the given gradient.
     
-    :param: gradient A gradientType of BDGradientNode.
+    - parameter gradient: A gradientType of BDGradientNode.
     
     */
     func adjustUIForGradient (gradient: String) {
@@ -1124,9 +1124,9 @@ class GradientScene : SKScene {
     
     The angle of a point around (0.5, 0.5).
     
-    :param: point A point.
+    - parameter point: A point.
     
-    :returns: The angle, in radians, of the vector of the given point around (0.5, 0.5).
+    - returns: The angle, in radians, of the vector of the given point around (0.5, 0.5).
     
     */
     func angleOfPoint (point: CGPoint) -> CGFloat {
@@ -1143,13 +1143,13 @@ class GradientScene : SKScene {
     
     Compares the point to check against the two other points to see which it's closer to.
     
-    :param: pointToCheck The point to compare.
+    - parameter pointToCheck: The point to compare.
     
-    :param: otherPoint1 The first other point.
+    - parameter otherPoint1: The first other point.
     
-    :param: otherPoint2 The second other point.
+    - parameter otherPoint2: The second other point.
     
-    :returns: If pointToCheck is closer to otherPoint1 than to otherPoint2: returns 1. If pointToCheck is closer to otherPoint2 than to otherPoint1: returns 2. If the distances are equal: returns 3. If somehow none of those conditions obtains: returns 0.
+    - returns: If pointToCheck is closer to otherPoint1 than to otherPoint2: returns 1. If pointToCheck is closer to otherPoint2 than to otherPoint1: returns 2. If the distances are equal: returns 3. If somehow none of those conditions obtains: returns 0.
     
     */
     func chooseCloserPoint(pointToCheck: CGPoint, otherPoint1: CGPoint, otherPoint2: CGPoint) -> Int {
@@ -1169,14 +1169,14 @@ class GradientScene : SKScene {
     
     Disables the UIButton at the given tag.
     
-    :param: tag The tag of the desired UIButton.
+    - parameter tag: The tag of the desired UIButton.
     
     */
     func disableButtonForTag (tag: Int) {
         
         if let button = (view?.viewWithTag(tag) as? UIButton) {
             button.enabled = false
-            button.layer.borderColor = UIColor.lightGrayColor().CGColor!
+            button.layer.borderColor = UIColor.lightGrayColor().CGColor
             button.setTitleColor(UIColor.lightGrayColor(), forState: .Normal)
         }
     }
@@ -1186,14 +1186,14 @@ class GradientScene : SKScene {
     
     Disables the UILabel at the given tag.
     
-    :param: tag The tag of the desired UILabel.
+    - parameter tag: The tag of the desired UILabel.
     
     */
     func disableLabelForTag (tag: Int) {
         
         if let label = (view?.viewWithTag(tag) as? UILabel) {
             label.enabled = false
-            label.layer.borderColor = UIColor.lightGrayColor().CGColor!
+            label.layer.borderColor = UIColor.lightGrayColor().CGColor
             label.textColor = UIColor.lightGrayColor()
         }
     }
@@ -1203,7 +1203,7 @@ class GradientScene : SKScene {
     
     Disables the UISlider at the given tag.
     
-    :param: tag The tag of the desired UISlider.
+    - parameter tag: The tag of the desired UISlider.
     
     */
     func disableSliderForTag (tag: Int) {
@@ -1226,11 +1226,11 @@ class GradientScene : SKScene {
     
     The distance between two points.
     
-    :param: firstPoint The first point.
+    - parameter firstPoint: The first point.
     
-    :param: secondPoint The second Point.
+    - parameter secondPoint: The second Point.
     
-    :returns: The distance between the two given points.
+    - returns: The distance between the two given points.
     
     */
     func distanceBetweenPoints(firstPoint: CGPoint, secondPoint: CGPoint) -> CGFloat {
@@ -1246,14 +1246,14 @@ class GradientScene : SKScene {
     
     Enables the UIButton at the given tag.
     
-    :param: tag The tag of the desired UIButton.
+    - parameter tag: The tag of the desired UIButton.
     
     */
     func enableButtonForTag (tag: Int) {
         
         if let button = (view?.viewWithTag(tag) as? UIButton) {
             button.enabled = true
-            button.layer.borderColor = blue.CGColor!
+            button.layer.borderColor = blue.CGColor
             button.setTitleColor(blue, forState: .Normal)
         }
     }
@@ -1263,14 +1263,14 @@ class GradientScene : SKScene {
     
     Enables the UILabel at the given tag.
     
-    :param: tag The tag of the desired UILabel.
+    - parameter tag: The tag of the desired UILabel.
     
     */
     func enableLabelForTag (tag: Int) {
         
         if let label = (view?.viewWithTag(tag) as? UILabel) {
             label.enabled = true
-            label.layer.borderColor = blue.CGColor!
+            label.layer.borderColor = blue.CGColor
             label.textColor = blue
         }
     }
@@ -1280,7 +1280,7 @@ class GradientScene : SKScene {
     
     Enables the UISlider at the given tag.
     
-    :param: tag The tag of the desired UISlider.
+    - parameter tag: The tag of the desired UISlider.
     
     */
     func enableSliderForTag (tag: Int) {
@@ -1303,14 +1303,14 @@ class GradientScene : SKScene {
     
     Generates a random CGFloat between the given min and max.
     
-    :param: min The lowest possible return value.
+    - parameter min: The lowest possible return value.
     
-    :param: max The highest possible return value.
+    - parameter max: The highest possible return value.
     
-    :returns: A random CGFloat between the given min and max.
+    - returns: A random CGFloat between the given min and max.
     
     */
-    func randomCGFloat(#min: CGFloat, max: CGFloat) -> CGFloat {
+    func randomCGFloat(min min: CGFloat, max: CGFloat) -> CGFloat {
         
         let random = CGFloat(Float(arc4random()) / 0xFFFFFFFF)
         return random * (max - min) + min
@@ -1321,14 +1321,14 @@ class GradientScene : SKScene {
     
     Generates a random Float between the given min and max.
     
-    :param: min The lowest possible return value.
+    - parameter min: The lowest possible return value.
     
-    :param: max The highest possible return value.
+    - parameter max: The highest possible return value.
     
-    :returns: A random Float between the given min and max.
+    - returns: A random Float between the given min and max.
     
     */
-    func randomFloat(#min: Float, max: Float) -> Float {
+    func randomFloat(min min: Float, max: Float) -> Float {
         
         let random = Float(arc4random()) / 0xFFFFFFFF
         return random * (max - min) + min
@@ -1339,9 +1339,9 @@ class GradientScene : SKScene {
     
     Creates an array of the given number of random colors.
     
-    :param: numberOfColors The number of colors that will be in the array.
+    - parameter numberOfColors: The number of colors that will be in the array.
     
-    :returns: An array of the given number of random colors.
+    - returns: An array of the given number of random colors.
     
     */
     func randomColorArray(numberOfColors: Int) -> [UIColor] {
@@ -1386,11 +1386,11 @@ class GradientScene : SKScene {
     
     Rotates a point around (0.5, 0.5) by the given angle.
     
-    :param: point The starting point.
+    - parameter point: The starting point.
     
-    :param: angle The angle by which the point will be rotated in radians.
+    - parameter angle: The angle by which the point will be rotated in radians.
     
-    :returns: A point rotated from the starting point, around (0.5, 0.5), by the given angle.
+    - returns: A point rotated from the starting point, around (0.5, 0.5), by the given angle.
     
     */
     func rotatePoint (point: CGPoint, byAngle angle: CGFloat) -> CGPoint {
@@ -1416,9 +1416,9 @@ class GradientScene : SKScene {
     
     A UIButton for a given tag.
     
-    :param: tag The tag for the desired UIButton.
+    - parameter tag: The tag for the desired UIButton.
     
-    :returns: The UIButton at the tag, if it exists; nil otherwise.
+    - returns: The UIButton at the tag, if it exists; nil otherwise.
     
     */
     func buttonForTag (tag: Int) -> UIButton? {
