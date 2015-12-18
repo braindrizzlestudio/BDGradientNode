@@ -1,7 +1,7 @@
 ![Braindrizzle Studio](http://braindrizzlestudio.com/images/logo/logo-overlay-orange-180.png "Braindrizzle Studio:tm:")
 
 # BDGradientNode
-#### Version: 1.2
+#### Version: 1.3
 
 ### By: [Braindrizzle Studio:tm:](http://braindrizzlestudio.com)
 
@@ -189,6 +189,9 @@ We have plans for version 2.0; it will be released later in 2015. The biggest ch
 
 
 ## Changelog
+
+### 1.3
+- Updated syntax for iOS 9 and Swift 2
 
 ### 1.2
 - Added the ability to vary blending percentage, rather than just having it off or on.
