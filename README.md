@@ -168,7 +168,7 @@ We wrote BDGradientNode because gradients are a bit of a pain to set up on the f
 
 ## Limitations
 
-- Version 1.2 is limited only in not being able to adjust the number of colors/locations without re-initializing a BDGradientNode.
+- The current version is limited only in not being able to adjust the number of colors/locations without re-initializing a BDGradientNode.
 
 - The shaders use high precision floats--not the most performant setting. But while on the iOS Simulator everything works with lower precisions, on hardware there can be artifacts in certain conditions. You can, of course, change the shaders for your own applications. Make sure you also change the shader-constructor's 'stringRange' instances to match, if required.
 
@@ -187,7 +187,7 @@ Note: the UI of the demo was not designed to fit on iPhone 4S.
 
 ## Coming Updates
 
-We have plans for version 2.0; it will be released later in 2015. The biggest change will be switching from the linear interpolation of GLSL mix() to something a bit fancier, as long as it's reasonably performant. We hope to receive suggestions from you, too!
+We have plans for version 2.0; it will be released in 2016. The biggest change will be switching from the linear interpolation of GLSL mix() to something a bit fancier, as long as it's reasonably performant. We hope to receive suggestions from you, too! Alternatively, we're looking into switching from OpenGL to Metal, as that's now the default setting for apps (which is why the new info.plist setting is required).
 
 
 ## Changelog
