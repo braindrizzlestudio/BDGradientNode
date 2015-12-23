@@ -1,7 +1,7 @@
 ![Braindrizzle Studio](http://braindrizzlestudio.com/images/logo/logo-overlay-orange-180.png "Braindrizzle Studio:tm:")
 
 # BDGradientNode
-#### Version: 1.3
+#### Version: 1.3.1
 
 ### By: [Braindrizzle Studio:tm:](http://braindrizzlestudio.com)
 
@@ -191,6 +191,10 @@ We have plans for version 2.0; it will be released later in 2015. The biggest ch
 
 
 ## Changelog
+
+### 1.3.1
+- Due to changes in Swift 2 / iOS 9, a small change was made to the GLSL code
+- Added NOTE to users that they now must add PrefersOpenGL = YES to info.plist
 
 ### 1.3
 - Updated syntax for iOS 9 and Swift 2
