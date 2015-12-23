@@ -27,6 +27,12 @@ Version: 1.3.1
 
 */
 
+/*
+ 
+ NOTE: Because of a change in Swift 2 / iOS 9, apps now use Metal rather than OpenGL by default. For this version of BDGradientNodes to work you must add PrefersOpenGL = YES to your info.plist, as described in https://forums.developer.apple.com/message/71424#71424
+ 
+*/
+
 
 import SpriteKit
 
