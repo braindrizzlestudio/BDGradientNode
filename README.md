@@ -28,6 +28,8 @@ Note: the project requires Xcode 6.3 and Swift 1.2.
 
 2. Enjoy your BDGradientNode!
 
+NOTE: Due to a change in Swift 2 / iOS 9, you are now required to add the line PrefersOpenGL = YES to your info.plist
+
 
 ## Examples
 
