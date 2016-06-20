@@ -1,4 +1,4 @@
-![Braindrizzle Studio](http://braindrizzlestudio.com/images/logo/logo-overlay-orange-180.png "Braindrizzle Studio:tm:")
+![Braindrizzle Studio](http://braindrizzlestudios.com/images/logo/logo-overlay-orange-180.png "Braindrizzle Studio:tm:")
 
 # BDGradientNode
 #### Version: 1.3.1
@@ -61,7 +61,7 @@ let myGradientNode = BDGradientNode(radialGradientWithTexture: texture, colors: 
 addChild(myGradientNode)
 ```
 
-![Radial Gradient](http://braindrizzlestudio.com/images/other/example-radial.jpg "Radial Gradient")
+![Radial Gradient](http://braindrizzlestudios.com/images/other/example-radial.jpg "Radial Gradient")
 
 This will instantiate the linear gradient of 3 colors, blended with the Spacehip, in the screenshot.
 ```swift
@@ -85,7 +85,7 @@ let texture = SKTexture(imageNamed: "Spaceship")
 let myGradientNode = BDGradientNode(linearGradientWithTexture: texture, colors: colors, locations: nil, startPoint: startPoint, endPoint: endPoint, blending: blending, keepTextureShape: true, size: nodeSize)
 ```
 
-![Linear Gradient](http://braindrizzlestudio.com/images/other/example-linear.jpg "Linear Gradient")
+![Linear Gradient](http://braindrizzlestudios.com/images/other/example-linear.jpg "Linear Gradient")
 
 
 #### Animation
