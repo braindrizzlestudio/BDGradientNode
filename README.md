@@ -19,7 +19,7 @@ I have tried to provide thorough documentation in the BDGradientNode.swift file.
 ## Installation
 
 Simply copy BDGradientNode.swift into your project. Done!
-Note: the project requires Xcode 6.3 and Swift 1.2.
+Note: the project requires Swift 2.
 
 
 ## Use
